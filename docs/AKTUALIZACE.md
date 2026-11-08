@@ -23,14 +23,19 @@ Kontrola používá raw.githubusercontent.com/OWNER/REPO/main/release.json. Soub
 4. Správce zálohuje databázi, private/config.php, private/storage a fotografie v map/public/photos a uploads. Záloha databáze není vytvářena automaticky.
 5. Zaškrtne potvrzení zálohy a souhlas s instalací konkrétního balíčku. Teprve tlačítko Schválit a nainstalovat spustí změny.
 6. Aktualizátor získá výhradní zámek. Pokud právě probíhají jiné požadavky, odmítne spuštění bez změn; opakujte za chvíli. Při aktualizaci dostávají ostatní požadavky odpověď 503 s oznámením údržby.
-7. Zálohuje nahrazované programové soubory, provede migrace, nahradí soubory a nakonec zapíše verzi. Úspěch ukáže správci. Nic se neinstaluje na pozadí bez schválení.
+7. Před údržbou odmítne balíček s databázovými migracemi (viz níže). U balíčku bez migrací zálohuje nahrazované programové soubory, nahradí soubory a nakonec zapíše verzi. Úspěch ukáže správci. Nic se neinstaluje na pozadí bez schválení.
 
 Podporovány jsou navazující balíčky z přesné verze na novější verzi. Přeskakování verzí je možné jen tehdy, když vydavatel připraví odpovídající souhrnný balíček. Návrat na nižší verzi se běžným aktualizátorem nepovoluje.
 
 ## Ochrana dat
 Balíček nemůže zapisovat do private, složek fotografií, .git ani install. Verzi mění výhradně aktualizátor. Cesty s přechodem do nadřazeného adresáře, symbolické odkazy v ZIPu či cílové cestě a nesouhlasící kontrolní součty jsou odmítnuty. Soubory se nepřepisují před ověřením podpisu a kompletního obsahu.
 
-Databázové migrace jsou součástí podepsaného programu; vydavatel je musí zkontrolovat a otestovat na kopii databáze. Musí být opakovatelné a zachovávat data. Aktualizátor sám nemůže obecně dokázat bezpečnost libovolného SQL. MariaDB DDL nelze spolehlivě vrátit transakcí; proto je záloha povinná a při chybě zůstane údržba aktivní.
+### Databáze na sdíleném hostingu
+Aktuální oprava dovoluje pouze balíčky bez databázových migrací. Při jejich instalaci neprovádí žádný SQL příkaz, ani `CREATE TABLE IF NOT EXISTS`. Webový databázový účet tedy nepotřebuje oprávnění měnit strukturu.
+
+Balíčky obsahující migrace se odmítnou před zálohováním programových souborů, přepnutím do údržby a výměnou souborů. V rozhraní se nezobrazí instalační tlačítko. Toto omezení platí i pro účty s plnými právy; nezjišťujeme oprávnění pokusným DDL.
+
+Samostatná příprava databáze správcem a ověření její výsledné struktury nejsou dosud implementované. Neodstraňujte migrace z balíčku ani neměňte manifest, abyste tuto kontrolu obešli. Vydavatel musí pro změny databáze dodat odpovídající postup. Běžné opravy souborů lze vydávat bez změn databáze.
 
 ## Přerušená aktualizace a obnova
 Pokud dojde k chybě po zahájení změn, nemažte soubor údržby pouze proto, abyste web zpřístupnili. V private/updates/maintenance.json je označení použité zálohy. Podrobnost chyby je v PHP logu; last-result.json obsahuje výsledek posledního pokusu.
@@ -46,4 +51,4 @@ Automatický rollback databáze není součástí této verze. Zálohy a připra
 ## Limity hostingu
 PHP 8.2+, OpenSSL, ZipArchive, HTTPS odchozí spojení a zapisovatelné programové soubory a private. Limit ZIPu 30 MB, rozbaleného obsahu 100 MB, nejvýše 2500 položek. Hosting může mít nižší upload limit. Aktualizace jsou určeny pro jednu instalaci na jednom souborovém systému (nikoli více serverů s oddělenými disky).
 
-Údržba chrání aplikační PHP požadavky, které používají společný bootstrap. Nejde o náhradu úplného auditu starších endpointů ani o zálohovací systém. Automatická kontrola GitHubu se dosud netestovala proti skutečnému vydavatelskému repozitáři, protože zatím nebyl určen.
+Údržba chrání aplikační PHP požadavky, které používají společný bootstrap. Nejde o náhradu úplného auditu starších endpointů ani o zálohovací systém. Automatická kontrola GitHubu se dosud netestovala proti skutečnému vydavatelskému repozitáři, a není aktivovaná na produkci. Repozitář jirivis/stromy-v-mape je zatím soukromý; anonymní stahování vyžaduje veřejný zdroj vydání.
