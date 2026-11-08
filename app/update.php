@@ -30,6 +30,7 @@ function upInspect(string $zipPath,string $publicKey,string $current):array{
   if(!is_array($m['files']??null)||!$m['files'])throw new RuntimeException('Prázdný balíček.');$expected=['manifest.json'=>true,'signature.txt'=>true];
   foreach($m['files'] as $p=>$hash){if(!is_string($p)||!upPath($p)||!is_string($hash)||!preg_match('/^[a-f0-9]{64}$/D',$hash))throw new RuntimeException('Nepovolená cesta nebo kontrolní součet.');$b=$z->getFromName('payload/'.$p);if($b===false||!hash_equals($hash,hash('sha256',$b)))throw new RuntimeException('Poškozený soubor balíčku.');$expected['payload/'.$p]=true;}
   if(array_diff_key($seen,$expected)||array_diff_key($expected,$seen))throw new RuntimeException('Balíček obsahuje neočekávané soubory.');
+  if(isset($m['migrations'])&&!is_array($m['migrations']))throw new RuntimeException('Neplatný seznam databázových migrací.');
   foreach($m['migrations']??[] as $p)if(!is_string($p)||!str_starts_with($p,'database/migrations/')||!str_ends_with($p,'.sql')||!isset($m['files'][$p]))throw new RuntimeException('Neplatná migrace.');
   return $m;
  }finally{$z->close();}
@@ -37,12 +38,13 @@ function upInspect(string $zipPath,string $publicKey,string $current):array{
 function upSafeTarget(string $p):string{
  $root=upRoot();$parts=explode('/',$p);$walk=$root;foreach($parts as $part){$walk.='/'.$part;if(is_link($walk))throw new RuntimeException('Cíl obsahuje symbolický odkaz.');}return $walk;
 }
+require_once __DIR__.'/update_database.php';
 function upApply(string $zipPath,string $key,mysqli $db):string{
  $lock=fopen(upRoot().'/private/app.lock','c+');if(!$lock||!flock($lock,LOCK_EX|LOCK_NB))throw new RuntimeException('Aplikace právě obsluhuje požadavky. Zkuste aktualizaci za chvíli.');
  $dir=upDir();$started=false;$z=null;
  try{
   if(is_file($dir.'/maintenance.json'))throw new RuntimeException('Předchozí aktualizace vyžaduje kontrolu správce. Viz postup obnovy.');
-  $m=upInspect($zipPath,$key,upVersion());$id=gmdate('Ymd-His').'-'.bin2hex(random_bytes(4));$backup=$dir.'/backup-'.$id;mkdir($backup,0700);
+  $m=upInspect($zipPath,$key,upVersion());upDatabasePreflight($m,$db);$id=gmdate('Ymd-His').'-'.bin2hex(random_bytes(4));$backup=$dir.'/backup-'.$id;mkdir($backup,0700);
   $targets=array_keys($m['files']);$targets[]='app/VERSION';$existing=[];
   foreach($targets as $p){$target=upSafeTarget($p);if(is_dir($target))throw new RuntimeException('Cílový soubor koliduje se složkou.');$parent=dirname($target);while(!is_dir($parent)&&$parent!==dirname($parent))$parent=dirname($parent);if(!is_writable($parent))throw new RuntimeException('Programové soubory nejsou zapisovatelné. Upravte oprávnění hostingu před aktualizací.');}
 
@@ -50,13 +52,6 @@ function upApply(string $zipPath,string $key,mysqli $db):string{
   upAtomic($backup.'/files.json',json_encode(['files'=>$targets,'existing'=>$existing,'from'=>upVersion(),'to'=>$m['version']],JSON_THROW_ON_ERROR));
   upAtomic($dir.'/maintenance.json',json_encode(['backup'=>basename($backup),'version'=>$m['version'],'started'=>gmdate(DATE_ATOM)],JSON_THROW_ON_ERROR));$started=true;
   $z=new ZipArchive();if($z->open($zipPath)!==true)throw new RuntimeException('Balíček nelze otevřít.');
-  require_once upRoot().'/app/sql.php';
-  $db->query('CREATE TABLE IF NOT EXISTS svm_schema_migrations (version VARCHAR(80) PRIMARY KEY, applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
-  foreach($m['migrations']??[] as $p){$tag=$m['version'].':'.basename($p);if(strlen($tag)>80)throw new RuntimeException('Příliš dlouhý název migrace.');$s=$db->prepare('SELECT version FROM svm_schema_migrations WHERE version=?');$s->bind_param('s',$tag);$s->execute();if($s->get_result()->num_rows)continue;
-   // Publisher migrations must be idempotent: MariaDB DDL is not transactionally reversible.
-   foreach(siStatements($z->getFromName('payload/'.$p)) as $sql)$db->query($sql);
-   $s=$db->prepare('INSERT INTO svm_schema_migrations(version) VALUES(?)');$s->bind_param('s',$tag);$s->execute();
-  }
   foreach($m['files'] as $p=>$hash)upAtomic(upSafeTarget($p),$z->getFromName('payload/'.$p),0644);
   upAtomic(upRoot().'/app/VERSION',$m['version']."\n",0644);
   upAtomic($dir.'/last-result.json',json_encode(['ok'=>true,'version'=>$m['version'],'at'=>gmdate(DATE_ATOM),'backup'=>basename($backup)],JSON_THROW_ON_ERROR));
