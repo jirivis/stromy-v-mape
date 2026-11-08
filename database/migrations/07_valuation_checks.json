@@ -1,0 +1,50 @@
+[
+  {
+    "table": "trees",
+    "column": "valuation_selected",
+    "type": "tinyint(1)",
+    "nullable": false
+  },
+  {
+    "table": "trees",
+    "column": "valuation_value_czk",
+    "type": "decimal(14,0)",
+    "nullable": true
+  },
+  {
+    "table": "trees",
+    "column": "valuation_method",
+    "type": "varchar(80)",
+    "nullable": true
+  },
+  {
+    "table": "trees",
+    "column": "valuation_at",
+    "type": "datetime",
+    "nullable": true
+  },
+  {
+    "table": "svm_areas",
+    "column": "valuation_selected",
+    "type": "tinyint(1)",
+    "nullable": false
+  },
+  {
+    "table": "svm_areas",
+    "column": "valuation_value_czk",
+    "type": "decimal(14,0)",
+    "nullable": true
+  },
+  {
+    "table": "svm_areas",
+    "column": "valuation_method",
+    "type": "varchar(80)",
+    "nullable": true
+  },
+  {
+    "table": "svm_areas",
+    "column": "valuation_at",
+    "type": "datetime",
+    "nullable": true
+  }
+]
