@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 
-require_once __DIR__ . '/db.php';
+require_once dirname(__DIR__,3).'/auth_api.php';
+header('Cache-Control: no-store');
+$_SESSION['measurement_csrf']??=bin2hex(random_bytes(32));
 
 try {
 
@@ -41,6 +43,7 @@ try {
             created_at
         FROM tree_measurements
         WHERE tree_id = ?
+          AND EXISTS (SELECT 1 FROM trees t WHERE t.id=tree_measurements.tree_id AND t.project_id=?)
         ORDER BY
             CASE
                 WHEN measured_at IS NULL THEN 1
@@ -60,8 +63,9 @@ try {
     }
 
     $stmt->bind_param(
-        'i',
-        $treeId
+        'ii',
+        $treeId,
+        $activeProjectId
     );
 
     if (!$stmt->execute()) {
@@ -85,7 +89,8 @@ try {
         [
             'success' => true,
             'tree_id' => $treeId,
-            'measurements' => $measurements
+            'measurements' => $measurements,
+            'csrf_token' => $_SESSION['measurement_csrf']
         ],
         JSON_UNESCAPED_UNICODE |
         JSON_UNESCAPED_SLASHES

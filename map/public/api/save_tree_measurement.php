@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 
-require_once __DIR__ . '/db.php';
+require_once dirname(__DIR__,3).'/auth_api.php';
+requireProjectRole(['owner','admin','editor']);
+header('Cache-Control: no-store');
 
 try {
 
@@ -22,6 +24,8 @@ try {
 
         exit;
     }
+
+    if(empty($_SESSION['measurement_csrf'])||!hash_equals($_SESSION['measurement_csrf'],(string)($_SERVER['HTTP_X_CSRF_TOKEN']??'')))apiAuthError(403,'invalid_csrf','Obnovte formulář měření.');
 
     $rawInput = file_get_contents('php://input');
 
@@ -142,7 +146,7 @@ try {
             "
                 SELECT id
                 FROM trees
-                WHERE id = ?
+                WHERE id = ? AND project_id = ?
                 LIMIT 1
             "
         );
@@ -154,8 +158,9 @@ try {
     }
 
     $treeCheck->bind_param(
-        'i',
-        $treeId
+        'ii',
+        $treeId,
+        $activeProjectId
     );
 
     $treeCheck->execute();
@@ -183,9 +188,9 @@ try {
     $treeCheck->close();
 
     /*
-     * Přihlášeného uživatele doplníme později.
+     * Autor se přebírá z ověřeného účtu.
      */
-    $createdBy = null;
+    $createdBy = (int)$_SESSION['user_id'];
 
     $sql = "
         INSERT INTO tree_measurements
