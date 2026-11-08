@@ -1,0 +1,286 @@
+{
+  "costs_tu0": {
+    "label": "Náklady – naléhavost 0",
+    "type": "number",
+    "options": {}
+  },
+  "costs_tu1": {
+    "label": "Náklady – naléhavost 1",
+    "type": "number",
+    "options": {}
+  },
+  "costs_tu2": {
+    "label": "Náklady – naléhavost 2",
+    "type": "number",
+    "options": {}
+  },
+  "costs_tu3": {
+    "label": "Náklady – naléhavost 3",
+    "type": "number",
+    "options": {}
+  },
+  "note_treatment": {
+    "label": "Poznámka k péči",
+    "type": "textarea",
+    "options": {}
+  },
+  "treatment_history": {
+    "label": "Historie péče",
+    "type": "textarea",
+    "options": {}
+  },
+  "lat_wgs84": {
+    "label": "Latitude (WGS84)",
+    "type": "text",
+    "options": {}
+  },
+  "lng_wgs84": {
+    "label": "Longitude (WGS84)",
+    "type": "text",
+    "options": {}
+  },
+  "y_sjtsk": {
+    "label": "Y (S-JTSK) (zadej s -)",
+    "type": "text",
+    "options": {}
+  },
+  "x_sjtsk": {
+    "label": "X (S-JTSK) (zadej s -)",
+    "type": "text",
+    "options": {}
+  },
+  "phy_age": {
+    "label": "Fyziologický věk",
+    "type": "select",
+    "options": {
+      "": "— vyber —",
+      "1": "1 - mladý jedinec ve fázi ujímání",
+      "2": "2 - aklimatizovaný mladý strom",
+      "3": "3 - dospívající jedinec",
+      "4": "4 - dospělý jedinec",
+      "5": "5 - senescentní jedinec"
+    }
+  },
+  "age": {
+    "label": "Odhadovaný věk",
+    "type": "number",
+    "options": {}
+  },
+  "vitality": {
+    "label": "Vitalita",
+    "type": "select",
+    "options": {
+      "": "— vyber —",
+      "1": "1 - výborná až mírně snížená",
+      "2": "2 - zřetelně snížená",
+      "3": "3 - výrazně snížená",
+      "4": "4 - zbytková",
+      "5": "5 - suchý (mrtvý) strom"
+    }
+  },
+  "tree_health": {
+    "label": "Zdravotní stav",
+    "type": "select",
+    "options": {
+      "": "— vyber —",
+      "1": "1 – výborný až dobrý",
+      "2": "2 – zhoršený",
+      "3": "3 – výrazně zhoršený",
+      "4": "4 – silně narušený",
+      "5": "5 – kritický/rozpadlý strom"
+    }
+  },
+  "stability": {
+    "label": "Statická stabilita",
+    "type": "select",
+    "options": {
+      "": "— vyber —",
+      "1": "1 – výborná až dobrá (nenarušená)",
+      "2": "2 – zhoršená",
+      "3": "3 – výrazně zhoršená",
+      "4": "4 – silně narušená",
+      "5": "5 – kritická"
+    }
+  },
+  "operational_safety": {
+    "label": "Provozní bezpečnost",
+    "type": "select",
+    "options": {
+      "": "— vyber —",
+      "1": "1 – bezpečný",
+      "2": "2 – potenciálně rizikový",
+      "3": "3 – nebezpečný"
+    }
+  },
+  "longevity": {
+    "label": "Perspektiva",
+    "type": "select",
+    "options": {
+      "": "— vyber —",
+      "a": "a – dlouhodobě perspektivní",
+      "b": "b – krátkodobě perspektivní (perspektiva dočasná)",
+      "c": "c – neperspektivní"
+    }
+  },
+  "ecological_value": {
+    "label": "Biologická hodnota",
+    "type": "select",
+    "options": {
+      "": "— vyber —",
+      "1": "1 – nízká",
+      "2": "2 – střední",
+      "3": "3 – vysoká"
+    }
+  },
+  "landscape_value": {
+    "label": "Sadovnická hodnota",
+    "type": "select",
+    "options": {
+      "": "— vyber —",
+      "1": "1 – jedinec velmi hodnotný",
+      "2": "2 – jedinec nadprůměrně hodnotný",
+      "3": "3 – jedinec průměrně hodnotný",
+      "4": "4 – jedinec podprůměrně hodnotný",
+      "5": "5 – jedinec velmi málo hodnotný"
+    }
+  },
+  "note_tree": {
+    "label": "Poznámka ke stromu",
+    "type": "textarea",
+    "options": {}
+  },
+  "usr_id": {
+    "label": "Číslo stromu",
+    "type": "number",
+    "options": {}
+  },
+  "species": {
+    "label": "Vědecké jméno",
+    "type": "text",
+    "options": {}
+  },
+  "scientific_author": {
+    "label": "Autor vědeckého jména",
+    "type": "text",
+    "options": {}
+  },
+  "czech": {
+    "label": "Český název",
+    "type": "text",
+    "options": {}
+  },
+  "angio_gymno": {
+    "label": "angio/gymno",
+    "type": "select",
+    "options": {
+      "": "— vyber —",
+      "angiospermae": "angiospermae (listnáče / krytosemenné)",
+      "gymnospermae": "gymnospermae (jehličnany / nahosemenné)"
+    }
+  },
+  "cultivated_variety": {
+    "label": "cultivated_variety",
+    "type": "text",
+    "options": {}
+  },
+  "planted": {
+    "label": "Datum výsadby",
+    "type": "date",
+    "options": {}
+  },
+  "measured_at": {
+    "label": "Datum měření",
+    "type": "date",
+    "options": {}
+  },
+  "last_insp_at": {
+    "label": "Poslední kontrola",
+    "type": "date",
+    "options": {}
+  },
+  "next_insp_at": {
+    "label": "Další kontrola",
+    "type": "date",
+    "options": {}
+  },
+  "dbh1_cm": {
+    "label": "Průměr kmene 1 (dbh1_cm)",
+    "type": "number",
+    "options": {}
+  },
+  "dbh2_cm": {
+    "label": "Průměr kmene 2 (dbh2_cm)",
+    "type": "number",
+    "options": {}
+  },
+  "dbh3_cm": {
+    "label": "Průměr kmene 3 (dbh3_cm)",
+    "type": "number",
+    "options": {}
+  },
+  "dbh4_cm": {
+    "label": "Průměr kmene 4 (dbh4_cm)",
+    "type": "number",
+    "options": {}
+  },
+  "girth1_cm": {
+    "label": "Obvod kmene 1 (girth1_cm)",
+    "type": "number",
+    "options": {}
+  },
+  "girth2_cm": {
+    "label": "Obvod kmene 2 (girth2_cm)",
+    "type": "number",
+    "options": {}
+  },
+  "girth3_cm": {
+    "label": "Obvod kmene 3 (girth3_cm)",
+    "type": "number",
+    "options": {}
+  },
+  "girth4_cm": {
+    "label": "Obvod kmene 4 (girth4_cm)",
+    "type": "number",
+    "options": {}
+  },
+  "height": {
+    "label": "Výška stromu",
+    "type": "number",
+    "options": {}
+  },
+  "canopy_h_m": {
+    "label": "Výška nasazení koruny",
+    "type": "number",
+    "options": {}
+  },
+  "spread_m": {
+    "label": "Šířka koruny",
+    "type": "number",
+    "options": {}
+  },
+  "treatment_u0": {
+    "label": "Zásahy – naléhavost 0",
+    "type": "textarea",
+    "options": {}
+  },
+  "treatment_u1": {
+    "label": "Zásahy – naléhavost 1",
+    "type": "textarea",
+    "options": {}
+  },
+  "treatment_u2": {
+    "label": "Zásahy – naléhavost 2",
+    "type": "textarea",
+    "options": {}
+  },
+  "treatment_u3": {
+    "label": "Zásahy – naléhavost 3",
+    "type": "textarea",
+    "options": {}
+  },
+  "note_public": {
+    "label": "Veřejná poznámka",
+    "type": "textarea",
+    "options": {}
+  }
+}

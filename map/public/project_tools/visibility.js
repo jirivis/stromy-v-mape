@@ -1,0 +1,12 @@
+'use strict';
+(async()=>{const boot=window.FormFieldsBoot;if(!boot)return;let data;try{const r=await fetch('/map/public/project_tools/api.php?action=settings',{cache:'no-store'});data=await r.json();if(!r.ok||data.project_id!==boot.project_id)throw Error(data.error||'Aktivní projekt se změnil.');}catch(e){const p=document.createElement('p');p.textContent='Nastavení polí se nepodařilo načíst. Zobrazena všechna pole. '+e.message;document.body.prepend(p);return;}
+const form=boot.kind==='areas'?document.getElementById('areaForm'):document.querySelector('form[action="tree_save.php"]');if(!form)return;
+const hidden=new Set(data.settings.hidden[boot.kind]),groups=[];let showAll=false;
+for(const k of hidden){if(boot.kind==='areas'&&['species','components'].includes(k)){const ids=k==='species'?['speciesRows','addSpecies']:['componentRows','addComponent','componentTotal'];for(const id of ids){const n=document.getElementById(id);if(n){groups.push(n);if(id==='speciesRows'&&n.previousElementSibling?.tagName==='H2')groups.push(n.previousElementSibling);if(id==='addSpecies'&&n.nextElementSibling?.classList.contains('hint'))groups.push(n.nextElementSibling);}}continue;}
+ const inputs=[...form.querySelectorAll('[name]')].filter(n=>n.name===k||n.name===k+'[]'||n.name===k+'_custom');for(const n of inputs){if(/^treatment_u[0-3]$/.test(k)){let section=n.closest('.content');if(section){groups.push(section);if(section.previousElementSibling?.classList.contains('collapsible'))groups.push(section.previousElementSibling);continue;}}const wrapping=n.closest('label');if(wrapping)groups.push(wrapping);else{const wrapper=n.closest('.suggest-wrapper');groups.push(wrapper||n);if(n.id){const label=[...form.querySelectorAll('label[for]')].find(l=>l.htmlFor===n.id);if(label)groups.push(label);}}}
+}
+const preserve=document.createElement('input');preserve.type='hidden';preserve.name='preserve_fields';form.append(preserve);
+function apply(){preserve.value=preserve.defaultValue=JSON.stringify(showAll?[]:[...hidden]);for(const n of groups){n.hidden=!showAll;const controls=n.matches('input,select,textarea')?[n]:[...n.querySelectorAll('input,select,textarea')];for(const c of controls){if(!showAll&&c.required){c.dataset.projectRequired='1';c.required=false;}else if(showAll&&c.dataset.projectRequired){c.required=true;}}}}
+apply();
+// Re-rendering area form creates new species/component controls; hidden container stays intact.
+})();

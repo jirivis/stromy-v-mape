@@ -1,0 +1,49 @@
+# Aktualizace aplikace — V2.23.0
+
+## Co se aktualizuje
+Každá instalace má vlastní databázi a fotografie. GitHub obsahuje pouze veřejná vydání programu. Aplikace stahuje informace o vydání a balíček; neposílá na GitHub projekty ani přístupové údaje. GitHub při připojení vidí obvyklá síťová metadata, například IP adresu hostingu.
+
+Nová sekce Dashboard → Nastavení systému → Aktualizace aplikace je dostupná pouze aktivnímu správci systému. Správce jednotlivého projektu k ní nemá přístup.
+
+## Jednorázové nastavení vydavatele
+V private/config.php doplňte položku updates podle config.example.php:
+
+- repository: skutečné `vlastník/repozitář` na GitHubu; veřejný repozitář.
+- public_key: veřejný PEM klíč vydavatele. Lze použít `file_get_contents(__DIR__.'/publisher-public.pem')` a veřejný klíč uložit do private/publisher-public.pem.
+- check_on_dashboard: true pro kontrolu při návštěvě dashboardu správce (výsledek se uchovává 6 hodin); false pro ruční kontrolu.
+
+Repozitář ani klíč nejsou v balíčku předstíraně vyplněny. Je nutné je nastavit, až bude založen skutečný vydavatelský repozitář. Bez nich zůstává aplikace funkční, ale kontrola vydání či ověření balíčku nebudou dostupné.
+
+Kontrola používá raw.githubusercontent.com/OWNER/REPO/main/release.json. Soubor uvádí version, notes, url a sha256. URL balíčku musí směřovat do Releases stejného repozitáře. ZIP je navíc kryptograficky podepsán; samotný kontrolní součet k instalaci nestačí.
+
+## Průběh
+1. Správce dostane na dashboardu upozornění nebo otevře Aktualizace aplikace a zvolí kontrolu vydání.
+2. Zvolí Stáhnout a ověřit balíček, případně nahraje podepsaný ZIP ručně.
+3. Zobrazí se verze, změny, počty souborů a migrací. Zatím se nic neinstaluje.
+4. Správce zálohuje databázi, private/config.php, private/storage a fotografie v map/public/photos a uploads. Záloha databáze není vytvářena automaticky.
+5. Zaškrtne potvrzení zálohy a souhlas s instalací konkrétního balíčku. Teprve tlačítko Schválit a nainstalovat spustí změny.
+6. Aktualizátor získá výhradní zámek. Pokud právě probíhají jiné požadavky, odmítne spuštění bez změn; opakujte za chvíli. Při aktualizaci dostávají ostatní požadavky odpověď 503 s oznámením údržby.
+7. Zálohuje nahrazované programové soubory, provede migrace, nahradí soubory a nakonec zapíše verzi. Úspěch ukáže správci. Nic se neinstaluje na pozadí bez schválení.
+
+Podporovány jsou navazující balíčky z přesné verze na novější verzi. Přeskakování verzí je možné jen tehdy, když vydavatel připraví odpovídající souhrnný balíček. Návrat na nižší verzi se běžným aktualizátorem nepovoluje.
+
+## Ochrana dat
+Balíček nemůže zapisovat do private, složek fotografií, .git ani install. Verzi mění výhradně aktualizátor. Cesty s přechodem do nadřazeného adresáře, symbolické odkazy v ZIPu či cílové cestě a nesouhlasící kontrolní součty jsou odmítnuty. Soubory se nepřepisují před ověřením podpisu a kompletního obsahu.
+
+Databázové migrace jsou součástí podepsaného programu; vydavatel je musí zkontrolovat a otestovat na kopii databáze. Musí být opakovatelné a zachovávat data. Aktualizátor sám nemůže obecně dokázat bezpečnost libovolného SQL. MariaDB DDL nelze spolehlivě vrátit transakcí; proto je záloha povinná a při chybě zůstane údržba aktivní.
+
+## Přerušená aktualizace a obnova
+Pokud dojde k chybě po zahájení změn, nemažte soubor údržby pouze proto, abyste web zpřístupnili. V private/updates/maintenance.json je označení použité zálohy. Podrobnost chyby je v PHP logu; last-result.json obsahuje výsledek posledního pokusu.
+
+Postup správce přes FTP a správu databáze:
+1. Ponechte údržbu aktivní a uchovejte současný stav pro diagnostiku.
+2. Obnovte databázi ze zálohy pořízené před aktualizací. Pokud došlo ke změnám fotografií mimo aktualizaci, obnovte i příslušné soubory z odpovídající zálohy.
+3. V private/updates/backup-DATUM-ID/files.json je seznam `files` a `existing`. Soubory uvedené v `existing` vraťte ze stejné záložní složky na odpovídající cestu aplikace, včetně app/VERSION. Soubor files.json do kořene aplikace nekopírujte. Nové soubory (`files` minus `existing`) odstraňte pouze podle tohoto seznamu. Alternativou je obnovení celé zálohy programových souborů.
+4. Po obnovení konzistentních souborů a databáze odstraňte private/updates/maintenance.json a ověřte přihlášení, projekty, fotografie a export. Je-li aktivní OPcache, proveďte restart PHP nebo jeho vyprázdnění podle hostingu.
+
+Automatický rollback databáze není součástí této verze. Zálohy a připravené ZIPy v private/updates se automaticky nemažou; po úspěšném ověření lze staré zálohy ručně archivovat mimo hosting a odstranit.
+
+## Limity hostingu
+PHP 8.2+, OpenSSL, ZipArchive, HTTPS odchozí spojení a zapisovatelné programové soubory a private. Limit ZIPu 30 MB, rozbaleného obsahu 100 MB, nejvýše 2500 položek. Hosting může mít nižší upload limit. Aktualizace jsou určeny pro jednu instalaci na jednom souborovém systému (nikoli více serverů s oddělenými disky).
+
+Údržba chrání aplikační PHP požadavky, které používají společný bootstrap. Nejde o náhradu úplného auditu starších endpointů ani o zálohovací systém. Automatická kontrola GitHubu se dosud netestovala proti skutečnému vydavatelskému repozitáři, protože zatím nebyl určen.

@@ -1,0 +1,6 @@
+<?php
+function ptTransferNav(string $active):void { ?>
+<style>.transfer-tabs,.transfer-sections{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.transfer-tabs{border-bottom:1px solid #ccd7cf;padding-bottom:12px}.transfer-tabs a,.transfer-sections a{padding:10px 18px;border:1px solid #b7cbbd;border-radius:6px;text-decoration:none;color:#24573a;background:#fff}.transfer-tabs a[aria-current],.transfer-sections a[aria-current]{background:#285f3d;color:white}.scope-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}.export-group{margin:20px 0;padding:16px;border:1px solid #ccd7cf;border-radius:8px}.export-group legend{font-weight:bold}.drawing-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.drawing-fields input{width:100%;box-sizing:border-box}</style>
+<nav class="transfer-tabs" aria-label="Přenos dat"><a href="export.php" <?= $active!=='import'?'aria-current="page"':'' ?>>Export</a><a href="import.php" <?= $active==='import'?'aria-current="page"':'' ?>>Import</a></nav>
+<?php if($active!=='import'): ?><nav class="transfer-sections" aria-label="Druh exportu"><a href="export.php" <?=$active==='data'?'aria-current="page"':''?>>Tabulky · GPKG · fotografie · QGZ</a><a href="overview.php" <?=$active==='overview'?'aria-current="page"':''?>>Rychlá přehledka</a></nav><?php endif;
+}

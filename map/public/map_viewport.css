@@ -1,0 +1,17 @@
+/* Scoped to the main map; admin pages keep their normal scrolling. */
+body.tree-map-page {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+}
+.tree-map-page > .app-topbar { flex-shrink: 0; }
+.tree-map-page .app-workspace { min-width: 0; overflow: hidden; }
+.tree-map-page #map { min-width: 0; min-height: 0; }
+.tree-map-page .table-panel { max-height: 65%; }
+.tree-map-page .table-panel__content { min-height: 0; overflow: auto; }
+@media (pointer: coarse) {
+    .tree-map-page input, .tree-map-page select, .tree-map-page textarea {
+        font-size: 16px;
+    }
+}

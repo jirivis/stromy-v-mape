@@ -1,0 +1,18 @@
+<?php
+declare(strict_types=1);
+require_once __DIR__.'/../../auth_api.php';requireProjectRole(['owner','admin','editor']);require_once __DIR__.'/api/db.php';
+header('Content-Type: application/json; charset=utf-8');header('Cache-Control: no-store');$tx=false;
+try{
+ if($_SERVER['REQUEST_METHOD']!=='POST')throw new RuntimeException('Použijte POST.',405);$raw=file_get_contents('php://input',false,null,0,300001);if(strlen($raw)>300000)throw new InvalidArgumentException('Příliš mnoho fotografií.');$d=json_decode($raw,true,24,JSON_THROW_ON_ERROR);
+ if(empty($_SESSION['tree_form_csrf'])||!hash_equals($_SESSION['tree_form_csrf'],(string)($d['tree_form_token']??''))||(int)($d['project_id']??0)!==(int)$activeProjectId)throw new RuntimeException('Platnost formuláře nebo projekt se změnil.',403);
+ $id=(int)($d['id']??0);$rows=$d['photos']??null;$before=$d['previous']??null;if(!is_array($rows)||!is_array($before)||count($rows)>500||count($before)>500)throw new InvalidArgumentException('Neplatný seznam fotografií.');
+ $mysqli->set_charset('utf8mb4');mysqli_report(MYSQLI_REPORT_ERROR|MYSQLI_REPORT_STRICT);$mysqli->begin_transaction();$tx=true;
+ $q=$mysqli->prepare('SELECT * FROM trees WHERE id=? AND project_id=? FOR UPDATE');$q->bind_param('ii',$id,$activeProjectId);$q->execute();$tree=$q->get_result()->fetch_assoc();if(!$tree)throw new RuntimeException('Strom v projektu nebyl nalezen.',404);ksort($tree);$ver=hash('sha256',json_encode($tree,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));if(!hash_equals($ver,(string)($d['row_version']??'')))throw new RuntimeException('Strom mezitím někdo změnil. Obnovte formulář.',409);
+ $q=$mysqli->prepare("SELECT id,note_photo FROM trees_photo WHERE tree_id=? AND status='active' ORDER BY sort_order,id FOR UPDATE");$q->bind_param('i',$id);$q->execute();$old=[];$result=$q->get_result();while($r=$result->fetch_assoc())$old[]=['id'=>(int)$r['id'],'note'=>(string)($r['note_photo']??'')];
+ if($old!==$before)throw new RuntimeException('Galerii mezitím někdo změnil. Obnovte formulář.',409);
+ $known=array_column($old,null,'id');$seen=[];
+ foreach($rows as $i=>$r){if(!is_array($r)||!is_int($r['id']??null)||!isset($known[$r['id']])||isset($seen[$r['id']])||!is_string($r['note']??null)||mb_strlen($r['note'])>1000)throw new InvalidArgumentException('Neplatný popisek nebo fotografie.');$seen[$r['id']]=true;$q=$mysqli->prepare("UPDATE trees_photo SET note_photo=?,sort_order=? WHERE id=? AND tree_id=? AND status='active'");$q->bind_param('siii',$r['note'],$i,$r['id'],$id);$q->execute();}
+ foreach($known as $photoId=>$r)if(!isset($seen[$photoId])){$q=$mysqli->prepare("UPDATE trees_photo SET status='archived' WHERE id=? AND tree_id=?");$q->bind_param('ii',$photoId,$id);$q->execute();}
+ $q=$mysqli->prepare("UPDATE trees SET photo_url=(SELECT url FROM trees_photo WHERE tree_id=? AND status='active' ORDER BY sort_order,id LIMIT 1) WHERE id=? AND project_id=?");$q->bind_param('iii',$id,$id,$activeProjectId);$q->execute();
+ $q=$mysqli->prepare('SELECT * FROM trees WHERE id=? AND project_id=?');$q->bind_param('ii',$id,$activeProjectId);$q->execute();$tree=$q->get_result()->fetch_assoc();ksort($tree);$version=hash('sha256',json_encode($tree,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));$mysqli->commit();$tx=false;echo json_encode(['success'=>true,'row_version'=>$version]);
+}catch(Throwable $e){if($tx)$mysqli->rollback();http_response_code(in_array($e->getCode(),[403,404,405,409],true)?$e->getCode():422);if($e instanceof mysqli_sql_exception)error_log('Photo metadata: '.$e->getMessage());echo json_encode(['success'=>false,'message'=>$e instanceof mysqli_sql_exception?'Změny fotografií nebyly uloženy.':$e->getMessage()],JSON_UNESCAPED_UNICODE);}

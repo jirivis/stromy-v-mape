@@ -1,0 +1,521 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #333; /* Lepší čitelnost textu */
+}
+
+#map {
+  height: 60vh;
+  width: 100%;
+  z-index: 1; /* Pro jistotu, aby mapa byla pod ovládacími prvky */
+}
+
+/* --- STYLY PRO TABULKU --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 14px; /* Trochu menší písmo do tabulky */
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 8px 12px; /* Trochu více prostoru */
+  text-align: left;
+}
+
+table th {
+  background-color: #f4f4f4; /* Šedé pozadí pro hlavičku */
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9; /* "Zebrování" řádků pro lepší čitelnost */
+}
+
+table img {
+  border-radius: 4px;
+}
+
+/* --- NOVÉ STYLY PRO POPUP (BUBLINU) --- */
+
+/* Wrapper, který jsi přidal v JS */
+.tree-popup {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Nadpis stromu (např. č.45 Dub letní) */
+.tree-popup h3 {
+  margin: 0 0 8px 0;
+  padding-bottom: 5px;
+  color: #2e7d32; /* Tmavě zelená barva */
+  border-bottom: 1px solid #ddd; /* Linka pod nadpisem */
+  font-size: 16px;
+}
+
+/* Odstavce s informacemi */
+.tree-popup p {
+  margin: 4px 0;
+}
+
+/* Ztučnění popisků (Druh, Obvod...) */
+.tree-popup strong {
+  color: #555;
+}
+
+/* Veřejná poznámka - aby vypadala jako poznámka */
+.tree-popup .note {
+  margin-top: 10px;
+  padding: 8px;
+  background-color: #f1f8e9; /* Velmi světle zelené pozadí */
+  border-left: 3px solid #8bc34a; /* Zelený proužek vlevo */
+  font-style: italic;
+  color: #444;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Obrázek v popupu */
+.tree-popup img {
+  display: block;
+  max-width: 100%; /* Aby obrázek nikdy nepřetekl šířku bubliny */
+  height: auto;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  padding: 3px;
+  background: #fff;
+}
+.add-tree-btn {
+    background: white;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.add-tree-btn:hover {
+    background: #e6ffe6;
+}
+
+.collapsible {
+    background: #e8f0fe;
+    padding: 14px 16px;
+    cursor: pointer;
+    border: 2px solid #8ab4f8;
+    margin-top: 20px;
+    font-weight: bold;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 17px;
+    color: #1a3d7c;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.collapsible:hover {
+    background: #d2e3fc;
+    border-color: #5a95f5;
+}
+
+.collapsible::before {
+    content: "▶";
+    margin-right: 10px;
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+.collapsible.active::before {
+    transform: rotate(90deg);
+}
+
+.collapsible::after {
+    content: "▼";
+    font-size: 14px;
+    transition: transform 0.2s ease;
+}
+
+.collapsible.active::after {
+    transform: rotate(-180deg);
+}
+
+.content {
+    display: none;
+    padding: 15px;
+    border: 1px solid #8ab4f8;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    background: #f8fbff;
+}
+
+.sub-collapsible {
+    background: #f5f7ff;
+    padding: 10px 12px;
+    cursor: pointer;
+    border: 1px solid #b9c9ff;
+    margin-top: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    font-size: 15px;
+    color: #2a4a8a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sub-collapsible:hover {
+    background: #e6ecff;
+}
+
+.sub-collapsible::after {
+    content: "▼";
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.sub-collapsible.active::after {
+    transform: rotate(-180deg);
+}
+
+.sub-content {
+    display: none;
+    padding: 10px 15px;
+    border-left: 2px solid #b9c9ff;
+    background: #fafbff;
+    margin-bottom: 10px;
+}
+
+.sub2-collapsible {
+    background: #f0f3ff;
+    padding: 8px 10px;
+    cursor: pointer;
+    border: 1px solid #c7d4ff;
+    margin-top: 8px;
+    font-weight: bold;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #2a3f7a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sub2-collapsible:hover {
+    background: #e4e9ff;
+}
+
+.sub2-collapsible::after {
+    content: "▼";
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.sub2-collapsible.active::after {
+    transform: rotate(-180deg);
+}
+
+.sub2-content {
+    display: none;
+    padding: 8px 15px;
+    border-left: 2px solid #c7d4ff;
+    background: #fafbff;
+    margin-bottom: 8px;
+}
+
+/* celý řádek */
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    margin: 8px 0;
+}
+
+/* schovat původní checkbox */
+.checkbox-item input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* zelený obdélník vlevo */
+.checkbox-box {
+    width: 42px;
+    height: 32px;
+    border-radius: 4px;
+    border: 1px solid #4a8f3c;
+    background: #fff; /* výchozí bílá */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease;
+}
+
+/* fajfka uvnitř */
+.checkbox-icon {
+    font-size: 18px;
+    color: #1a73e8; /* modrá fajfka */
+    opacity: 0;     /* výchozí: neviditelná */
+    transition: 0.2s ease;
+}
+
+/* text vpravo */
+.checkbox-text {
+    font-size: 16px;
+}
+
+/* po zaškrtnutí: zezelená jen levá krabička + zobrazí se fajfka */
+.checkbox-item input[type="checkbox"]:checked ~ .checkbox-box {
+    background: #e8f5e4;
+    border-color: #4a8f3c;
+}
+
+.checkbox-item input[type="checkbox"]:checked ~ .checkbox-box .checkbox-icon {
+    opacity: 1;
+}
+
+
+.checkbox-item:hover {
+    border-color: #999;
+    background: #f0f0f0;
+}
+
+.checkbox-item.checked {
+    border-color: #4a8f3c;
+    background: #e8f5e4;
+}
+
+.section-divider {
+    border-top: 1px solid #ccc;
+    margin: 14px 0;
+    width: 100%;
+}
+
+.suggest-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* JEDINÁ správná definice suggestions */
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.suggestions:empty {
+    display: none;
+}
+
+/* JEDINÁ správná definice suggestion-item */
+.suggestion-item {
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+    background: #0078d4;
+    color: white;
+}
+
+/* Inputy necháme takto */
+input {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* --- STYLY PRO NAHRÁVÁNÍ FOTEK --- */
+        .photo-upload-btn { display: inline-block; background: #2d7d2d; color: white; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; text-align: center; font-weight: bold; width: 100%; box-sizing: border-box; }
+        .photo-upload-btn:hover { background: #256525; }
+        .photo-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .photo-item { width: 140px; height: 210px; position: relative; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9; display: flex; flex-direction: column; overflow: hidden; }
+        .photo-item img { width: 100%; height: 100px; object-fit: cover; border-top-left-radius: 4px; border-top-right-radius: 4px; }
+        .photo-controls { display: flex; justify-content: space-between; padding: 5px; background: #fff; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; }
+        .photo-btn { background: #eee; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; padding: 2px 8px; font-size: 14px; font-weight: bold; color: #333; }
+        .photo-btn:hover { background: #ddd; }
+        .photo-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .photo-remove { position: absolute; top: 4px; right: 4px; background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+		.photo-note-input { flex-grow: 1; resize: none; border: none; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 5px; box-sizing: border-box; font-size: 12px; font-family: inherit; }
+		.photo-note-input:focus { outline: none; background: #eef8ee; }
+		
+/* --- RESPONZIVITA PRO MOBILY --- */
+@media (max-width: 600px) {
+    body {
+        margin: 10px;
+        padding: 5px;
+    }
+    
+    /* 1. Popisky zmenšené striktně na 75 % */
+    label {
+        font-size: 75%; 
+        margin-top: 25px; /* Větší mezera, ať se to po těch obřích polích neslije */
+        color: #555;      
+        text-transform: uppercase; /* Na mobilu malým písmem vypadá dobře verzálkami */
+        letter-spacing: 0.5px;
+    }
+
+    /* 2. Obří zadávací rámečky (fyzicky cca 200 % standardní velikosti) */
+    input[type="text"], 
+    input[type="number"], 
+    input[type="date"], 
+    select, 
+    textarea {
+        font-size: 150%;      /* Obrovský text pro snadné čtení na slunci */
+        padding: 25px 15px;   /* Masivní vnitřní výplň, rámeček bude velmi vysoký */
+        min-height: 80px;     /* Standard je cca 40px, tohle je rovnou 80px (200 %) */
+        border-radius: 8px;   
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); 
+        line-height: 1.4;
+    }
+
+    /* U textarea (poznámky) chceme výšku ještě větší */
+    textarea {
+        min-height: 180px;
+    }
+
+    /* I checkboxy uděláme pořádně velké, ať se do nich dobře trefuje */
+    .checkbox-item {
+        padding: 25px 15px; 
+        margin-bottom: 12px;
+        font-size: 120%;
+    }
+
+    /* Horizontální scrollování fotek */
+    .photo-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 15px;
+        gap: 15px;
+    }
+
+    .photo-item {
+        flex: 0 0 auto;
+        width: 150px;
+        height: 230px;
+    }
+
+    /* Obří tlačítka (uložit, fotit) */
+    .photo-upload-btn, .submit-btn {
+        padding: 25px;
+        font-size: 150%;
+        width: 100%;
+        display: block;
+        margin-top: 25px;
+        border-radius: 8px;
+    }
+}
+
+/* --- PROFESIONÁLNÍ LIGHTBOX GALERIE --- */
+.lightbox-overlay {
+    display: none; /* V základu je schovaný */
+    position: fixed;
+    z-index: 9999;
+    left: 0; top: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    align-items: center; justify-content: center;
+    flex-direction: column;
+}
+.lightbox-overlay.active { 
+    display: flex; 
+}
+.lightbox-content-wrapper { 
+    text-align: center; 
+    max-width: 90%; 
+    max-height: 80%; 
+    position: relative;
+}
+#lightbox-img { 
+    max-width: 100%; 
+    max-height: 70vh; 
+    border-radius: 4px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+}
+#lightbox-caption { 
+    color: #fff; 
+    margin-top: 15px; 
+    font-size: 16px; 
+    min-height: 24px; 
+    padding: 0 10px; 
+}
+.lightbox-close { 
+    position: absolute; 
+    top: 20px; 
+    right: 30px; 
+    color: #fff; 
+    font-size: 40px; 
+    cursor: pointer; 
+}
+.lightbox-prev, .lightbox-next { 
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.2); border: none; color: white;
+    font-size: 30px; padding: 15px; cursor: pointer; border-radius: 50%; 
+    transition: background 0.3s;
+}
+.lightbox-prev:hover, .lightbox-next:hover { background: rgba(255,255,255,0.4); }
+.lightbox-prev { left: 20px; }
+.lightbox-next { right: 20px; }
+
+@media (max-width: 600px) {
+    .lightbox-prev, .lightbox-next { font-size: 20px; padding: 10px; }
+    .lightbox-prev { left: 5px; }
+    .lightbox-next { right: 5px; }
+    #lightbox-img { max-height: 60vh; }
+    .lightbox-close { top: 10px; right: 15px; font-size: 30px; }
+}		
+
+.map-admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    padding: 10px 16px;
+
+    background: #1b3322;
+    color: #ffffff;
+
+    font-size: 14px;
+}
+
+.map-admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.map-admin-button {
+    display: inline-block;
+    padding: 7px 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 6px;
+
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.map-admin-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.map-admin-button--logout {
+    border-color: #d9a5a5;
+}

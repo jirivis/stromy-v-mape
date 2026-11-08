@@ -1,0 +1,1 @@
+(()=>{const box=document.getElementById('updateNotice');if(!box)return;fetch('/updates/check.php',{method:'POST',body:new URLSearchParams({csrf:box.dataset.token})}).then(r=>r.ok?r.json():{}).then(d=>{if(d.available){box.hidden=false;box.querySelector('span').textContent='Je dostupná aktualizace '+d.version+'. ';}}).catch(()=>{});})();
