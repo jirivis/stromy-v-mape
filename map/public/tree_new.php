@@ -834,6 +834,7 @@ $page_title = $is_edit
             action="tree_history_save.php"
             method="POST"
         >
+            <input type="hidden" name="tree_form_token" value="<?= htmlspecialchars($_SESSION['tree_form_csrf'],ENT_QUOTES,'UTF-8') ?>">
 
             <input
                 type="hidden"

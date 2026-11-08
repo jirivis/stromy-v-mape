@@ -1,7 +1,7 @@
 # Podmínky před veřejným vydáním
 
 ## Bezpečnost
-Opravena kontrola přihlášení, projektu, role a CSRF ve starším API tree_measurements/save_tree_measurement. HTTP test pokrývá anonymní přístup, viewer, chybějící token, cizí projekt, povolený zápis a autora. Lokálně prošlo PHP 8.3 / MariaDB 10.11. Přidána CI matice 8.3/8.4/8.5; samotná konfigurace není důkaz úspěšného běhu.
+Opravena kontrola přihlášení, projektu, role a CSRF ve starším API tree_measurements/save_tree_measurement. HTTP test pokrývá anonymní přístup, viewer, chybějící token, cizí projekt, povolený zápis a autora. Lokálně prošlo PHP 8.3 / MariaDB 10.11. CI matice 8.3/8.4/8.5 úspěšně prošla pro commit de21b67cc1365b18a01195de1f1f5de3299d8faf (běh 42479880322). Nejde o test všech webových funkcí. Následně doplněna CSRF ochrana mazání stromu a uložení historie; lokálně zatím ověřena syntaxe.
 
 Balíček 2.24.0 vytvořený před touto opravou ji neobsahuje. Není doporučen k novému zákaznickému nasazení. Nevydávat další balíček bez zahrnutí opravy do instalačního i aktualizačního payloadu a ověření podpisu. Celkový bezpečnostní audit tímto není dokončen; zbývají ostatní zápisové endpointy, izolace projektů, přístup k fotografiím, přihlašování a obnova hesel.
 
