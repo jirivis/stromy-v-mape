@@ -38,19 +38,13 @@ function upInspect(string $zipPath,string $publicKey,string $current):array{
 function upSafeTarget(string $p):string{
  $root=upRoot();$parts=explode('/',$p);$walk=$root;foreach($parts as $part){$walk.='/'.$part;if(is_link($walk))throw new RuntimeException('Cíl obsahuje symbolický odkaz.');}return $walk;
 }
-// Until a separate administrator migration workflow is implemented, accept
-// file-only releases. Never probe DDL permissions by modifying the database.
-function upDatabasePreflight(array $manifest):void{
- $migrations=$manifest['migrations']??[];
- if(!is_array($migrations))throw new RuntimeException('Neplatný seznam databázových migrací.');
- if($migrations)throw new RuntimeException('Balíček vyžaduje změnu databáze. Tato verze aktualizátoru podporuje pouze aktualizace souborů. Vyžádejte si postup přípravy databáze od vydavatele; aplikace nebyla přepnuta do údržby.');
-}
+require_once __DIR__.'/update_database.php';
 function upApply(string $zipPath,string $key,mysqli $db):string{
  $lock=fopen(upRoot().'/private/app.lock','c+');if(!$lock||!flock($lock,LOCK_EX|LOCK_NB))throw new RuntimeException('Aplikace právě obsluhuje požadavky. Zkuste aktualizaci za chvíli.');
  $dir=upDir();$started=false;$z=null;
  try{
   if(is_file($dir.'/maintenance.json'))throw new RuntimeException('Předchozí aktualizace vyžaduje kontrolu správce. Viz postup obnovy.');
-  $m=upInspect($zipPath,$key,upVersion());upDatabasePreflight($m);$id=gmdate('Ymd-His').'-'.bin2hex(random_bytes(4));$backup=$dir.'/backup-'.$id;mkdir($backup,0700);
+  $m=upInspect($zipPath,$key,upVersion());upDatabasePreflight($m,$db);$id=gmdate('Ymd-His').'-'.bin2hex(random_bytes(4));$backup=$dir.'/backup-'.$id;mkdir($backup,0700);
   $targets=array_keys($m['files']);$targets[]='app/VERSION';$existing=[];
   foreach($targets as $p){$target=upSafeTarget($p);if(is_dir($target))throw new RuntimeException('Cílový soubor koliduje se složkou.');$parent=dirname($target);while(!is_dir($parent)&&$parent!==dirname($parent))$parent=dirname($parent);if(!is_writable($parent))throw new RuntimeException('Programové soubory nejsou zapisovatelné. Upravte oprávnění hostingu před aktualizací.');}
 

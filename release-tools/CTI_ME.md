@@ -24,3 +24,14 @@ python3 build.py --payload payload --from-version 2.23.0 --version 2.24.0 \
 Pokud nejsou migrace, parametr --migration vynechte. Před vydáním proveďte aktualizaci na kopii databáze i simulaci selhání. Nahrajte ZIP do GitHub Releases a v hlavní větvi main zveřejněte vygenerovaný release.json. Názvy jirivis/stromy-v-mape nahraďte skutečným repozitářem. Nástroj nic nezveřejňuje automaticky.
 
 Manifest podepisuje verzi, výchozí verzi, popis, seznam migrací a SHA-256 každého souboru. ZIP mimo manifest a podpis obsahuje pouze payload. Běžný instalační ZIP není aktualizačním balíčkem a aktualizátor jej odmítne.
+
+## Příprava databáze na sdíleném hostingu
+Pouze zpětně kompatibilní, opakovatelné přidávání struktury. Pro každou SQL změnu přidejte úplné kontroly výsledných sloupců do JSON a použijte `--schema-checks checks.json` spolu s `--migration database/migrations/....sql`. Příklad:
+
+```json
+[{"table":"svm_area_photos","column":"file_path","type":"varchar(80)","nullable":true}]
+```
+
+Typ musí přesně odpovídat `information_schema.COLUMNS.COLUMN_TYPE` cílové databáze. Balíček podepisuje i tyto kontroly. Web SQL pouze nabídne ke stažení a pak ověří strukturu; příkazy provede správce samostatně v phpMyAdminu. Datové migrace, indexy, přejmenování a destruktivní změny tento protokol neověřuje. Neoznačujte je jako `manual-schema`.
+
+Nejprve je nutné nainstalovat aktualizátor s podporou tohoto protokolu balíčkem **bez migrací**. Původní 2.23.0 spouštěla migrace automaticky a nový protokol nezná. První podepsané vydání proto musí obsahovat jen aktualizátor a související soubory, žádné SQL migrace. Produkční vydání a klíč zatím nejsou připravené.

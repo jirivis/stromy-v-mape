@@ -9,6 +9,7 @@ function removeTree(string $path):void {
 $root=sys_get_temp_dir().'/svm-update-test-'.bin2hex(random_bytes(6));
 mkdir($root.'/app',0700,true);mkdir($root.'/private',0700);
 copy(dirname(__DIR__).'/app/update.php',$root.'/app/update.php');
+copy(dirname(__DIR__).'/app/update_database.php',$root.'/app/update_database.php');
 require $root.'/app/update.php';
 try {
  $key=openssl_pkey_new(['private_key_bits'=>2048,'private_key_type'=>OPENSSL_KEYTYPE_RSA]);
@@ -23,7 +24,7 @@ try {
  };
  file_put_contents($root.'/app/VERSION',"2.23.0\n");file_put_contents($root.'/example.txt','original');
  $make($root.'/migration.zip',['database/migrations/change.sql']);
- try{upApply($root.'/migration.zip',$public,$db);throw new LogicException('Migration was accepted');}catch(RuntimeException $e){check(str_contains($e->getMessage(),'změnu databáze'),'Migration rejected clearly');}
+ try{upApply($root.'/migration.zip',$public,$db);throw new LogicException('Migration was accepted');}catch(RuntimeException $e){check(str_contains($e->getMessage(),'ověřitelný postup'),'Migration rejected clearly');}
  check(file_get_contents($root.'/example.txt')==='original','Original file retained');
  check(upVersion()==='2.23.0','Version retained');
  check(!file_exists(upDir().'/maintenance.json'),'No maintenance on rejection');

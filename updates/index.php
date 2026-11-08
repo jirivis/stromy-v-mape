@@ -17,15 +17,24 @@ try{
    try{$pending=upInspect($path,(string)($cfg['public_key']??''),upVersion());}catch(Throwable $e){unlink($path);throw $e;}
    if(isset($_SESSION['update_pending']))@unlink(upDir().'/pending-'.$_SESSION['update_pending'].'.zip');
    $_SESSION['update_pending']=$token;$_SESSION['update_pending_hash']=hash_file('sha256',$path);$message='Podpis a obsah balíčku jsou ověřeny. Zatím nebylo nic nainstalováno.';
-  }elseif($action==='install'){
+  }elseif(in_array($action,['install','database_sql','database_check'],true)){
    $token=(string)($_SESSION['update_pending']??'');if(!preg_match('/^[a-f0-9]{32}$/D',$token))throw new RuntimeException('Nejprve připravte balíček.');
-   if(($_POST['backup']??'')!=='yes'||($_POST['approve']??'')!=='yes')throw new RuntimeException('Potvrďte zálohu a souhlas s instalací.');
+   if($action==='install'&&(($_POST['backup']??'')!=='yes'||($_POST['approve']??'')!=='yes'))throw new RuntimeException('Potvrďte zálohu a souhlas s instalací.');
    $path=upDir().'/pending-'.$token.'.zip';if(!is_file($path)||!hash_equals((string)($_SESSION['update_pending_hash']??''),(string)hash_file('sha256',$path)))throw new RuntimeException('Připravený balíček se změnil. Připravte jej znovu.');
-   $version=upApply($path,(string)($cfg['public_key']??''),$mysqli);unlink($path);unset($_SESSION['update_pending'],$_SESSION['update_pending_hash']);$message='Aktualizace na verzi '.$version.' byla dokončena.';
+   $pending=upInspect($path,(string)($cfg['public_key']??''),upVersion());
+   if($action==='database_sql'){
+    $sql=upMigrationSql($path,$pending);header('Content-Type: application/sql; charset=utf-8');header('Content-Disposition: attachment; filename="priprava-databaze.sql"');echo $sql;exit;
+   }
+   if($action==='database_check'){upDatabasePreflight($pending,$mysqli);$message='Požadovaná databázová struktura je připravená. Při instalaci se ověří znovu.';}
+   else{
+   $version=upApply($path,(string)($cfg['public_key']??''),$mysqli);unlink($path);unset($_SESSION['update_pending'],$_SESSION['update_pending_hash']);$pending=null;$message='Aktualizace na verzi '.$version.' byla dokončena.';
+   }
   }else throw new RuntimeException('Neznámá akce.');
  }
  if(isset($_SESSION['update_pending']))$pending=upInspect(upDir().'/pending-'.$_SESSION['update_pending'].'.zip',(string)($cfg['public_key']??''),upVersion());
 }catch(Throwable $e){$error=$e->getMessage();}
+$databaseReady=true;$databaseMessage='';
+if($pending){try{upDatabasePreflight($pending,$mysqli);}catch(Throwable $e){$databaseReady=false;$databaseMessage=$e->getMessage();}}
 $release=is_file(upDir().'/release-cache.json')?json_decode(file_get_contents(upDir().'/release-cache.json'),true):null;
 function uh($s):string{return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
 function ut():void{echo '<input type="hidden" name="csrf" value="'.uh($_SESSION['update_csrf']).'">';}
@@ -39,5 +48,6 @@ function ut():void{echo '<input type="hidden" name="csrf" value="'.uh($_SESSION[
 <form method="post"><?php ut();?><button name="action" value="check">Zkontrolovat vydání</button> <button name="action" value="download">Stáhnout a ověřit balíček</button></form>
 <h2>Ruční nahrání</h2><p>Nahrání balíček pouze připraví. Přijímá se jen ZIP podepsaný nastaveným klíčem vydavatele.</p>
 <form method="post" enctype="multipart/form-data"><?php ut();?><input type="file" name="package" accept=".zip" required><button name="action" value="prepare">Nahrát a ověřit</button></form>
-<?php if($pending):?><h2>Připravená aktualizace <?=uh($pending['version'])?></h2><p><?=nl2br(uh($pending['notes']??''))?></p><p>Souborů: <?=count($pending['files'])?> · databázových migrací: <?=count($pending['migrations']??[])?></p><?php if(!empty($pending['migrations'])):?><p role="alert">Tento balíček mění databázi. Instalace je zablokovaná do přípravy postupu vydavatelem. Web zůstává v provozu.</p><?php else:?><form method="post"><?php ut();?><p><label><input type="checkbox" name="backup" value="yes" required> Mám aktuální zálohu databáze, konfigurace a fotografií.</label></p><p><label><input type="checkbox" name="approve" value="yes" required> Schvaluji instalaci této verze.</label></p><button name="action" value="install">Schválit a nainstalovat</button></form><?php endif;?><?php endif;?>
+<?php if($pending):?><h2>Připravená aktualizace <?=uh($pending['version'])?></h2><p><?=nl2br(uh($pending['notes']??''))?></p><p>Souborů: <?=count($pending['files'])?> · databázových migrací: <?=count($pending['migrations']??[])?></p><?php if(!empty($pending['migrations'])):?><h3>Příprava databáze</h3><p>Po záloze stáhněte SQL a spusťte jej v phpMyAdminu ve správné databázi pod účtem správce databáze. Jeho heslo do aplikace neukládejte. Před spuštěním přerušte práci uživatelů a obnovte ji až po dokončení aktualizace.</p><form method="post"><?php ut();?><button name="action" value="database_sql">Stáhnout SQL přípravu</button> <button name="action" value="database_check">Zkontrolovat databázi</button></form><?php endif;?>
+<?php if(!$databaseReady):?><p role="alert"><?=uh($databaseMessage)?></p><?php else:?><form method="post"><?php ut();?><p><label><input type="checkbox" name="backup" value="yes" required> Mám aktuální zálohu databáze, konfigurace a fotografií.</label></p><p><label><input type="checkbox" name="approve" value="yes" required> Schvaluji instalaci této verze.</label></p><button name="action" value="install">Schválit a nainstalovat</button></form><?php endif;?><?php endif;?>
 <p>Data projektů se na GitHub neodesílají. Konfigurace a fotografie se aktualizačním balíčkem nepřepisují.</p></main></html>

@@ -23,7 +23,7 @@ Kontrola používá raw.githubusercontent.com/OWNER/REPO/main/release.json. Soub
 4. Správce zálohuje databázi, private/config.php, private/storage a fotografie v map/public/photos a uploads. Záloha databáze není vytvářena automaticky.
 5. Zaškrtne potvrzení zálohy a souhlas s instalací konkrétního balíčku. Teprve tlačítko Schválit a nainstalovat spustí změny.
 6. Aktualizátor získá výhradní zámek. Pokud právě probíhají jiné požadavky, odmítne spuštění bez změn; opakujte za chvíli. Při aktualizaci dostávají ostatní požadavky odpověď 503 s oznámením údržby.
-7. Před údržbou odmítne balíček s databázovými migracemi (viz níže). U balíčku bez migrací zálohuje nahrazované programové soubory, nahradí soubory a nakonec zapíše verzi. Úspěch ukáže správci. Nic se neinstaluje na pozadí bez schválení.
+7. Před údržbou ověří přípravu databáze (viz níže). Poté zálohuje nahrazované programové soubory, nahradí soubory a nakonec zapíše verzi. Úspěch ukáže správci. Nic se neinstaluje na pozadí bez schválení.
 
 Podporovány jsou navazující balíčky z přesné verze na novější verzi. Přeskakování verzí je možné jen tehdy, když vydavatel připraví odpovídající souhrnný balíček. Návrat na nižší verzi se běžným aktualizátorem nepovoluje.
 
@@ -31,11 +31,15 @@ Podporovány jsou navazující balíčky z přesné verze na novější verzi. P
 Balíček nemůže zapisovat do private, složek fotografií, .git ani install. Verzi mění výhradně aktualizátor. Cesty s přechodem do nadřazeného adresáře, symbolické odkazy v ZIPu či cílové cestě a nesouhlasící kontrolní součty jsou odmítnuty. Soubory se nepřepisují před ověřením podpisu a kompletního obsahu.
 
 ### Databáze na sdíleném hostingu
-Aktuální oprava dovoluje pouze balíčky bez databázových migrací. Při jejich instalaci neprovádí žádný SQL příkaz, ani `CREATE TABLE IF NOT EXISTS`. Webový databázový účet tedy nepotřebuje oprávnění měnit strukturu.
+Balíčky bez migrací neprovádějí žádný SQL příkaz. Pro balíčky s migracemi musí vydavatel přiložit podepsané kontroly požadovaných sloupců (tabulka, název, přesný COLUMN_TYPE a možnost NULL). Podporujeme pouze přidávání struktury kompatibilní s dosavadní verzí. Přesuny dat, mazání, přejmenování a jiné nevratné změny tímto postupem nevydávejte. Kontroly neověřují obsah dat, indexy, výchozí hodnoty ani obecnou bezpečnost SQL; za úplnost kontrol odpovídá vydavatel.
 
-Balíčky obsahující migrace se odmítnou před zálohováním programových souborů, přepnutím do údržby a výměnou souborů. V rozhraní se nezobrazí instalační tlačítko. Toto omezení platí i pro účty s plnými právy; nezjišťujeme oprávnění pokusným DDL.
+1. Správce zazálohuje databázi a přeruší práci uživatelů.
+2. V připraveném balíčku zvolí **Stáhnout SQL přípravu**. Stažení ověřuje podpis a kontrolní součty, nic nespouští.
+3. SQL spustí v phpMyAdminu ve správné databázi účtem správce databáze (na WEDOSu účet s oprávněním měnit strukturu). Heslo správce se do aplikace nezadává ani neukládá.
+4. Po úspěšném provedení všech příkazů zvolí **Zkontrolovat databázi**. Při chybě SQL nepokračuje a řeší přípravu s vydavatelem. Skripty musí být opakovatelné.
+5. Instalační formulář se zpřístupní po shodě požadované struktury. Před vlastní výměnou souborů se kontrola zopakuje pod aplikačním zámkem; při neshodě se údržba nezapne. Poté správce schválí instalaci a nakonec ověří funkčnost.
 
-Samostatná příprava databáze správcem a ověření její výsledné struktury nejsou dosud implementované. Neodstraňujte migrace z balíčku ani neměňte manifest, abyste tuto kontrolu obešli. Vydavatel musí pro změny databáze dodat odpovídající postup. Běžné opravy souborů lze vydávat bez změn databáze.
+Starší balíčky s migracemi bez těchto kontrol jsou odmítnuté. Neobcházejte kontrolu odstraněním migrací z manifestu. Aktualizátor při žádné variantě nespouští DDL ani jiné migrační SQL.
 
 ## Přerušená aktualizace a obnova
 Pokud dojde k chybě po zahájení změn, nemažte soubor údržby pouze proto, abyste web zpřístupnili. V private/updates/maintenance.json je označení použité zálohy. Podrobnost chyby je v PHP logu; last-result.json obsahuje výsledek posledního pokusu.
