@@ -15,5 +15,6 @@ with tempfile.TemporaryDirectory(prefix='svm-schema-') as td:
                 time.sleep(.1)
             else:raise RuntimeError('MariaDB startup timeout')
             subprocess.run(['php',str(pathlib.Path(__file__).with_name('update_schema.php')),socket],check=True)
+            subprocess.run(['php',str(pathlib.Path(__file__).with_name('valuation_schema.php')),socket],check=True)
         finally:
             db.terminate();db.wait(timeout=20)

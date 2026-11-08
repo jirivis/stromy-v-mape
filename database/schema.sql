@@ -129,6 +129,10 @@ CREATE TABLE IF NOT EXISTS `species` (
 --
 
 CREATE TABLE IF NOT EXISTS `svm_areas` (
+  `valuation_selected` tinyint(1) NOT NULL DEFAULT 0,
+  `valuation_value_czk` decimal(14,0) DEFAULT NULL,
+  `valuation_method` varchar(80) DEFAULT NULL,
+  `valuation_at` datetime DEFAULT NULL,
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `project_id` bigint(20) unsigned NOT NULL,
   `code` varchar(40) NOT NULL,
@@ -236,6 +240,10 @@ CREATE TABLE IF NOT EXISTS `svm_table_audit` (
 --
 
 CREATE TABLE IF NOT EXISTS `trees` (
+  `valuation_selected` tinyint(1) NOT NULL DEFAULT 0,
+  `valuation_value_czk` decimal(14,0) DEFAULT NULL,
+  `valuation_method` varchar(80) DEFAULT NULL,
+  `valuation_at` datetime DEFAULT NULL,
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `project_id` int(11) NOT NULL,
   `usr_id` int(11) DEFAULT NULL,
