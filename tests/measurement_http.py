@@ -1,4 +1,4 @@
-import base64,re,urllib.parse
+import base64,re,urllib.parse,hashlib
 import pathlib,tempfile,shutil,subprocess,sys,json,time,urllib.request,urllib.error
 repo=pathlib.Path(__file__).resolve().parent.parent;port=sys.argv[1]
 subprocess.run(['mariadb','--no-defaults','--protocol=tcp','-h127.0.0.1','-P'+port,'-uroot','valuation_fresh','-e',"INSERT INTO users(id,username,password,active) VALUES(1,'editor','unused',1),(2,'viewer','unused',1); INSERT INTO projects(id,name,owner_id) VALUES(1,'A',1),(2,'B',NULL); INSERT INTO project_users VALUES(1,2,'viewer',NOW()); INSERT INTO trees(id,project_id) VALUES(1,1),(2,2); INSERT INTO tree_measurements(tree_id,measurement_type,value_cm) VALUES(2,'dbh',44);"],check=True)
@@ -74,6 +74,27 @@ with tempfile.TemporaryDirectory() as td:
    assert post_form('tree_delete.php',{'id':1})==403
    assert post_form('tree_delete.php',{'id':2,'tree_form_token':'test-form-token'})==404
    assert post_form('tree_delete.php',{'id':1,'tree_form_token':'test-form-token'},'viewer')==403
+   for endpoint in ['tree_remove.php','tree_restore.php','share_tree.php?id=1']:
+    assert post_form(endpoint,{'id':1,'action':'revoke'})==403
+    assert post_form(endpoint,{'id':1,'action':'revoke','tree_form_token':'test-form-token'},'viewer')==403
+   def sql(statement):
+    return subprocess.check_output(['mariadb','--no-defaults','--protocol=tcp','-h127.0.0.1','-P'+port,'-uroot','-N','valuation_fresh','-e',statement]).decode().strip()
+   share_token='a'*64
+   sql("INSERT INTO tree_shares(tree_id,token_hash) VALUES(1,'"+hashlib.sha256(share_token.encode()).hexdigest()+"'); INSERT INTO trees_photo(tree_id,url,note_photo,status) VALUES(1,'uploads/active.jpg','VISIBLE-PHOTO','active'),(1,'uploads/archived.jpg','ARCHIVED-SECRET','archived');")
+   url='http://127.0.0.1:33080/map/public/public_tree.php?token='+share_token
+   with urllib.request.urlopen(url) as response:
+    html=response.read().decode();assert 'VISIBLE-PHOTO' in html and 'ARCHIVED-SECRET' not in html and 'archived.jpg' not in html
+    assert response.headers['Cache-Control']=='no-store' and response.headers['Referrer-Policy']=='no-referrer'
+   sql('UPDATE tree_shares SET active=0')
+   try:urllib.request.urlopen(url);raise AssertionError('Revoked share readable')
+   except urllib.error.HTTPError as e:assert e.code==404
+   sql("UPDATE projects SET owner_id=NULL WHERE id=1; INSERT INTO project_users VALUES(1,1,'viewer',NOW());")
+   # Simulate an already logged-in former owner; permissions must be refreshed for each write.
+   for endpoint in ['tree_delete.php','tree_remove.php','tree_restore.php']:
+    subprocess.run(['php','-d','session.save_path='+str(sessions),'-r',"session_id('editor');session_start();$_SESSION['active_project_role']='owner';session_write_close();"],check=True)
+    assert post_form(endpoint,{'id':1,'tree_form_token':'test-form-token'})==403
+   assert sql('SELECT COUNT(*) FROM trees WHERE id=1 AND status=\'active\'')=='1'
+   print('PASS sharing/lifecycle: CSRF and revoked role denied; public gallery excludes archive; revoked share unreadable')
    print('PASS history/delete HTTP: CSRF, foreign project and viewer requests denied')
    print('PASS legacy photo HTTP: scripts/spoofed images rejected; viewer/CSRF denied; real image stored under random .png name')
    print('PASS measurement HTTP: anonymous/viewer/CSRF/cross-project denied; authorized read/write and author retained')

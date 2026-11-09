@@ -19,7 +19,7 @@ with zipfile.ZipFile(out/'install-2.24.0.zip','w',zipfile.ZIP_DEFLATED) as z:
   if n.startswith('private/') and n not in ['private/.htaccess','private/config.example.php','private/storage/area_photos/.gitkeep']:raise SystemExit('Unexpected private file: '+n)
   if n.startswith(('map/public/photos/','map/public/uploads/')) and not n.endswith(('/.gitkeep','/.htaccess')):raise SystemExit('Unexpected photo: '+n)
   z.write(f,n)
-files=['map/public/tree_save.php','map/public/uploads/.htaccess','map/public/photos/.htaccess','map/public/tree_delete.php','map/public/tree_new.php','map/public/tree_history_save.php','map/public/api/tree_measurements.php','map/public/api/save_tree_measurement.php','map/public/js/editor.js','app/update.php','app/update_database.php','app/update-publisher.pem','updates/index.php','docs/AKTUALIZACE.md','docs/OCENENI.md','database/migrations/07_valuation_prepare.sql','database/migrations/07_valuation_checks.json']
+files=['map/public/tree_remove.php','map/public/tree_restore.php','map/public/share_tree.php','map/public/public_tree.php','map/public/tree_save.php','map/public/uploads/.htaccess','map/public/photos/.htaccess','map/public/tree_delete.php','map/public/tree_new.php','map/public/tree_history_save.php','map/public/api/tree_measurements.php','map/public/api/save_tree_measurement.php','map/public/js/editor.js','app/update.php','app/update_database.php','app/update-publisher.pem','updates/index.php','docs/AKTUALIZACE.md','docs/OCENENI.md','database/migrations/07_valuation_prepare.sql','database/migrations/07_valuation_checks.json']
 with tempfile.TemporaryDirectory() as td:
  payload=pathlib.Path(td)
  for n in files:

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../auth.php';
+require_once __DIR__ . '/../../auth_api.php';
 require_once __DIR__ . '/../../config_app.php';
 require_once __DIR__ . '/api/db.php';
 

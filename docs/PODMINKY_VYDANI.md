@@ -22,3 +22,9 @@ Ve starším formuláři tree_save.php opraveno ukládání původní přípony 
 HTTP test v izolované databázi ověřuje odmítnutí PHP i falešného PNG, viewer, CSRF a cizí projekt; skutečný PNG pojmenovaný .php musí skončit jako náhodný .png a zůstat čitelný. Testuje se také CSRF/role/projekt u mazání a ukládání historie. Podepsané aktualizace smějí v úložišti měnit pouze dvě konkrétní .htaccess; fotografie, podadresáře a soukromá konfigurace zůstávají blokované. Balíčky zatím nebyly znovu sestaveny ani vydány.
 
 Zůstává otevřeno: soukromí historických přímých odkazů na fotografie (veřejné soubory nejsou chráněny projektovým oprávněním), ověření všech cest veřejného sdílení a zbývající body auditu výše. Samotné ověření obrázku tuto otázku neřeší.
+
+## Kontrola sdílení a změny stavu stromu – 9. 11. 2026
+
+Do označení stromu jako odstraněného, obnovení a správy sdílení doplněna kontrola formulářového tokenu. Mazání, odstranění a obnovení nově znovu ověřují členství a projektovou roli přes auth_api.php; stará role uložená v session po odebrání oprávnění nestačí. Veřejná karta vybírá jen aktivní fotografie, posílá no-store a no-referrer. Nemění se obsah fotografií ani historie.
+
+Lokální HTTP testy s PHP 8.3 / MariaDB prošly: chybějící token, viewer, cizí projekt, bývalý vlastník s rolí owner ve staré session; aktivní veřejná karta zachová aktivní fotografii a nezobrazí archivovanou, zrušený odkaz vrací 404. Pro přímé URL souborů tato změna není řešením přístupových práv; tento bod zůstává otevřený. Nové opravné soubory jsou přidané do seznamu aktualizačního balíčku, samotný balíček dosud nevydán.
