@@ -8,10 +8,12 @@ $db->query('CREATE DATABASE catalogs_test');$db->select_db('catalogs_test');$db-
 siInstall($db,file_get_contents(dirname(__DIR__).'/database/schema.sql'),['tester','test@example.invalid',password_hash('test-only-password',PASSWORD_DEFAULT)]);
 function countRows(mysqli $db,string $table):int{return (int)$db->query('SELECT COUNT(*) FROM '.$table)->fetch_row()[0];}
 if(countRows($db,'species')!==557||countRows($db,'cultivars')!==1099)throw new Exception('Fresh install catalog counts: '.countRows($db,'species').'/'.countRows($db,'cultivars'));
+if((int)$db->query("SELECT COUNT(*) FROM species WHERE powo_id IS NOT NULL AND powo_id<>''")->fetch_row()[0]!==557)throw new Exception('POWO identifiers missing');
+$db->query("UPDATE species SET powo_id='local-id' WHERE scientific_name='Abies alba'");
 $db->query("UPDATE species SET czech_name='Místní úprava' WHERE scientific_name='Abies alba'");
 $db->query("UPDATE cultivars SET notes='Místní poznámka' WHERE name='Globosum'");
 $before=[];foreach(['species','cultivars'] as $t)$before[$t]=$db->query("SELECT * FROM $t ORDER BY id")->fetch_all(MYSQLI_ASSOC);
-foreach(['baseline.sql','additions.sql'] as $f)foreach(siStatements(file_get_contents(dirname(__DIR__).'/database/catalogs/'.$f)) as $sql)$db->query($sql);
+foreach(['baseline.sql','additions.sql','powo-ids.sql'] as $f)foreach(siStatements(file_get_contents(dirname(__DIR__).'/database/catalogs/'.$f)) as $sql)$db->query($sql);
 foreach(['species','cultivars'] as $t)if($before[$t]!==$db->query("SELECT * FROM $t ORDER BY id")->fetch_all(MYSQLI_ASSOC))throw new Exception('Repeat changed IDs or user edits');
 $db->query("DELETE FROM species WHERE scientific_name='Parrotia persica'");
 foreach(siStatements(file_get_contents(dirname(__DIR__).'/database/catalogs/additions.sql')) as $sql)$db->query($sql);

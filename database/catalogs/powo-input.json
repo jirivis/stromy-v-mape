@@ -1,0 +1,2206 @@
+[
+  {
+    "scientific_name": "Abies alba",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Abies concolor",
+    "author": "(Gordon & Glend.) Lindl. ex Hildebr."
+  },
+  {
+    "scientific_name": "Abies grandis",
+    "author": "(Douglas ex D. Don) Lindl."
+  },
+  {
+    "scientific_name": "Abies nordmanniana",
+    "author": "(Steven) Spach"
+  },
+  {
+    "scientific_name": "Abies procera",
+    "author": "Rehder"
+  },
+  {
+    "scientific_name": "Acer campestre",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Acer ginnala",
+    "author": "Maxim."
+  },
+  {
+    "scientific_name": "Acer negundo",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Acer platanoides",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Acer pseudoplatanus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Acer saccharinum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Acer tataricum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Aesculus hippocastanum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Aesculus × carnea",
+    "author": "Hayne"
+  },
+  {
+    "scientific_name": "Alnus glutinosa",
+    "author": "(L.) Gaertn."
+  },
+  {
+    "scientific_name": "Alnus incana",
+    "author": "(L.) Moench"
+  },
+  {
+    "scientific_name": "Alnus viridis",
+    "author": "(Chaix) DC."
+  },
+  {
+    "scientific_name": "Amelanchier alnifolia",
+    "author": "(Nutt.) Nutt. ex M. Roem."
+  },
+  {
+    "scientific_name": "Amelanchier canadensis",
+    "author": "(L.) Medik."
+  },
+  {
+    "scientific_name": "Amelanchier lamarckii",
+    "author": "F.G. Schroed."
+  },
+  {
+    "scientific_name": "Aronia melanocarpa",
+    "author": "(Michx.) Elliott"
+  },
+  {
+    "scientific_name": "Betula pendula",
+    "author": "Roth"
+  },
+  {
+    "scientific_name": "Betula pubescens",
+    "author": "Ehrh."
+  },
+  {
+    "scientific_name": "Betula nana",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Berberis vulgaris",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Berberis thunbergii",
+    "author": "DC."
+  },
+  {
+    "scientific_name": "Buxus sempervirens",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Carpinus betulus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Castanea sativa",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Catalpa bignonioides",
+    "author": "Walter"
+  },
+  {
+    "scientific_name": "Catalpa speciosa",
+    "author": "Ward."
+  },
+  {
+    "scientific_name": "Cedrus atlantica",
+    "author": "(Endl.) Manetti ex Carrière"
+  },
+  {
+    "scientific_name": "Cedrus deodara",
+    "author": "(Roxb.) G. Don"
+  },
+  {
+    "scientific_name": "Cedrus libani",
+    "author": "A. Rich."
+  },
+  {
+    "scientific_name": "Celtis occidentalis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Cercis siliquastrum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Corylus avellana",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Corylus colurna",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Cornus alba",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Cornus mas",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Cornus sanguinea",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Cornus sericea",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Crataegus monogyna",
+    "author": "Jacq."
+  },
+  {
+    "scientific_name": "Crataegus laevigata",
+    "author": "(Poir.) DC."
+  },
+  {
+    "scientific_name": "Crataegus × media",
+    "author": "Bechst."
+  },
+  {
+    "scientific_name": "Cytisus scoparius",
+    "author": "(L.) Link"
+  },
+  {
+    "scientific_name": "Cytisus nigricans",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Daphne mezereum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Daphne cneorum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Deutzia gracilis",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Deutzia scabra",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Elaeagnus angustifolia",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Elaeagnus commutata",
+    "author": "Bernh. ex Rydb."
+  },
+  {
+    "scientific_name": "Euonymus europaeus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Euonymus verrucosus",
+    "author": "Scop."
+  },
+  {
+    "scientific_name": "Euonymus alatus",
+    "author": "(Thunb.) Siebold"
+  },
+  {
+    "scientific_name": "Euonymus fortunei",
+    "author": "(Turcz.) Hand.-Maz."
+  },
+  {
+    "scientific_name": "Fagus sylvatica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Fagus sylvatica f. purpurea",
+    "author": "Aiton"
+  },
+  {
+    "scientific_name": "Forsythia × intermedia",
+    "author": "Zabel"
+  },
+  {
+    "scientific_name": "Forsythia suspensa",
+    "author": "(Thunb.) Vahl"
+  },
+  {
+    "scientific_name": "Fraxinus excelsior",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Fraxinus angustifolia",
+    "author": "Vahl"
+  },
+  {
+    "scientific_name": "Fraxinus ornus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Ginkgo biloba",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Gleditsia triacanthos",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Hamamelis virginiana",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Hamamelis mollis",
+    "author": "Oliv."
+  },
+  {
+    "scientific_name": "Hamamelis × intermedia",
+    "author": "Rehder"
+  },
+  {
+    "scientific_name": "Hedera helix",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Hippophae rhamnoides",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Hydrangea arborescens",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Hydrangea paniculata",
+    "author": "Siebold"
+  },
+  {
+    "scientific_name": "Hydrangea quercifolia",
+    "author": "Bartram"
+  },
+  {
+    "scientific_name": "Hydrangea macrophylla",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Hypericum perforatum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Hypericum androsaemum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Hypericum calycinum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Ilex aquifolium",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Juglans regia",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Juglans nigra",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Juglans cinerea",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Juniperus communis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Juniperus sabina",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Juniperus virginiana",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Juniperus chinensis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Kolkwitzia amabilis",
+    "author": "Graebn."
+  },
+  {
+    "scientific_name": "Laburnum anagyroides",
+    "author": "Medik."
+  },
+  {
+    "scientific_name": "Laburnum × watereri",
+    "author": "Dippel"
+  },
+  {
+    "scientific_name": "Larix decidua",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Larix kaempferi",
+    "author": "(Lamb.) Carrière"
+  },
+  {
+    "scientific_name": "Ligustrum vulgare",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Ligustrum ovalifolium",
+    "author": "Hassk."
+  },
+  {
+    "scientific_name": "Lonicera xylosteum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Lonicera tatarica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Lonicera japonica",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Lonicera periclymenum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Magnolia kobus",
+    "author": "DC."
+  },
+  {
+    "scientific_name": "Magnolia stellata",
+    "author": "(Siebold & Zucc.) Maxim."
+  },
+  {
+    "scientific_name": "Magnolia × soulangeana",
+    "author": "Soul.-Bod."
+  },
+  {
+    "scientific_name": "Malus domestica",
+    "author": "Borkh."
+  },
+  {
+    "scientific_name": "Malus sylvestris",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Malus floribunda",
+    "author": "Siebold"
+  },
+  {
+    "scientific_name": "Metasequoia glyptostroboides",
+    "author": "Hu & W.C.Cheng"
+  },
+  {
+    "scientific_name": "Morus alba",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Morus nigra",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Nerium oleander",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Ostrya carpinifolia",
+    "author": "Scop."
+  },
+  {
+    "scientific_name": "Parthenocissus quinquefolia",
+    "author": "(L.) Planch."
+  },
+  {
+    "scientific_name": "Parthenocissus tricuspidata",
+    "author": "(Siebold & Zucc.) Planch."
+  },
+  {
+    "scientific_name": "Philadelphus coronarius",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Philadelphus × lemoinei",
+    "author": "Lemoine"
+  },
+  {
+    "scientific_name": "Picea abies",
+    "author": "(L.) H. Karst."
+  },
+  {
+    "scientific_name": "Picea pungens",
+    "author": "Engelm."
+  },
+  {
+    "scientific_name": "Picea omorika",
+    "author": "(Pančić) Purk."
+  },
+  {
+    "scientific_name": "Picea orientalis",
+    "author": "(L.) Peterm."
+  },
+  {
+    "scientific_name": "Pinus sylvestris",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Pinus nigra",
+    "author": "J.F.Arnold"
+  },
+  {
+    "scientific_name": "Pinus strobus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Pinus mugo",
+    "author": "Turra"
+  },
+  {
+    "scientific_name": "Pinus cembra",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Platanus × acerifolia",
+    "author": "(Aiton) Willd."
+  },
+  {
+    "scientific_name": "Platanus orientalis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Populus alba",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Populus tremula",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Populus nigra",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Populus × canadensis",
+    "author": "Moench"
+  },
+  {
+    "scientific_name": "Populus balsamifera",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Populus trichocarpa",
+    "author": "Torr. & A.Gray"
+  },
+  {
+    "scientific_name": "Prunus avium",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Prunus cerasus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Prunus domestica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Prunus spinosa",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Prunus padus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Prunus serotina",
+    "author": "Ehrh."
+  },
+  {
+    "scientific_name": "Prunus mahaleb",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Prunus laurocerasus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Prunus lusitanica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Pseudotsuga menziesii",
+    "author": "(Mirb.) Franco"
+  },
+  {
+    "scientific_name": "Ptelea trifoliata",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Pyracantha coccinea",
+    "author": "M.Roem."
+  },
+  {
+    "scientific_name": "Pyracantha angustifolia",
+    "author": "(Franch.) C.K.Schneid."
+  },
+  {
+    "scientific_name": "Pyrus communis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Pyrus pyraster",
+    "author": "(L.) Burgsd."
+  },
+  {
+    "scientific_name": "Pyrus salicifolia",
+    "author": "Pall."
+  },
+  {
+    "scientific_name": "Quercus robur",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Quercus petraea",
+    "author": "(Matt.) Liebl."
+  },
+  {
+    "scientific_name": "Quercus rubra",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Quercus cerris",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Quercus ilex",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Quercus frainetto",
+    "author": "Ten."
+  },
+  {
+    "scientific_name": "Quercus pubescens",
+    "author": "Willd."
+  },
+  {
+    "scientific_name": "Quercus palustris",
+    "author": "Münchh."
+  },
+  {
+    "scientific_name": "Quercus imbricaria",
+    "author": "Michx."
+  },
+  {
+    "scientific_name": "Quercus macrocarpa",
+    "author": "Michx."
+  },
+  {
+    "scientific_name": "Rhamnus cathartica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Rhamnus frangula",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Rhododendron catawbiense",
+    "author": "Michx."
+  },
+  {
+    "scientific_name": "Rhododendron ponticum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Rhododendron luteum",
+    "author": "Sweet"
+  },
+  {
+    "scientific_name": "Ribes uva-crispa",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Ribes rubrum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Ribes nigrum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Robinia pseudoacacia",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Rosa canina",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Rosa rubiginosa",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Rosa rugosa",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Rosa gallica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Rosa multiflora",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Rubus fruticosus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Rubus idaeus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix alba",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix fragilis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix caprea",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix cinerea",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix purpurea",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix viminalis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Sambucus nigra",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Sambucus racemosa",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Sorbus aucuparia",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Sorbus aria",
+    "author": "(L.) Crantz"
+  },
+  {
+    "scientific_name": "Sorbus torminalis",
+    "author": "(L.) Crantz"
+  },
+  {
+    "scientific_name": "Sorbus intermedia",
+    "author": "(Ehrh.) Pers."
+  },
+  {
+    "scientific_name": "Spiraea japonica",
+    "author": "L.f."
+  },
+  {
+    "scientific_name": "Spiraea salicifolia",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Spiraea × vanhouttei",
+    "author": "Zabel"
+  },
+  {
+    "scientific_name": "Staphylea pinnata",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Syringa vulgaris",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Syringa josikaea",
+    "author": "Jacq. fil."
+  },
+  {
+    "scientific_name": "Syringa meyeri",
+    "author": "C.K.Schneid."
+  },
+  {
+    "scientific_name": "Taxus baccata",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Thuja occidentalis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Thuja plicata",
+    "author": "Donn ex D.Don"
+  },
+  {
+    "scientific_name": "Tilia cordata",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Tilia platyphyllos",
+    "author": "Scop."
+  },
+  {
+    "scientific_name": "Tilia × europaea",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Ulmus glabra",
+    "author": "Huds."
+  },
+  {
+    "scientific_name": "Ulmus laevis",
+    "author": "Pall."
+  },
+  {
+    "scientific_name": "Ulmus minor",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Viburnum lantana",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Viburnum opulus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Viburnum rhytidophyllum",
+    "author": "Hemsl."
+  },
+  {
+    "scientific_name": "Viburnum plicatum",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Vinca minor",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Vitis vinifera",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Vitis riparia",
+    "author": "Michx."
+  },
+  {
+    "scientific_name": "Vitis labrusca",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Weigela florida",
+    "author": "(Bunge) A.DC."
+  },
+  {
+    "scientific_name": "Weigela praecox",
+    "author": "(Lemoine) Bailey"
+  },
+  {
+    "scientific_name": "Zanthoxylum simulans",
+    "author": "Hance"
+  },
+  {
+    "scientific_name": "Zelkova carpinifolia",
+    "author": "(Pall.) K.Koch"
+  },
+  {
+    "scientific_name": "Berberis julianae",
+    "author": "C.K.Schneid."
+  },
+  {
+    "scientific_name": "Berberis koreana",
+    "author": "Palib."
+  },
+  {
+    "scientific_name": "Berberis × ottawensis",
+    "author": "Schneid."
+  },
+  {
+    "scientific_name": "Buddleja davidii",
+    "author": "Franch."
+  },
+  {
+    "scientific_name": "Callicarpa bodinieri",
+    "author": "H.Lév."
+  },
+  {
+    "scientific_name": "Chaenomeles japonica",
+    "author": "(Thunb.) Lindl. ex Spach"
+  },
+  {
+    "scientific_name": "Chaenomeles speciosa",
+    "author": "(Sweet) Nakai"
+  },
+  {
+    "scientific_name": "Chaenomeles × superba",
+    "author": "Frahm"
+  },
+  {
+    "scientific_name": "Cistus ladanifer",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Cistus albidus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Clerodendrum trichotomum",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Cornus kousa",
+    "author": "Hance"
+  },
+  {
+    "scientific_name": "Cornus nuttallii",
+    "author": "Audubon"
+  },
+  {
+    "scientific_name": "Cotinus coggygria",
+    "author": "Scop."
+  },
+  {
+    "scientific_name": "Cotoneaster integerrimus",
+    "author": "Medik."
+  },
+  {
+    "scientific_name": "Cotoneaster horizontalis",
+    "author": "Decne."
+  },
+  {
+    "scientific_name": "Cotoneaster dammeri",
+    "author": "C.K.Schneid."
+  },
+  {
+    "scientific_name": "Cotoneaster salicifolius",
+    "author": "Franch."
+  },
+  {
+    "scientific_name": "Deutzia × hybrida",
+    "author": "Rehder"
+  },
+  {
+    "scientific_name": "Eleagnus × ebbingei",
+    "author": "Doorenbos"
+  },
+  {
+    "scientific_name": "Exochorda racemosa",
+    "author": "(Lindl.) Rehder"
+  },
+  {
+    "scientific_name": "Fothergilla major",
+    "author": "Lodd."
+  },
+  {
+    "scientific_name": "Genista tinctoria",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Genista germanica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Hibiscus syriacus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Hydrangea serrata",
+    "author": "(Thunb.) Ser."
+  },
+  {
+    "scientific_name": "Itea virginica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Jasminum officinale",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Kerria japonica",
+    "author": "(L.) DC."
+  },
+  {
+    "scientific_name": "Lespedeza bicolor",
+    "author": "Turcz."
+  },
+  {
+    "scientific_name": "Mahonia aquifolium",
+    "author": "(Pursh) Nutt."
+  },
+  {
+    "scientific_name": "Mahonia × media",
+    "author": "J. Ingram"
+  },
+  {
+    "scientific_name": "Philadelphus pubescens",
+    "author": "Loisel."
+  },
+  {
+    "scientific_name": "Potentilla fruticosa",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Rhodotypos scandens",
+    "author": "(Thunb.) Makino"
+  },
+  {
+    "scientific_name": "Ribes alpinum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Sarcococca confusa",
+    "author": "Sealy"
+  },
+  {
+    "scientific_name": "Skimmia japonica",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Symphoricarpos albus",
+    "author": "(L.) S.F.Blake"
+  },
+  {
+    "scientific_name": "Symphoricarpos × doorenbosii",
+    "author": "Rehder"
+  },
+  {
+    "scientific_name": "Tamarix tetrandra",
+    "author": "Pall. ex M.Bieb."
+  },
+  {
+    "scientific_name": "Tamarix gallica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Viburnum davidii",
+    "author": "Franch."
+  },
+  {
+    "scientific_name": "Viburnum tinus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Weigela middendorffiana",
+    "author": "Carrière"
+  },
+  {
+    "scientific_name": "Yucca filamentosa",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Yucca gloriosa",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Akebia quinata",
+    "author": "Decne."
+  },
+  {
+    "scientific_name": "Aristolochia macrophylla",
+    "author": "Lam."
+  },
+  {
+    "scientific_name": "Campsis radicans",
+    "author": "(L.) Bureau"
+  },
+  {
+    "scientific_name": "Campsis × tagliabuana",
+    "author": "Vis."
+  },
+  {
+    "scientific_name": "Celastrus orbiculatus",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Clematis vitalba",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Clematis alpina",
+    "author": "(L.) Mill."
+  },
+  {
+    "scientific_name": "Clematis montana",
+    "author": "Buch.-Ham. ex DC."
+  },
+  {
+    "scientific_name": "Clematis tangutica",
+    "author": "Maxim."
+  },
+  {
+    "scientific_name": "Clematis jackmanii",
+    "author": "Moore"
+  },
+  {
+    "scientific_name": "Fallopia baldschuanica",
+    "author": "(Regel) Holub"
+  },
+  {
+    "scientific_name": "Hedera hibernica",
+    "author": "Kirchn."
+  },
+  {
+    "scientific_name": "Humulus lupulus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Jasminum nudiflorum",
+    "author": "Lindl."
+  },
+  {
+    "scientific_name": "Lonicera caprifolium",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Lonicera henryi",
+    "author": "Hemsl."
+  },
+  {
+    "scientific_name": "Parthenocissus inserta",
+    "author": "(A.Kern.) Fritsch"
+  },
+  {
+    "scientific_name": "Rosa arvensis",
+    "author": "Huds."
+  },
+  {
+    "scientific_name": "Rosa banksiae",
+    "author": "Aiton"
+  },
+  {
+    "scientific_name": "Rubus phoenicolasius",
+    "author": "Maxim."
+  },
+  {
+    "scientific_name": "Solanum dulcamara",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Vitis amurensis",
+    "author": "Rupr."
+  },
+  {
+    "scientific_name": "Vitis coignetiae",
+    "author": "Pulliat ex Planch."
+  },
+  {
+    "scientific_name": "Wisteria sinensis",
+    "author": "(Sims) Sweet"
+  },
+  {
+    "scientific_name": "Wisteria floribunda",
+    "author": "(Willd.) DC."
+  },
+  {
+    "scientific_name": "Wisteria × formosa",
+    "author": "Rehder"
+  },
+  {
+    "scientific_name": "Ailanthus altissima",
+    "author": "(Mill.) Swingle"
+  },
+  {
+    "scientific_name": "Albizia julibrissin",
+    "author": "Durazz."
+  },
+  {
+    "scientific_name": "Arbutus unedo",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Betula utilis",
+    "author": "D.Don"
+  },
+  {
+    "scientific_name": "Calocedrus decurrens",
+    "author": "(Torr.) Florin"
+  },
+  {
+    "scientific_name": "Caragana arborescens",
+    "author": "Lam."
+  },
+  {
+    "scientific_name": "Caragana frutex",
+    "author": "(L.) K.Koch"
+  },
+  {
+    "scientific_name": "Cedrela sinensis",
+    "author": "A.Juss."
+  },
+  {
+    "scientific_name": "Cercidiphyllum japonicum",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Chamaecyparis lawsoniana",
+    "author": "(A.Murray bis) Parl."
+  },
+  {
+    "scientific_name": "Chamaecyparis pisifera",
+    "author": "(Siebold & Zucc.) Endl."
+  },
+  {
+    "scientific_name": "Chamaecyparis obtusa",
+    "author": "(Siebold & Zucc.) Endl."
+  },
+  {
+    "scientific_name": "Cladrastis kentukea",
+    "author": "(Dum.Cours.) Rudd"
+  },
+  {
+    "scientific_name": "Corylus maxima",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Crinodendron hookerianum",
+    "author": "Gay"
+  },
+  {
+    "scientific_name": "Cryptomeria japonica",
+    "author": "(L.f.) D.Don"
+  },
+  {
+    "scientific_name": "Davidia involucrata",
+    "author": "Baill."
+  },
+  {
+    "scientific_name": "Diospyros lotus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Diospyros kaki",
+    "author": "L.f."
+  },
+  {
+    "scientific_name": "Eucommia ulmoides",
+    "author": "Oliv."
+  },
+  {
+    "scientific_name": "Firmiana simplex",
+    "author": "(L.) W.Wight"
+  },
+  {
+    "scientific_name": "Halesia carolina",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Ilex crenata",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Juglans ailantifolia",
+    "author": "Carr."
+  },
+  {
+    "scientific_name": "Juglans mandshurica",
+    "author": "Maxim."
+  },
+  {
+    "scientific_name": "Koelreuteria paniculata",
+    "author": "Laxm."
+  },
+  {
+    "scientific_name": "Liquidambar styraciflua",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Liriodendron tulipifera",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Maclura pomifera",
+    "author": "(Raf.) C.K.Schneid."
+  },
+  {
+    "scientific_name": "Magnolia grandiflora",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Paulownia tomentosa",
+    "author": "(Thunb.) Steud."
+  },
+  {
+    "scientific_name": "Paulownia fortunei",
+    "author": "Hemsl."
+  },
+  {
+    "scientific_name": "Phellodendron amurense",
+    "author": "Rupr."
+  },
+  {
+    "scientific_name": "Photinia × fraseri",
+    "author": "Dress"
+  },
+  {
+    "scientific_name": "Picea breweriana",
+    "author": "S.Watson"
+  },
+  {
+    "scientific_name": "Pinus ponderosa",
+    "author": "Douglas ex C.Lawson"
+  },
+  {
+    "scientific_name": "Pinus jeffreyi",
+    "author": "Grev. & Balf."
+  },
+  {
+    "scientific_name": "Quercus coccinea",
+    "author": "Muenchh."
+  },
+  {
+    "scientific_name": "Quercus velutina",
+    "author": "Lam."
+  },
+  {
+    "scientific_name": "Quercus phellos",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Sequoiadendron giganteum",
+    "author": "(Lindl.) J.Buchholz"
+  },
+  {
+    "scientific_name": "Sequoia sempervirens",
+    "author": "(D.Don) Endl."
+  },
+  {
+    "scientific_name": "Sophora japonica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Taxodium distichum",
+    "author": "(L.) Rich."
+  },
+  {
+    "scientific_name": "Taxodium ascendens",
+    "author": "Brongn."
+  },
+  {
+    "scientific_name": "Tetradium daniellii",
+    "author": "(Benn.) T.G.Hartley"
+  },
+  {
+    "scientific_name": "Toona sinensis",
+    "author": "(A.Juss.) M.Roem."
+  },
+  {
+    "scientific_name": "Zelkova serrata",
+    "author": "(Thunb.) Makino"
+  },
+  {
+    "scientific_name": "Abelia × grandiflora",
+    "author": "Rehd."
+  },
+  {
+    "scientific_name": "Acer griseum",
+    "author": "(Franch.) Pax"
+  },
+  {
+    "scientific_name": "Acer pensylvanicum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Acer davidii",
+    "author": "Franch."
+  },
+  {
+    "scientific_name": "Acer triflorum",
+    "author": "Kom."
+  },
+  {
+    "scientific_name": "Aesculus parviflora",
+    "author": "Walt."
+  },
+  {
+    "scientific_name": "Alangium platanifolium",
+    "author": "(Siebold & Zucc.) Harms"
+  },
+  {
+    "scientific_name": "Amorpha fruticosa",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Aronia arbutifolia",
+    "author": "(L.) Pers."
+  },
+  {
+    "scientific_name": "Betula papyrifera",
+    "author": "Marshall"
+  },
+  {
+    "scientific_name": "Betula alleghaniensis",
+    "author": "Britton"
+  },
+  {
+    "scientific_name": "Broussonetia papyrifera",
+    "author": "(L.) L’Hér. ex Vent."
+  },
+  {
+    "scientific_name": "Callicarpa japonica",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Carpinus orientalis",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Carya ovata",
+    "author": "(Mill.) K.Koch"
+  },
+  {
+    "scientific_name": "Carya laciniosa",
+    "author": "(Michx. f.) Loudon"
+  },
+  {
+    "scientific_name": "Carya cordiformis",
+    "author": "(Wangenh.) K.Koch"
+  },
+  {
+    "scientific_name": "Castanea crenata",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Ceanothus americanus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Cercis canadensis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Chionanthus virginicus",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Clerodendrum bungei",
+    "author": "Steud."
+  },
+  {
+    "scientific_name": "Cornus alternifolia",
+    "author": "L.f."
+  },
+  {
+    "scientific_name": "Corylopsis pauciflora",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Corylopsis spicata",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Cotinus obovatus",
+    "author": "Raf."
+  },
+  {
+    "scientific_name": "Crataegus crus-galli",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Crataegus douglasii",
+    "author": "Lindl."
+  },
+  {
+    "scientific_name": "Daphniphyllum macropodum",
+    "author": "Miq."
+  },
+  {
+    "scientific_name": "Elaeagnus multiflora",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Enkianthus campanulatus",
+    "author": "(Miq.) G.Nicholson"
+  },
+  {
+    "scientific_name": "Euonymus hamiltonianus",
+    "author": "Wall."
+  },
+  {
+    "scientific_name": "Fagus orientalis",
+    "author": "Lipsky"
+  },
+  {
+    "scientific_name": "Fraxinus pennsylvanica",
+    "author": "Marshall"
+  },
+  {
+    "scientific_name": "Halesia monticola",
+    "author": "Sarg."
+  },
+  {
+    "scientific_name": "Hamamelis vernalis",
+    "author": "Sarg."
+  },
+  {
+    "scientific_name": "Ilex verticillata",
+    "author": "(L.) A.Gray"
+  },
+  {
+    "scientific_name": "Juglans microcarpa",
+    "author": "Berl."
+  },
+  {
+    "scientific_name": "Magnolia acuminata",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Magnolia tripetala",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Nyssa sylvatica",
+    "author": "Marshall"
+  },
+  {
+    "scientific_name": "Ostrya virginiana",
+    "author": "(Mill.) K.Koch"
+  },
+  {
+    "scientific_name": "Phellodendron sachalinense",
+    "author": "Franch. & Sav."
+  },
+  {
+    "scientific_name": "Picea sitchensis",
+    "author": "(Bong.) Carrière"
+  },
+  {
+    "scientific_name": "Pinus contorta",
+    "author": "Douglas ex Loudon"
+  },
+  {
+    "scientific_name": "Pinus banksiana",
+    "author": "Lamb."
+  },
+  {
+    "scientific_name": "Populus simonii",
+    "author": "Carrière"
+  },
+  {
+    "scientific_name": "Prunus × yedoensis",
+    "author": "Matsum."
+  },
+  {
+    "scientific_name": "Prunus serrulata",
+    "author": "Lindl."
+  },
+  {
+    "scientific_name": "Quercus acutissima",
+    "author": "Carruth."
+  },
+  {
+    "scientific_name": "Quercus dentata",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Rhododendron maximum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Sassafras albidum",
+    "author": "(Nutt.) Nees"
+  },
+  {
+    "scientific_name": "Stewartia pseudocamellia",
+    "author": "Maxim."
+  },
+  {
+    "scientific_name": "Styrax japonicus",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Tsuga canadensis",
+    "author": "(L.) Carrière"
+  },
+  {
+    "scientific_name": "Tsuga heterophylla",
+    "author": "(Raf.) Sarg."
+  },
+  {
+    "scientific_name": "Ulmus pumila",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Acer palmatum",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Acer shirasawanum",
+    "author": "Koidz."
+  },
+  {
+    "scientific_name": "Aesculus glabra",
+    "author": "Willd."
+  },
+  {
+    "scientific_name": "Alnus rubra",
+    "author": "Bong."
+  },
+  {
+    "scientific_name": "Amelanchier ovalis",
+    "author": "Medik."
+  },
+  {
+    "scientific_name": "Aronia prunifolia",
+    "author": "(Marshall) Rehder"
+  },
+  {
+    "scientific_name": "Berberis empetrifolia",
+    "author": "Lam."
+  },
+  {
+    "scientific_name": "Betula lenta",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Bignonia capreolata",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Caragana microphylla",
+    "author": "Lam."
+  },
+  {
+    "scientific_name": "Carya illinoinensis",
+    "author": "(Wangenh.) K.Koch"
+  },
+  {
+    "scientific_name": "Castanopsis sieboldii",
+    "author": "(Makino) Hatus."
+  },
+  {
+    "scientific_name": "Cephalotaxus harringtonia",
+    "author": "(Knight) K.Koch"
+  },
+  {
+    "scientific_name": "Cercis chinensis",
+    "author": "Bunge"
+  },
+  {
+    "scientific_name": "Chamaerops humilis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Cornus officinalis",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Corylus heterophylla",
+    "author": "Fisch. ex Trautv."
+  },
+  {
+    "scientific_name": "Cotoneaster lacteus",
+    "author": "W.W.Sm."
+  },
+  {
+    "scientific_name": "Crataegus orientalis",
+    "author": "Pall."
+  },
+  {
+    "scientific_name": "Cupressus arizonica",
+    "author": "Greene"
+  },
+  {
+    "scientific_name": "Cupressus sempervirens",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Cydonia oblonga",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Diospyros virginiana",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Elaeagnus umbellata",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Euonymus planipes",
+    "author": "Koehne"
+  },
+  {
+    "scientific_name": "Fagus grandifolia",
+    "author": "Ehrh."
+  },
+  {
+    "scientific_name": "Fraxinus quadrangulata",
+    "author": "Michx."
+  },
+  {
+    "scientific_name": "Garrya elliptica",
+    "author": "Douglas ex Lindl."
+  },
+  {
+    "scientific_name": "Ginkgo biloba f. variegata",
+    "author": "hort."
+  },
+  {
+    "scientific_name": "Hippophae salicifolia",
+    "author": "D.Don"
+  },
+  {
+    "scientific_name": "Ilex × meserveae",
+    "author": "S.Y.Hu"
+  },
+  {
+    "scientific_name": "Juglans hopeiensis",
+    "author": "Hu"
+  },
+  {
+    "scientific_name": "Koelreuteria bipinnata",
+    "author": "Franch."
+  },
+  {
+    "scientific_name": "Lagerstroemia indica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Laurus nobilis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Ligustrum sinense",
+    "author": "Lour."
+  },
+  {
+    "scientific_name": "Liquidambar orientalis",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Magnolia denudata",
+    "author": "Desr."
+  },
+  {
+    "scientific_name": "Malus baccata",
+    "author": "(L.) Borkh."
+  },
+  {
+    "scientific_name": "Metrosideros excelsa",
+    "author": "Sol. ex Gaertn."
+  },
+  {
+    "scientific_name": "Myrica gale",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Nothofagus antarctica",
+    "author": "(G.Forst.) Oerst."
+  },
+  {
+    "scientific_name": "Nothofagus obliqua",
+    "author": "(Mirb.) Oerst."
+  },
+  {
+    "scientific_name": "Olea europaea",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Osmanthus heterophyllus",
+    "author": "(G.Don) P.S.Green"
+  },
+  {
+    "scientific_name": "Picea engelmannii",
+    "author": "Parry ex Engelm."
+  },
+  {
+    "scientific_name": "Pinus aristata",
+    "author": "Engelm."
+  },
+  {
+    "scientific_name": "Pinus heldreichii",
+    "author": "Christ"
+  },
+  {
+    "scientific_name": "Prunus × subhirtella",
+    "author": "Miq."
+  },
+  {
+    "scientific_name": "Pyrus ussuriensis",
+    "author": "Maxim."
+  },
+  {
+    "scientific_name": "Quercus mongolica",
+    "author": "Fisch. ex Ledeb."
+  },
+  {
+    "scientific_name": "Quercus variabilis",
+    "author": "Blume"
+  },
+  {
+    "scientific_name": "Rhus typhina",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Sambucus canadensis",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Sorbus commixta",
+    "author": "Hedl."
+  },
+  {
+    "scientific_name": "Styrax obassia",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Taxodium mucronatum",
+    "author": "Ten."
+  },
+  {
+    "scientific_name": "Thuja koraiensis",
+    "author": "Nakai"
+  },
+  {
+    "scientific_name": "Tilia americana",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Ulmus thomasii",
+    "author": "Sarg."
+  },
+  {
+    "scientific_name": "Viburnum sieboldii",
+    "author": "Miq."
+  },
+  {
+    "scientific_name": "Ziziphus jujuba",
+    "author": "Mill."
+  },
+  {
+    "scientific_name": "Abies koreana",
+    "author": "E.H.Wilson"
+  },
+  {
+    "scientific_name": "Abies balsamea",
+    "author": "(L.) Mill."
+  },
+  {
+    "scientific_name": "Abies fraseri",
+    "author": "(Pursh) Poir."
+  },
+  {
+    "scientific_name": "Abies lasiocarpa",
+    "author": "(Hook.) Nutt."
+  },
+  {
+    "scientific_name": "Abies veitchii",
+    "author": "Lindl."
+  },
+  {
+    "scientific_name": "Abies homolepis",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Abies pinsapo",
+    "author": "Boiss."
+  },
+  {
+    "scientific_name": "Abies cephalonica",
+    "author": "Loudon"
+  },
+  {
+    "scientific_name": "Abies cilicica",
+    "author": "(Antoine & Kotschy) Carrière"
+  },
+  {
+    "scientific_name": "Abies firma",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Abies sachalinensis",
+    "author": "F.Schmidt"
+  },
+  {
+    "scientific_name": "Abies sibirica",
+    "author": "Ledeb."
+  },
+  {
+    "scientific_name": "Abies nephrolepis",
+    "author": "(Trautv. ex Maxim.) Maxim."
+  },
+  {
+    "scientific_name": "Abies amabilis",
+    "author": "(Douglas ex Loudon) Douglas ex Forbes"
+  },
+  {
+    "scientific_name": "Abies magnifica",
+    "author": "A.Murray bis"
+  },
+  {
+    "scientific_name": "Abies pindrow",
+    "author": "Royle"
+  },
+  {
+    "scientific_name": "Abies spectabilis",
+    "author": "(D.Don) Mirb."
+  },
+  {
+    "scientific_name": "Populus nigra subsp. italica",
+    "author": "(Duroi) Rouy"
+  },
+  {
+    "scientific_name": "Populus × canescens",
+    "author": "(Aiton) Sm."
+  },
+  {
+    "scientific_name": "Populus deltoides",
+    "author": "W.Bartram ex Marshall"
+  },
+  {
+    "scientific_name": "Populus maximowiczii",
+    "author": "A.Henry"
+  },
+  {
+    "scientific_name": "Populus laurifolia",
+    "author": "Ledeb."
+  },
+  {
+    "scientific_name": "Populus suaveolens",
+    "author": "Fisch."
+  },
+  {
+    "scientific_name": "Populus koreana",
+    "author": "Rehder"
+  },
+  {
+    "scientific_name": "Populus szechuanica",
+    "author": "Dode"
+  },
+  {
+    "scientific_name": "Populus cathayana",
+    "author": "Rehder"
+  },
+  {
+    "scientific_name": "Populus yunnanensis",
+    "author": "Dode"
+  },
+  {
+    "scientific_name": "Populus lasiocarpa",
+    "author": "Olga"
+  },
+  {
+    "scientific_name": "Populus heterophylla",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Populus angustifolia",
+    "author": "James"
+  },
+  {
+    "scientific_name": "Populus fremontii",
+    "author": "S.Watson"
+  },
+  {
+    "scientific_name": "Salix × rubens",
+    "author": "Schrank"
+  },
+  {
+    "scientific_name": "Salix babylonica",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix matsudana",
+    "author": "Koidz."
+  },
+  {
+    "scientific_name": "Salix aurita",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix daphnoides",
+    "author": "Vill."
+  },
+  {
+    "scientific_name": "Salix triandra",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix pentandra",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix myrsinifolia",
+    "author": "Salisb."
+  },
+  {
+    "scientific_name": "Salix phylicifolia",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix rosmarinifolia",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix repens",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix herbacea",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix reticulata",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix arbuscula",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix arctica",
+    "author": "Pall."
+  },
+  {
+    "scientific_name": "Salix lapponum",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix hastata",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix glauca",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Salix helvetica",
+    "author": "Vill."
+  },
+  {
+    "scientific_name": "Salix eleagnos",
+    "author": "Scop."
+  },
+  {
+    "scientific_name": "Salix incana",
+    "author": "Schrank"
+  },
+  {
+    "scientific_name": "Salix integra",
+    "author": "Thunb."
+  },
+  {
+    "scientific_name": "Salix udensis",
+    "author": "Trautv. & C.A.Mey."
+  },
+  {
+    "scientific_name": "Salix schwerinii",
+    "author": "E.L.Wolf"
+  },
+  {
+    "scientific_name": "Salix gracilistyla",
+    "author": "Miq."
+  },
+  {
+    "scientific_name": "Salix chaenomeloides",
+    "author": "Kimura"
+  },
+  {
+    "scientific_name": "Salix fargesii",
+    "author": "Franch."
+  },
+  {
+    "scientific_name": "Salix magnifica",
+    "author": "Hemsl. & E.H.Wilson"
+  },
+  {
+    "scientific_name": "Salix moupinensis",
+    "author": "Franch."
+  },
+  {
+    "scientific_name": "Salix rehderiana",
+    "author": "C.K.Schneid."
+  },
+  {
+    "scientific_name": "Salix suchowensis",
+    "author": "W.C.Cheng ex G.Zhu"
+  },
+  {
+    "scientific_name": "Salix cupularis",
+    "author": "Rehder"
+  },
+  {
+    "scientific_name": "Salix lindleyana",
+    "author": "Wall. ex Andersson"
+  },
+  {
+    "scientific_name": "Salix hylematica",
+    "author": "C.K.Schneid."
+  },
+  {
+    "scientific_name": "Salix pierotii",
+    "author": "Miégev."
+  },
+  {
+    "scientific_name": "Salix commutata",
+    "author": "Bebb"
+  },
+  {
+    "scientific_name": "Salix hookeriana",
+    "author": "Barratt ex Hook."
+  },
+  {
+    "scientific_name": "Salix sitchensis",
+    "author": "Bong."
+  },
+  {
+    "scientific_name": "Salix scouleriana",
+    "author": "Barratt ex Hook."
+  },
+  {
+    "scientific_name": "Salix exigua",
+    "author": "Nutt."
+  },
+  {
+    "scientific_name": "Salix gooddingii",
+    "author": "C.R.Ball"
+  },
+  {
+    "scientific_name": "Salix lasiolepis",
+    "author": "Benth."
+  },
+  {
+    "scientific_name": "Salix melanopsis",
+    "author": "Nutt."
+  },
+  {
+    "scientific_name": "Salix prolixa",
+    "author": "Andersson"
+  },
+  {
+    "scientific_name": "Salix geyeriana",
+    "author": "Andersson"
+  },
+  {
+    "scientific_name": "Salix × sepulcralis",
+    "author": "Simonk."
+  },
+  {
+    "scientific_name": "Salix × pendulina",
+    "author": "Wender."
+  },
+  {
+    "scientific_name": "Salix × blanda",
+    "author": "Andersson"
+  },
+  {
+    "scientific_name": "Salix × smithiana",
+    "author": "Willd."
+  },
+  {
+    "scientific_name": "Salix × rubra",
+    "author": "Huds."
+  },
+  {
+    "scientific_name": "Salix × mollissima",
+    "author": "Hoffm."
+  },
+  {
+    "scientific_name": "Salix × dasyclados",
+    "author": "Wimm."
+  },
+  {
+    "scientific_name": "Betula humilis",
+    "author": "Schrank"
+  },
+  {
+    "scientific_name": "Betula nigra",
+    "author": "L."
+  },
+  {
+    "scientific_name": "Betula maximowicziana",
+    "author": "Regel"
+  },
+  {
+    "scientific_name": "Betula ermanii",
+    "author": "Cham."
+  },
+  {
+    "scientific_name": "Betula utilis var. jacquemontii",
+    "author": "(Spach) Regel"
+  },
+  {
+    "scientific_name": "Betula costata",
+    "author": "Trautv."
+  },
+  {
+    "scientific_name": "Betula platyphylla",
+    "author": "Sukaczev"
+  },
+  {
+    "scientific_name": "Betula davurica",
+    "author": "Pall."
+  },
+  {
+    "scientific_name": "Betula medwediewii",
+    "author": "Regel"
+  },
+  {
+    "scientific_name": "Betula grossa",
+    "author": "Siebold & Zucc."
+  },
+  {
+    "scientific_name": "Betula chinensis",
+    "author": "Maxim."
+  },
+  {
+    "scientific_name": "Betula albosinensis",
+    "author": "Burkill"
+  },
+  {
+    "scientific_name": "Betula schmidtii",
+    "author": "Regel"
+  },
+  {
+    "scientific_name": "Betula occidentalis",
+    "author": "Hook."
+  },
+  {
+    "scientific_name": "Betula kenaica",
+    "author": "W.H.Evans"
+  },
+  {
+    "scientific_name": "Betula pumila",
+    "author": "L."
+  }
+]

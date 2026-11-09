@@ -1,0 +1,57 @@
+{
+  "Amelanchier lamarckii": {
+    "powo_id": "721221-1",
+    "matched_name": "Amelanchier × lamarckii",
+    "reason": "V POWO je uveden hybridní znak."
+  },
+  "Malus floribunda": {
+    "powo_id": "726291-1",
+    "matched_name": "Malus × floribunda",
+    "reason": "V POWO je uveden hybridní znak a úplný autor."
+  },
+  "Salix fragilis": {
+    "powo_id": "777611-1",
+    "matched_name": "Salix × fragilis",
+    "reason": "L. označuje hybrid; stejnojmenné záznamy Host jsou misapplied."
+  },
+  "Eleagnus × ebbingei": {
+    "powo_id": "323688-1",
+    "matched_name": "Elaeagnus × ebbingei",
+    "reason": "Překlep rodu Eleagnus; záznam POWO má status Illegitimate, nepřejmenovávat automaticky."
+  },
+  "Campsis × tagliabuana": {
+    "powo_id": "109141-1",
+    "matched_name": "Campsis × tagliabueana",
+    "reason": "Pravopis epiteta tagliabueana a úplný autor."
+  },
+  "Clematis jackmanii": {
+    "powo_id": "60452719-2",
+    "matched_name": "Clematis × jackmanii",
+    "reason": "Chybí hybridní znak a iniciála autora T.Moore."
+  },
+  "Aronia prunifolia": {
+    "powo_id": "20144-2",
+    "matched_name": "Aronia × prunifolia",
+    "reason": "V POWO je uveden hybridní znak."
+  },
+  "Crataegus orientalis": {
+    "powo_id": "723901-1",
+    "matched_name": "Crataegus orientalis",
+    "reason": "Autor Pall. je neúplný, POWO Pall. ex M.Bieb.; druhý homonym má jiného autora."
+  },
+  "Populus angustifolia": {
+    "powo_id": "208240-2",
+    "matched_name": "Populus angustifolia",
+    "reason": "James odpovídá úplnému označení E.James; ostatní homonyma mají jiné autory."
+  },
+  "Salix × smithiana": {
+    "powo_id": "778870-1",
+    "matched_name": "Salix smithiana",
+    "reason": "POWO záznam stejného autora nemá hybridní znak."
+  },
+  "Salix × dasyclados": {
+    "powo_id": "777427-1",
+    "matched_name": "Salix dasyclados",
+    "reason": "POWO záznam stejného autora nemá hybridní znak."
+  }
+}
