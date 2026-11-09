@@ -6,7 +6,7 @@ with tempfile.TemporaryDirectory() as td:
  root=pathlib.Path(td);app=root/'app';shutil.copytree(repo,app);sessions=root/'sessions';sessions.mkdir()
  (app/'private/config.php').write_text("<?php return ['app'=>['url'=>'http://127.0.0.1:33080'],'database'=>['host'=>'127.0.0.1','port'=>"+port+",'user'=>'root','password'=>'','name'=>'valuation_fresh']];")
  for sid,uid in [('editor',1),('viewer',2)]:
-  subprocess.run(['php','-d','session.save_path='+str(sessions),'-r',"session_id('"+sid+"');session_start();$_SESSION=['user_id'=>"+str(uid)+",'active_project_id'=>1,'tree_form_csrf'=>'test-form-token'];session_write_close();"],check=True)
+  subprocess.run(['php','-d','session.save_path='+str(sessions),'-r',"session_id('"+sid+"');session_start();$_SESSION=['user_id'=>"+str(uid)+",'active_project_id'=>1,'tree_form_csrf'=>'test-form-token','password_version'=>hash('sha256','unused')];session_write_close();"],check=True)
  with (root/'http.log').open('w') as log:
   server=subprocess.Popen(['php','-d','session.save_path='+str(sessions),'-S','127.0.0.1:33080','-t',str(app)],stdout=log,stderr=log)
   def request(path,sid=None,data=None,token=None):

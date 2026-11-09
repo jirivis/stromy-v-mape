@@ -38,3 +38,11 @@ Lokální HTTP testy PHP gateway prošly: anonymní přístup, cizí projekt, de
 ### Výsledek Apache / PHP matice
 
 Commit aee35144ce031f342fdf2fdecd93aa830f02c9d7 úspěšně prošel GitHub Actions během 42685078283 na PHP 8.3, 8.4 i 8.5. Zahrnuje skutečný Apache s .htaccess, mod_rewrite a proxy na PHP: původní URL vyžaduje autorizaci, zachovává cookie i token, odmítá archiv a cizí projekt. Tím je výše uvedený požadavek integračního testu Apache splněn pro testovací konfiguraci. Ověření AllowOverride/mod_rewrite konkrétního hostingu a celková kontrola instalace před vydáním nadále zbývají. Živý web nebyl změněn.
+
+## Přihlášení a obnova hesla – 9. 11. 2026
+
+Doplněn formulářový token pro login, žádost o obnovu i samotné nastavení hesla, no-store/no-referrer a cookies HttpOnly/SameSite=Lax/Secure pro konfigurované HTTPS. Přihlášení regeneruje ID session a odstraňuje staré formulářové tokeny. Session obsahuje otisk databázového hashe hesla; při ověřování identity je porovnán s aktuální hodnotou. Změna hesla proto zneplatní předchozí přihlášení při dalším chráněném požadavku. Databázové heslo se z načteného účtu nevrací. Po prvním nasazení je nutné jednorázové opětovné přihlášení všech uživatelů (staré session nemají otisk). Není potřeba změna SQL schématu.
+
+Reset zachovává zamykání tokenu, kontrolu expirace a jednorázovost. Doplněna horní hranice 72 bajtů a zákaz NUL, aby nedocházelo ke zkrácení bcrypt hesla či výjimce z neplatného vstupu. Původní dolní hranice 10 znaků zůstává. HTTP test bez odesílání pošty ověřuje CSRF, cookies, rotaci session, reset, délku, opakované použití, expiraci a odmítnutí starého přihlášení. Lokálně PHP 8.3 prošlo.
+
+Audit přihlášení není ještě úplný: zbývá omezení opakovaných pokusů a žádostí o obnovu (s ohledem na skutečné IP za hostingovou proxy), kontrola ostatních administračních zápisů a integrační ověření doručování pošty na hostingu.

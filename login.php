@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+require_once __DIR__.'/app/auth_form.php';
 
 require_once __DIR__ . '/config_app.php';
 
@@ -12,6 +12,7 @@ if (isset($_SESSION['user_id'])) {
 $error = $_GET['error'] ?? '';
 
 $errorMessages = [
+    'session' => 'Platnost přihlášení skončila. Přihlaste se znovu.',
     'empty' => 'Vyplňte uživatelské jméno i heslo.',
     'invalid' => 'Nesprávné uživatelské jméno nebo heslo.',
     'inactive' => 'Tento uživatelský účet není aktivní.',
@@ -34,6 +35,7 @@ require_once __DIR__ . '/app/includes/header.php';
 <?php endif; ?>
 
 <form action="/login_process.php" method="post" class="admin-form">
+<input type="hidden" name="auth_form_token" value="<?= htmlspecialchars($_SESSION['auth_form_token'],ENT_QUOTES,'UTF-8') ?>">
 
     <div class="admin-field">
         <label for="username">Uživatelské jméno</label>

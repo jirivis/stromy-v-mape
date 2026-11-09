@@ -133,7 +133,7 @@ if (
 
 
 require_once __DIR__.'/app/account.php';
-if(!svmApplyAccount(svmLoadAccount($authDb,(int)$_SESSION['user_id']))){apiAuthError(403,'inactive_account','Uživatelský účet není aktivní.');}
+if(!svmApplyAccount(svmLoadAccount($authDb,(int)$_SESSION['user_id']))){apiAuthError(403,'inactive_account','Přihlášení již není platné nebo účet není aktivní. Přihlaste se znovu.');}
 
 $userId =
     (int) $_SESSION['user_id'];

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/app/auth_form.php';
 require_once __DIR__.'/app/bootstrap.php';
 
 
@@ -257,6 +258,7 @@ require_once __DIR__
         method="post"
         class="admin-form"
     >
+<input type="hidden" name="auth_form_token" value="<?= htmlspecialchars($_SESSION['auth_form_token'],ENT_QUOTES,'UTF-8') ?>">
 
         <div class="admin-field">
 

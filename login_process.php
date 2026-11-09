@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-session_start();
+require_once __DIR__.'/app/auth_form.php';
 
 require_once __DIR__ . '/config_app.php';
 require_once __DIR__ . '/map/public/api/db.php';
@@ -79,6 +79,8 @@ if ((int) $user['active'] !== 1) {
  * Ochrana proti session fixation.
  */
 session_regenerate_id(true);
+$_SESSION=[];
+$_SESSION['password_version']=hash('sha256',(string)$user['password']);
 
 $userId = (int) $user['id'];
 $isSuperAdmin = (int) $user['is_super_admin'];
