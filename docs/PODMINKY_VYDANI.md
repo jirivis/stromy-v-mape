@@ -46,3 +46,11 @@ Doplněn formulářový token pro login, žádost o obnovu i samotné nastavení
 Reset zachovává zamykání tokenu, kontrolu expirace a jednorázovost. Doplněna horní hranice 72 bajtů a zákaz NUL, aby nedocházelo ke zkrácení bcrypt hesla či výjimce z neplatného vstupu. Původní dolní hranice 10 znaků zůstává. HTTP test bez odesílání pošty ověřuje CSRF, cookies, rotaci session, reset, délku, opakované použití, expiraci a odmítnutí starého přihlášení. Lokálně PHP 8.3 prošlo.
 
 Audit přihlášení není ještě úplný: zbývá omezení opakovaných pokusů a žádostí o obnovu (s ohledem na skutečné IP za hostingovou proxy), kontrola ostatních administračních zápisů a integrační ověření doručování pošty na hostingu.
+
+## Omezení přihlašování a resetů – 9. 11. 2026
+
+Počítadla v private/auth_limits.sqlite3 přežívají nové cookies/session a nepotřebují ALTER v MySQL. Přihlášení: 8 požadavků na účet + REMOTE_ADDR během 60 sekund, celkem 20 na účet za 15 minut (započítávají se i úspěšná přihlášení). Obnova: 3 požadavky na účet/e-mail za hodinu. U existujícího účtu se používá databázové ID, takže varianty názvu či e-mailu podle databázové collation limit neobcházejí. Neexistující účty mají stejná pravidla a běžná odpověď obnovy neprozrazuje existenci účtu. X-Forwarded-For se nedůvěřuje. Sdílená proxy proto sdílí pouze limit u stejného účtu, ostatní účty nejsou omezeny společným IP počítadlem.
+
+Zápis je atomický (SQLite BEGIN IMMEDIATE), klíče HMAC místo prostých jmen/e-mailů/IP, expirované záznamy se mažou, nejvýše 10 000 současných záznamů. Při limitu HTTP 429 s Retry-After; při nedostupném úložišti 503 místo obejití kontroly. Cílené vyčerpání limitu může dočasně omezit přihlašování konkrétního účtu; aktivní relace zůstávají funkční. Nejde o ochranu proti všem distribuovaným útokům či DDoS.
+
+Testy ověřují per-account/per-client limity, jiný účet na stejné IP, změnu IP, expiraci, obnovení kvóty, opakované HTTP požadavky z nových session a Retry-After. Test obnovy používá neexistující adresu a neposílá e-maily. SQLite3 již patří mezi instalační požadavky aplikace. Živý hosting zatím nezměněn.

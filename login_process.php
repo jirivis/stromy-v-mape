@@ -58,6 +58,8 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 $stmt->close();
+require_once __DIR__.'/app/auth_limit.php';
+svmEnforceAuthLimit('login',$user?'user:'.(int)$user['id']:'name:'.mb_strtolower($username,'UTF-8'));
 
 if (
     !$user ||

@@ -14,6 +14,7 @@ with tempfile.TemporaryDirectory(prefix='svm-schema-') as td:
                 if db.poll() is not None:raise RuntimeError((root/'server.log').read_text())
                 time.sleep(.1)
             else:raise RuntimeError('MariaDB startup timeout')
+            subprocess.run(['php',str(pathlib.Path(__file__).with_name('auth_limit.php'))],check=True)
             subprocess.run(['php',str(pathlib.Path(__file__).with_name('update_schema.php')),socket],check=True)
             subprocess.run(['php',str(pathlib.Path(__file__).with_name('valuation_schema.php')),socket],check=True)
             subprocess.run(['php',str(pathlib.Path(__file__).with_name('catalogs.php')),socket],check=True)

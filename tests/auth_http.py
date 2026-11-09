@@ -48,6 +48,18 @@ with tempfile.TemporaryDirectory() as td:
    expired='c'*64;sql("INSERT INTO password_reset_tokens(user_id,token_hash,expires_at) VALUES(20,'"+hashlib.sha256(expired.encode()).hexdigest()+"',NOW()-INTERVAL 2 DAY)")
    reset.request('/reset_password.php?token='+expired,{'auth_form_token':reset_csrf,'password':'Other-password-789','password_again':'Other-password-789'})
    assert sql('SELECT password FROM users WHERE id=20')==hash2
+   for i in range(9):
+    fresh=Browser();status,body,h=fresh.request('/login.php');csrf=token(body)
+    status,body,h=fresh.request('/login_process.php',{'auth_form_token':csrf,'username':'unknown-rate-test','password':'invalid-password'})
+    assert status==(302 if i<8 else 429),(i,status,body)
+    if i==8:assert int(h['Retry-After'])>0
+   # Unknown addresses exercise neutral responses without sending mail.
+   for i in range(4):
+    fresh=Browser();status,body,h=fresh.request('/forgot_password.php');csrf=token(body)
+    status,body,h=fresh.request('/forgot_password.php',{'auth_form_token':csrf,'email':'nonexistent-rate@example.invalid'})
+    assert status==(200 if i<3 else 429),(i,status,body)
+    if i==3:assert int(h['Retry-After'])>0
+   print('PASS rate HTTP: fresh sessions cannot bypass login/reset quotas; 429 includes Retry-After; no email sent')
    print('PASS auth HTTP: CSRF, cookie flags, session rotation, reset headers/length/one-use/expiry and old-login invalidation')
   except Exception:
    print((root/'http.log').read_text()[-3000:]);raise
