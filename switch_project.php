@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/auth.php';
+require_once __DIR__.'/app/auth_form.php';
 require_once __DIR__ . '/map/public/api/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
