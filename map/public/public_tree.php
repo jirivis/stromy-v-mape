@@ -128,6 +128,7 @@ while (
     $photo =
         $photoResult->fetch_assoc()
 ) {
+    $photo['url']='/map/public/photo.php?photo='.(int)$photo['id'].'&token='.rawurlencode($token);
     $gallery[] = $photo;
 }
 

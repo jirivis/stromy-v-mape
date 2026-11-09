@@ -1,10 +1,10 @@
-import base64,re,urllib.parse,hashlib
+import base64,re,urllib.parse,hashlib,os
 import pathlib,tempfile,shutil,subprocess,sys,json,time,urllib.request,urllib.error
 repo=pathlib.Path(__file__).resolve().parent.parent;port=sys.argv[1]
 subprocess.run(['mariadb','--no-defaults','--protocol=tcp','-h127.0.0.1','-P'+port,'-uroot','valuation_fresh','-e',"INSERT INTO users(id,username,password,active) VALUES(1,'editor','unused',1),(2,'viewer','unused',1); INSERT INTO projects(id,name,owner_id) VALUES(1,'A',1),(2,'B',NULL); INSERT INTO project_users VALUES(1,2,'viewer',NOW()); INSERT INTO trees(id,project_id) VALUES(1,1),(2,2); INSERT INTO tree_measurements(tree_id,measurement_type,value_cm) VALUES(2,'dbh',44);"],check=True)
 with tempfile.TemporaryDirectory() as td:
  root=pathlib.Path(td);app=root/'app';shutil.copytree(repo,app);sessions=root/'sessions';sessions.mkdir()
- (app/'private/config.php').write_text("<?php return ['database'=>['host'=>'127.0.0.1','port'=>"+port+",'user'=>'root','password'=>'','name'=>'valuation_fresh']];")
+ (app/'private/config.php').write_text("<?php return ['app'=>['url'=>'http://127.0.0.1:33080'],'database'=>['host'=>'127.0.0.1','port'=>"+port+",'user'=>'root','password'=>'','name'=>'valuation_fresh']];")
  for sid,uid in [('editor',1),('viewer',2)]:
   subprocess.run(['php','-d','session.save_path='+str(sessions),'-r',"session_id('"+sid+"');session_start();$_SESSION=['user_id'=>"+str(uid)+",'active_project_id'=>1,'tree_form_csrf'=>'test-form-token'];session_write_close();"],check=True)
  with (root/'http.log').open('w') as log:
@@ -85,7 +85,41 @@ with tempfile.TemporaryDirectory() as td:
    with urllib.request.urlopen(url) as response:
     html=response.read().decode();assert 'VISIBLE-PHOTO' in html and 'ARCHIVED-SECRET' not in html and 'archived.jpg' not in html
     assert response.headers['Cache-Control']=='no-store' and response.headers['Referrer-Policy']=='no-referrer'
+   (app/'map/public/uploads/active.jpg').write_bytes(png)
+   (app/'map/public/uploads/archived.jpg').write_bytes(png)
+   (app/'map/public/uploads/foreign.jpg').write_bytes(png)
+   sql("INSERT INTO trees_photo(tree_id,url,note_photo,status) VALUES(2,'uploads/foreign.jpg','foreign','active')")
+   photo_id=sql("SELECT id FROM trees_photo WHERE note_photo='VISIBLE-PHOTO'")
+   archived_id=sql("SELECT id FROM trees_photo WHERE note_photo='ARCHIVED-SECRET'")
+   foreign_id=sql("SELECT id FROM trees_photo WHERE note_photo='foreign'")
+   def image_request(query,sid=None):
+    q=urllib.request.Request('http://127.0.0.1:33080/map/public/photo.php?'+query,headers={'Cookie':'PHPSESSID='+sid} if sid else {})
+    try:
+     with urllib.request.urlopen(q) as r:return r.status,r.read(),r.headers
+    except urllib.error.HTTPError as e:return e.code,e.read(),e.headers
+   assert image_request('photo='+photo_id)[0]==404
+   assert image_request('folder=uploads&file=active.jpg')[0]==404
+   assert image_request('photo='+photo_id,'editor')[1]==png
+   assert image_request('photo='+photo_id,'viewer')[0]==200
+   assert image_request('photo='+foreign_id,'editor')[0]==404
+   assert image_request('photo='+archived_id,'editor')[0]==200
+   assert image_request('photo='+photo_id+'&token='+share_token)[1]==png
+   assert image_request('photo='+archived_id+'&token='+share_token)[0]==404
+   assert image_request('photo='+foreign_id+'&token='+share_token)[0]==404
+   assert image_request('folder=uploads&file=../private/config.php','editor')[0]==404
+   assert image_request('folder=uploads&file=active.jpg','editor')[1]==png
+   sql('UPDATE users SET active=0 WHERE id=2')
+   assert image_request('photo='+photo_id,'viewer')[0]==404
+   sql('UPDATE users SET active=1 WHERE id=2')
+   sql('UPDATE tree_shares SET expires_at=NOW()-INTERVAL 1 DAY')
+   assert image_request('photo='+photo_id+'&token='+share_token)[0]==404
+   sql('UPDATE tree_shares SET expires_at=NULL')
+   print('PASS protected photos: anonymous/foreign/inactive denied; member and valid share allowed; archive/token scope/expiry/path traversal checked')
+   if os.environ.get('SVM_APACHE_TEST')=='1':
+    from apache_photos import check_routes
+    check_routes(root,app,png,share_token)
    sql('UPDATE tree_shares SET active=0')
+   assert image_request('photo='+photo_id+'&token='+share_token)[0]==404
    try:urllib.request.urlopen(url);raise AssertionError('Revoked share readable')
    except urllib.error.HTTPError as e:assert e.code==404
    sql("UPDATE projects SET owner_id=NULL WHERE id=1; INSERT INTO project_users VALUES(1,1,'viewer',NOW());")
