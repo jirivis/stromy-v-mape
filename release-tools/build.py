@@ -10,7 +10,7 @@ for f in sorted(root.rglob('*')):
  if not f.is_file():continue
  name=f.relative_to(root).as_posix()
  if not re.fullmatch(r'[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*',name) or '..' in name:raise SystemExit('Invalid path: '+name)
- if name in ['app/VERSION','manifest.json','signature.txt','release.json'] or any(name==x or name.startswith(x+'/') for x in ['private','map/public/photos','map/public/uploads','.git','install']):raise SystemExit('Protected path: '+name)
+ if name not in ['map/public/photos/.htaccess','map/public/uploads/.htaccess'] and (name in ['app/VERSION','manifest.json','signature.txt','release.json'] or any(name==x or name.startswith(x+'/') for x in ['private','map/public/photos','map/public/uploads','.git','install'])):raise SystemExit('Protected path: '+name)
  files[name]=hashlib.sha256(f.read_bytes()).hexdigest()
 for m in a.migration:
  if m not in files or not m.startswith('database/migrations/') or not m.endswith('.sql'):raise SystemExit('Invalid migration '+m)

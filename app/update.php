@@ -6,6 +6,8 @@ function upDir():string{$p=upRoot().'/private/updates';if(!is_dir($p)&&!mkdir($p
 function upVersion():string{return trim(file_get_contents(upRoot().'/app/VERSION'));}
 function upPath(string $p):bool{
  if(!preg_match('~^[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$~D',$p)||str_contains($p,'..'))return false;
+ // Only these publisher-managed protection files may enter photo storage.
+ if(in_array($p,['map/public/photos/.htaccess','map/public/uploads/.htaccess'],true))return true;
  foreach(['private','map/public/photos','map/public/uploads','.git','install'] as $x)if($p===$x||str_starts_with($p,$x.'/'))return false;
  return !in_array($p,['app/VERSION','release.json','manifest.json','signature.txt'],true);
 }

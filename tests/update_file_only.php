@@ -12,6 +12,8 @@ copy(dirname(__DIR__).'/app/update.php',$root.'/app/update.php');
 copy(dirname(__DIR__).'/app/update_database.php',$root.'/app/update_database.php');
 require $root.'/app/update.php';
 try {
+ check(upPath("map/public/uploads/.htaccess")&&upPath("map/public/photos/.htaccess"),"Allow signed storage protection");
+ foreach(["map/public/uploads/a.jpg","map/public/photos/a.php","map/public/uploads/sub/.htaccess","private/config.php","map/public/uploads/../a.php"] as $path)check(!upPath($path),"Protected storage path: ".$path);
  $key=openssl_pkey_new(['private_key_bits'=>2048,'private_key_type'=>OPENSSL_KEYTYPE_RSA]);
  check($key!==false,'Test signing key');$public=openssl_pkey_get_details($key)['key'];
  // Deliberately disconnected: any query would fail, including CREATE IF NOT EXISTS.

@@ -1,0 +1,5 @@
+Options -Indexes -ExecCGI
+# Legacy photographs remain readable; executable and configuration files do not.
+<FilesMatch "(?i)(^\.|\.(php[0-9]*|phtml|pht|phar|cgi|pl|py|sh|shtml|htaccess|htpasswd)(\.|$))">
+Require all denied
+</FilesMatch>

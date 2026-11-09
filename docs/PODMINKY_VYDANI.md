@@ -14,3 +14,11 @@ Před veřejnou distribucí zbývá doložit původ a možnost redistribuce pův
 Podepsaný ručně nahraný balíček a databázová příprava jsou implementované a otestované. Soukromý klíč byl předán vydavateli odděleně. Zdroj je stále soukromý; veřejné release.json a ZIP v GitHub Releases zatím nejsou dostupné. Kontrola aktualizací je proto ve výchozí konfiguraci vypnutá.
 
 Po bezpečnostní kontrole: připravit opravené balíčky, ověřit PHP 8.4, vyřešit licenci, zveřejnit zdroj nebo samostatný veřejný distribuční repozitář, publikovat podepsaný ZIP a release.json, ověřit stažení z hostingu a teprve poté zapnout kontrolu. Každé provedení schvaluje správce instalace. SQL příprava dosud není bezobslužná.
+
+## Kontrola nahrávání fotografií – 9. 11. 2026
+
+Ve starším formuláři tree_save.php opraveno ukládání původní přípony bez ověření obsahu. Všechny soubory se nyní ověří ještě před změnou dat: HTTP upload, MIME a rozměry obrázku, 5 MB / 24 megapixelů, JPG/PNG/WebP. Cílové názvy jsou náhodné a přípona pochází z ověřeného MIME. Nepoužívá se původní přípona ani relativní pracovní adresář. Do photos/uploads přidána pravidla Apache zakazující obsluhu skriptů a konfiguračních souborů; pravidla je ještě nutné ověřit na cílovém Apache (PHP testovací server .htaccess nevyhodnocuje).
+
+HTTP test v izolované databázi ověřuje odmítnutí PHP i falešného PNG, viewer, CSRF a cizí projekt; skutečný PNG pojmenovaný .php musí skončit jako náhodný .png a zůstat čitelný. Testuje se také CSRF/role/projekt u mazání a ukládání historie. Podepsané aktualizace smějí v úložišti měnit pouze dvě konkrétní .htaccess; fotografie, podadresáře a soukromá konfigurace zůstávají blokované. Balíčky zatím nebyly znovu sestaveny ani vydány.
+
+Zůstává otevřeno: soukromí historických přímých odkazů na fotografie (veřejné soubory nejsou chráněny projektovým oprávněním), ověření všech cest veřejného sdílení a zbývající body auditu výše. Samotné ověření obrázku tuto otázku neřeší.
