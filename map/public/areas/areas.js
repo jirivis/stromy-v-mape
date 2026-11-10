@@ -1,5 +1,7 @@
 'use strict';
 (async function () {
+// Display-only prefix; keep legacy codes such as P1 and database values unchanged.
+function areaMapLabel(code){const value=String(code??'').trim();return /^\d+$/.test(value)?'p'+value:value;}
 const boot=window.AreasBoot, $=s=>document.querySelector(s), form=$('#areaForm');
 const status=(text,error=false)=>{ $('#status').textContent=text;$('#status').classList.toggle('error',error); };
 if(!window.L || !L.Draw){status('Nepodařilo se načíst mapové knihovny. Zkontrolujte připojení a obnovte stránku.',true);return;}
@@ -78,7 +80,7 @@ function stopDrawing(){boundary.reset();}
 function mapArea(){return editingLayer?Math.round(L.GeometryUtil.geodesicArea(editingLayer.getLatLngs()[0])*100)/100:0;}
 function updateArea(){$('#mapArea').textContent=editingLayer?mapArea().toLocaleString('cs-CZ',{maximumFractionDigits:2}):'—';}
 function setGeometry(g){editGroup.clearLayers();editingLayer=null;if(g)L.geoJSON(g,{style:{color:'#b16c12',weight:3,fillOpacity:.22}}).eachLayer(l=>{editingLayer=l;editGroup.addLayer(l);l.on('edit',()=>{mark();updateArea();});});updateArea();}
-function repaint(){background.clearLayers();for(const f of features){if(f.properties.id===selected?.properties.id)continue;const removed=f.properties.attributes.status==='removed';L.geoJSON(f,{interactive:false,style:{color:removed?'#a94137':'#44855a',fillOpacity:.14,dashArray:removed?'6 5':null}}).eachLayer(l=>{l.bindTooltip(node('span',f.properties.code),{permanent:true,direction:'center',className:'area-label'});background.addLayer(l);});}updateLabels();}
+function repaint(){background.clearLayers();for(const f of features){if(f.properties.id===selected?.properties.id)continue;const removed=f.properties.attributes.status==='removed';L.geoJSON(f,{interactive:false,style:{color:removed?'#a94137':'#44855a',fillOpacity:.14,dashArray:removed?'6 5':null}}).eachLayer(l=>{l.bindTooltip(node('span',areaMapLabel(f.properties.code)),{permanent:true,direction:'center',className:'area-label'});background.addLayer(l);});}updateLabels();}
 function updateList(){const list=$('#areaList');list.replaceChildren(new Option('— Vyberte plochu —',''));for(const f of features){const p=f.properties;list.append(new Option(p.code+(p.attributes.name?' – '+p.attributes.name:''),p.id));}list.value=selected?.properties.id||'';}
 function total(){let sum=0;$('#componentRows').querySelectorAll('.component-row').forEach(r=>{sum+=Number(r.querySelector('input').value)||0;});$('#componentTotal').textContent='Součet výměr pro AOPK: '+sum.toLocaleString('cs-CZ')+' m²';}
 function addComponent(data={}){

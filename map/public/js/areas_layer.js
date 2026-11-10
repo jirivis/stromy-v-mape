@@ -1,5 +1,7 @@
 'use strict';
 (function(){
+// Display-only prefix; keep legacy codes such as P1 and database values unchanged.
+function areaMapLabel(code){const value=String(code??'').trim();return /^\d+$/.test(value)?'p'+value:value;}
 const original=TreeApp.initMap;
 TreeApp.initMap=function(...args){
  const result=original.apply(this,args),map=TreeApp.map;
@@ -12,7 +14,7 @@ TreeApp.initMap=function(...args){
   const user=window.TreeAppUser||{};if(['owner','admin','editor'].includes(user.projectRole)||Number(user.isSuperAdmin)===1){const edit=el('a','Upravit');edit.href='/map/public/areas/?id='+Number(p.id);edit.className='tree-popup__button';actions.append(edit);}const card=el('a','Karta');card.href='/map/public/project_tools/area_card.php?id='+Number(p.id);card.target='_blank';card.rel='noopener noreferrer';card.className='tree-popup__button';actions.append(card);header.append(heading,actions);box.append(header);
   const attrs=el('section');attrs.className='tree-popup__attributes';const entries=[['Druhové složení',(a.species||[]).map(s=>s.czech_name||s.scientific_name).join(', ')],['Výměra',Number(p.area_m2).toLocaleString('cs-CZ')+' m²'],['Stav',a.status==='removed'?'Odstraněný porost':'Existující porost'],['Datum měření',a.measured_at],['Další kontrola',a.next_insp_at]];for(const [label,value] of entries){if(value===undefined||value===null||value==='')continue;const row=el('div'),key=el('span',label),val=el('span',value);row.className='tree-popup__row';key.className='tree-popup__label';val.className='tree-popup__value';row.append(key,val);attrs.append(row);}box.append(attrs);
   let photoLoaded=false;l.on('popupopen',async()=>{if(photoLoaded)return;try{const res=await fetch('/map/public/areas/api.php?action=get&id='+Number(p.id),{credentials:'same-origin',cache:'no-store'});if(!res.ok)return;const d=await res.json();if(!d.photos?.length){photoLoaded=true;return;}const gallery=el('section'),link=el('a'),img=el('img');gallery.className='tree-popup__gallery';link.className='tree-popup__photo-link';link.href=card.href;link.target='_blank';link.rel='noopener';img.className='tree-popup__photo';img.src='/map/public/project_tools/card_photo.php?kind=areas&id='+Number(d.photos[0].id);img.alt='Porost '+p.code;link.append(img);gallery.append(link);box.append(gallery);photoLoaded=true;}catch{}});
-  l.bindPopup(box,TreeApp.treePopupOptions||{minWidth:280,maxWidth:380});l.bindTooltip(el('span',p.code),{permanent:true,direction:'center'});l.on('add',()=>{applyStyle();updateLabels();});
+  l.bindPopup(box,TreeApp.treePopupOptions||{minWidth:280,maxWidth:380});l.bindTooltip(el('span',areaMapLabel(p.code)),{permanent:true,direction:'center'});l.on('add',()=>{applyStyle();updateLabels();});
  }}).addTo(map);
  function updateLabels(){polygons.eachLayer(l=>{const tip=l.getTooltip();if(tip){const n=tip.getElement();if(n)n.style.display=map.getZoom()>=15?'':'none';}});}
  map.on('zoomend',updateLabels);
