@@ -19,12 +19,12 @@ TreeApp.getMarkerDimension = function (tree, mode) {
     };
     const girth = firstPositive(["girth1_cm", "girth2_cm", "girth3_cm", "girth4_cm", "girth_cm"]);
     const dbh = firstPositive(["dbh1_cm", "dbh2_cm", "dbh3_cm", "dbh4_cm"]);
-    if (mode === "none") return 20;
-    if (mode === "girth") return Math.max(20, (girth || (dbh ? dbh * Math.PI : 0)) * 0.3);
-    if (mode === "dbh") return Math.max(20, (dbh || (girth ? girth / Math.PI : 0)) * Math.PI * 0.3);
-    if (mode === "spread") return Math.max(20, Math.min(110, Number(tree.spread_m) > 0 ? Number(tree.spread_m) * 4 : 20));
-    if (mode === "height") return Math.max(20, Math.min(110, Number(tree.height) > 0 ? Number(tree.height) * 2 : 20));
-    return 20;
+    if (mode === "none") return 28;
+    if (mode === "girth") return Math.max(28, (girth || (dbh ? dbh * Math.PI : 0)) * 0.3);
+    if (mode === "dbh") return Math.max(28, (dbh || (girth ? girth / Math.PI : 0)) * Math.PI * 0.3);
+    if (mode === "spread") return Math.max(28, Math.min(110, Number(tree.spread_m) > 0 ? Number(tree.spread_m) * 4 : 28));
+    if (mode === "height") return Math.max(28, Math.min(110, Number(tree.height) > 0 ? Number(tree.height) * 2 : 28));
+    return 28;
 };
 
 // Styl popisku je vložen z JS, aby nebylo nutné upravovat další CSS soubor.
@@ -36,7 +36,7 @@ TreeApp.installTreeLabelStyles = function () {
         .leaflet-tooltip.tree-usr-label {
             background: transparent; border: 0; box-shadow: none;
             padding: 0; margin: 0; color: #fff;
-            font: 700 13px/1.15 Arial, sans-serif;
+            font: 700 16px/1.2 Arial, sans-serif;
             white-space: nowrap; pointer-events: none;
             -webkit-text-stroke: 2.5px #202020;
             paint-order: stroke fill;
@@ -314,7 +314,7 @@ TreeApp.createTreeMarkerIcon = function (
 
     const safeSize =
         Math.max(
-            20,
+            28,
             Math.round(size)
         );
 

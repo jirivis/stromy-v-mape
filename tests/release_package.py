@@ -4,6 +4,8 @@ repo=pathlib.Path(__file__).resolve().parent.parent
 with tempfile.TemporaryDirectory(prefix='svm-release-test-') as td:
  root=pathlib.Path(td);source=root/'source'
  shutil.copytree(repo,source,ignore=shutil.ignore_patterns('.git','__pycache__'))
+ # Exercise the legacy 2.23 -> 2.24 builder independently of current source version.
+ (source/'app/VERSION').write_text('2.24.0\n')
  key=root/'test-private.pem'
  subprocess.run(['openssl','genpkey','-algorithm','RSA','-pkeyopt','rsa_keygen_bits:2048','-out',str(key)],check=True,capture_output=True)
  public=subprocess.check_output(['openssl','pkey','-in',str(key),'-pubout'])

@@ -346,9 +346,12 @@ TreeApp.initDataTable = function () {
             .DataTable({
 
                 language: {
-                    url:
-                        "https://cdn.datatables.net/" +
-                        "plug-ins/1.13.6/i18n/cs.json",
+                    search: "Hledat:",
+                    lengthMenu: "Zobrazit _MENU_ záznamů",
+                    emptyTable: "Žádné záznamy",
+                    zeroRecords: "Nenalezeny žádné odpovídající záznamy",
+                    loadingRecords: "Načítání…",
+                    processing: "Zpracování…",
 
                     info:
                         "Zobrazeno _START_–_END_ z _TOTAL_",
@@ -401,11 +404,13 @@ paging: true,
 autoWidth: false
             });
 
+    const initializedTable = TreeApp.dataTable;
     window.setTimeout(
         function () {
 
             if (
-                TreeApp.dataTable &&
+                TreeApp.dataTable === initializedTable &&
+                table.isConnected &&
                 window.jQuery.fn.DataTable
                     .isDataTable("#tabulka")
             ) {
@@ -424,7 +429,7 @@ autoWidth: false
 
     window.setTimeout(function () {
 
-        TreeApp.enableColumnResize();
+        if (TreeApp.dataTable === initializedTable && table.isConnected) TreeApp.enableColumnResize();
 
     }, 300);
 

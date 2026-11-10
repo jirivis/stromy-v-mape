@@ -1035,7 +1035,7 @@ window.loadedTree = <?= json_encode(
 
 <script>window.FormFieldsBoot={kind:'trees',project_id:<?= (int)$activeProjectId ?>};</script>
 <script src="project_tools/visibility.js?v=2.3"></script>
-<script src="project_tools/editor_exit.js?v=2.10"></script><script>
+<script src="project_tools/editor_exit.js?v=2.24.1"></script><script>
 (()=>{const gallery=document.getElementById('tree-photos'),form=document.querySelector('form[action="tree_save.php"]'),bar=document.getElementById('tree-save-actions');if(!gallery||!form||!bar)return;
 const save=gallery.querySelector('button[type="submit"],input[type="submit"],button.submit-btn');if(save)bar.append(save);
 const record=form.querySelector('.tree-record-actions'),history=document.getElementById('tree-history');if(record)(history||form).after(record);

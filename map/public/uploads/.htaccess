@@ -1,4 +1,4 @@
-Options -Indexes -ExecCGI
+# No Options overrides: shared hosting may disallow ExecCGI.
 # Legacy photographs remain readable; executable and configuration files do not.
 <FilesMatch "(?i)(^\.|\.(php[0-9]*|phtml|pht|phar|cgi|pl|py|sh|shtml|htaccess|htpasswd)(\.|$))">
 Require all denied
@@ -10,5 +10,6 @@ Require all denied
 </IfModule>
 <IfModule mod_rewrite.c>
 RewriteEngine On
+RewriteRule ^$ - [F,L]
 RewriteRule ^(.+)$ /map/public/photo.php?folder=uploads&file=$1 [B,QSA,END]
 </IfModule>

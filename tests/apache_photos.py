@@ -12,6 +12,7 @@ def check_routes(root, app, png, token):
   *['LoadModule '+m+'_module /usr/lib/apache2/modules/mod_'+m+'.so' for m in modules],
   'TypesConfig /etc/mime.types','DocumentRoot "'+str(app)+'"',
   '<Directory "'+str(app)+'">','Require all granted','AllowOverride All','Options FollowSymLinks','</Directory>',
+  '<Directory "'+str(app/'map/public/uploads')+'">','AllowOverride FileInfo AuthConfig Options=Indexes','</Directory>',
   'ProxyPass /map/public/photo.php http://127.0.0.1:33080/map/public/photo.php',
  ]))
  server=subprocess.Popen(['apache2','-f',str(config),'-DFOREGROUND'],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
@@ -30,6 +31,8 @@ def check_routes(root, app, png, token):
   assert get('/map/public/uploads/active.jpg?token='+token)==(200,png)
   assert get('/map/public/uploads/archived.jpg?token='+token)[0]==404
   assert get('/map/public/uploads/foreign.jpg','PHPSESSID=editor')[0]==404
+  assert get('/map/public/uploads/')[0]==403
+  assert get('/map/public/uploads/evil.php')[0] in (403,404)
   assert get('/map/public/uploads/.htaccess')[0] in (403,404)
   print('PASS Apache routes: legacy image URL requires access; cookie and share token preserved; archive/foreign/config denied')
  except Exception:
