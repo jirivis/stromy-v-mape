@@ -226,22 +226,6 @@ if (
         . '/map/public/public_tree.php?token='
         . rawurlencode($token);
 		
-		$customerEmail =
-    trim(
-        $_POST['customer_email']
-        ?? ''
-    );
-
-if (
-    $customerEmail !== ''
-    && !filter_var(
-        $customerEmail,
-        FILTER_VALIDATE_EMAIL
-    )
-) {
-    $customerEmail = '';
-}
-
 $emailSubject =
     'Karta stromu č. '
     . $treeNumber
@@ -585,25 +569,20 @@ if ($shareStatement) {
                     Otevřít veřejnou kartu
                 </a>
 				
-				<?php if (!empty($customerEmail)): ?>
+				<button type="button" class="button" id="shareDevice" hidden
+        data-title="<?= htmlspecialchars($emailSubject, ENT_QUOTES, 'UTF-8') ?>">
+        Sdílet…
+    </button>
+    <a href="mailto:?subject=<?= rawurlencode($emailSubject) ?>&amp;body=<?= rawurlencode($emailBody) ?>"
+       class="button">E-mailem</a>
+    <a href="https://wa.me/?text=<?= rawurlencode($emailSubject . "\n" . $generatedUrl) ?>"
+       class="button" target="_blank" rel="noopener noreferrer">WhatsApp</a>
 
-    <a
-        href="mailto:<?= rawurlencode(
-            $customerEmail
-        ) ?>?subject=<?= rawurlencode(
-            $emailSubject
-        ) ?>&body=<?= rawurlencode(
-            $emailBody
-        ) ?>"
-        class="button"
-    >
-        Připravit e-mail zákazníkovi
-    </a>
-
-<?php endif; ?>
 
             </div>
 
+            <p id="shareStatus" role="status" aria-live="polite"></p>
+            <p><small>Vyberte aplikaci a příjemce. Zprávu odešlete sami ve své aplikaci.</small></p>
             <p>
                 <small>
                     Tento odkaz si nyní uložte.
@@ -730,27 +709,7 @@ if ($shareStatement) {
 </div>
 
 
-<div class="field">
 
-    <label for="customer_email">
-        E-mail zákazníka
-        <small>(nepovinné)</small>
-    </label>
-
-    <input
-        type="email"
-        id="customer_email"
-        name="customer_email"
-        maxlength="255"
-        placeholder="zakaznik@example.cz"
-        value="<?= htmlspecialchars(
-            $_POST['customer_email'] ?? '',
-            ENT_QUOTES,
-            'UTF-8'
-        ) ?>"
-    >
-
-</div>
 
             <div class="actions">
 
@@ -782,39 +741,36 @@ if ($shareStatement) {
 </main>
 
 <script>
-
-function copyShareUrl() {
-
-    const input =
-        document.getElementById(
-            "generatedUrl"
-        );
-
-    if (!input) {
-        return;
+const shareInput = document.getElementById('generatedUrl');
+const shareStatus = document.getElementById('shareStatus');
+const shareButton = document.getElementById('shareDevice');
+function shareMessage(text) { if (shareStatus) shareStatus.textContent = text; }
+async function copyShareUrl() {
+    if (!shareInput) return;
+    try {
+        if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(shareInput.value);
+        shareMessage('Odkaz byl zkopírován.');
+    } catch {
+        shareInput.focus(); shareInput.select();
+        shareInput.setSelectionRange(0, shareInput.value.length);
+        let copied = false;
+        try { copied = document.execCommand('copy'); } catch {}
+        shareMessage(copied ? 'Odkaz byl zkopírován.' : 'Odkaz je označený. Zkopírujte jej pomocí nabídky zařízení nebo Ctrl+C.');
     }
-
-    navigator.clipboard
-        .writeText(input.value)
-        .then(function () {
-
-            alert(
-                "Odkaz byl zkopírován."
-            );
-
-        })
-        .catch(function () {
-
-            input.select();
-            document.execCommand("copy");
-
-            alert(
-                "Odkaz byl zkopírován."
-            );
-
-        });
 }
-
+if (shareButton && shareInput && typeof navigator.share === 'function') {
+    shareButton.hidden = false;
+    shareButton.addEventListener('click', async () => {
+        shareButton.disabled = true;
+        try {
+            await navigator.share({title: shareButton.dataset.title, text: shareButton.dataset.title, url: shareInput.value});
+            shareMessage('Odkaz byl předán vybrané aplikaci.');
+        } catch (error) {
+            if (error.name !== 'AbortError') shareMessage('Sdílení se nepodařilo otevřít. Použijte E-mailem, WhatsApp nebo Kopírovat odkaz.');
+        } finally { shareButton.disabled = false; }
+    });
+}
 </script>
 
 </body>

@@ -16,3 +16,5 @@ Ověření: Node regresní testy URL a rozměrů; kontrola syntaxe JS; sestaven�
 Fotografie ploch se správně nahrávají a na kartě zobrazují i s popiskem. Hlášený problém fotografií se týká stromů.
 
 Číselný popisek plochy v hlavní mapě a mapě editoru dostává pouze pro zobrazení malé p (12 → p12). Starší kódy typu P1 se neduplikují. Tabulky, karty a uložené hodnoty se nemění. Opravy zatím pouze na GitHubu; nové vydání a nasazení počkají na další poznatky.
+
+Sdílení karty stromu: odstraněno pole e-mailu zákazníka, po vytvoření odkazu jsou dostupné E-mailem, WhatsApp, kopírování a systémové Sdílet (pokud je prohlížeč podporuje). Poznámka k odkazu zůstává. Zprávu odesílá uživatel ve zvolené aplikaci; systém neposílá poštu jeho jménem. Kopírování již nehlásí úspěch, pokud selže i náhradní způsob.
