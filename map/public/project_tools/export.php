@@ -13,11 +13,28 @@ $projectTitle=(string)($_SESSION['active_project_name']??('Projekt '.$project));
 $files=[];$zip=null;$readTx=false;
 try{
  ptCheckPost();if(!class_exists('ZipArchive'))throw new RuntimeException('Na hostingu chybí ZipArchive.');$wantQgz=($_POST['qgz']??'')==='1';$wantGpkg=$wantQgz||($_POST['gpkg']??'')==='1';if($wantGpkg&&!class_exists('SQLite3'))throw new RuntimeException('Na hostingu chybí SQLite3 pro vytvoření GPKG.');
- $selected=($_POST['scope']??'all')==='selection'?json_decode($_POST['selection']??'',true,32,JSON_THROW_ON_ERROR):null;
- if($selected!==null){foreach(['trees','areas'] as $k)if(!isset($selected[$k])||!is_array($selected[$k])||count($selected[$k])>100000)throw new RuntimeException('Neplatný výběr.');}
+ $scope=$_POST['scope']??'all';
+ if(!is_string($scope)||!in_array($scope,['all','selection'],true))throw new InvalidArgumentException('Neplatný rozsah exportu.');
+ $selected=null;
+ if($scope==='selection'){
+  $raw=$_POST['selection']??'';
+  if(!is_string($raw)||strlen($raw)>3000000)throw new InvalidArgumentException('Neplatný výběr.');
+  $selection=json_decode($raw,true,32,JSON_THROW_ON_ERROR);
+  if(!is_array($selection))throw new InvalidArgumentException('Neplatný výběr.');
+  $selected=[];
+  foreach(['trees','areas'] as $kind){
+   $ids=$selection[$kind]??null;
+   if(!is_array($ids)||!array_is_list($ids)||count($ids)>100000)throw new InvalidArgumentException('Neplatný výběr.');
+   $selected[$kind]=[];
+   foreach($ids as $id){
+    if((!is_int($id)&&!is_string($id))||!preg_match('/^[1-9][0-9]{0,19}$/D',(string)$id))throw new InvalidArgumentException('Neplatné číslo ve výběru.');
+    $selected[$kind][(string)$id]=true;
+   }
+  }
+ }
  $mysqli->begin_transaction(MYSQLI_TRANS_START_READ_ONLY|MYSQLI_TRANS_START_WITH_CONSISTENT_SNAPSHOT);$readTx=true;
  $trees=($_POST['trees']??'')==='1'?ptRows('trees'):[];$areas=($_POST['areas']??'')==='1'?ptRows('areas'):[];
- if($selected!==null){$trees=array_values(array_filter($trees,fn($r)=>in_array((string)$r['id'],array_map('strval',$selected['trees']),true)));$areas=array_values(array_filter($areas,fn($r)=>in_array((string)$r['id'],array_map('strval',$selected['areas']),true)));}
+ if($selected!==null){$trees=array_values(array_filter($trees,fn($r)=>isset($selected['trees'][(string)$r['id']])));$areas=array_values(array_filter($areas,fn($r)=>isset($selected['areas'][(string)$r['id']])));}
  if(!$trees&&!$areas)throw new RuntimeException('Export neobsahuje žádné záznamy. Zkontrolujte výběr.');
  $photos=($_POST['photos']??'')==='1';$archived=($_POST['archived']??'')==='1';$warnings=[];$photoRows=[];$areaRows=[];$treeGeom=[];$areaGeom=[];$speciesRows=[];$partRows=[];
  $temp=function()use(&$files){$p=tempnam(sys_get_temp_dir(),'svm_');if($p===false)throw new RuntimeException('Nelze vytvořit dočasný soubor.');$files[]=$p;return $p;};

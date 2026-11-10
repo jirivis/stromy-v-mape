@@ -1,5 +1,5 @@
 """Real HTTP import regressions on an isolated database; no production data."""
-import pathlib,tempfile,shutil,subprocess,sys,time,http.client,json
+import pathlib,tempfile,shutil,subprocess,sys,time,http.client,json,urllib.parse,zipfile,io
 repo=pathlib.Path(__file__).resolve().parent.parent;port=sys.argv[1]
 def sql(q):return subprocess.check_output(['mariadb','--no-defaults','--protocol=tcp','-h127.0.0.1','-P'+port,'-uroot','-N','valuation_fresh','-e',q]).decode().strip()
 sql("INSERT INTO users(id,username,password,active) VALUES(40,'importer','unused',1),(41,'importviewer','unused',1); INSERT INTO projects(id,name,owner_id) VALUES(40,'Import A',NULL),(41,'Import B',40); INSERT INTO project_users VALUES(40,40,'editor',NOW()),(40,41,'viewer',NOW());")
@@ -43,6 +43,27 @@ with tempfile.TemporaryDirectory() as td:
     else:sql("INSERT INTO svm_areas(project_id,code,geometry_json,attributes_json,area_m2) SELECT project_id,'403',geometry_json,attributes_json,area_m2 FROM svm_areas WHERE project_id=40 LIMIT 1")
     assert request(endpoint,'commit',{'token':body['token']})[0]==409
     assert sql('SELECT COUNT(*) FROM '+table+' WHERE project_id=40 AND '+field+"='402'")=='0'
+   def export(data,sid='importer'):
+    c=http.client.HTTPConnection('127.0.0.1',33085)
+    c.request('POST','/map/public/project_tools/export.php',urllib.parse.urlencode(data),{'Content-Type':'application/x-www-form-urlencoded','Cookie':'PHPSESSID='+sid})
+    response=c.getresponse();body=response.read();status=response.status;c.close();return status,body
+   base={'token':'import-token','project_id':'40','scope':'selection','trees':'1','areas':'1'}
+   for bad in ['null','false','[]','{}','{"trees":[{}],"areas":[]}','{"trees":[true],"areas":[]}']:
+    assert export(dict(base,selection=bad))[0]==422,bad
+   assert export(dict(base,scope='unknown'))[0]==422
+   assert export(dict(base,selection='{"trees":[],"areas":[]}'))[0]==422
+   own=sql('SELECT id FROM trees WHERE project_id=40 AND usr_id=401')
+   sql("INSERT INTO trees(project_id,usr_id,species) VALUES(41,999,'PRIVATE FOREIGN SPECIES')")
+   foreign=sql('SELECT id FROM trees WHERE project_id=41 AND usr_id=999')
+   selection=json.dumps({'trees':[own,foreign],'areas':[]})
+   assert export(dict(base,selection=selection),'importviewer')[0]==403
+   status,body=export(dict(base,selection=selection));assert status==200,(status,body[:500])
+   with zipfile.ZipFile(io.BytesIO(body)) as archive:
+    assert 'Stromy: 1' in archive.read('CTI_ME.txt').decode()
+    with zipfile.ZipFile(io.BytesIO(archive.read('tabulky.xlsx'))) as workbook:
+     xml=b''.join(workbook.read(n) for n in workbook.namelist() if n.endswith('.xml'))
+     assert b'Import test' in xml and b'PRIVATE FOREIGN SPECIES' not in xml
+   print('PASS export HTTP: invalid/null selection rejected; selected ZIP contains only authorized selected tree')
    print('PASS import HTTP: tree/area preview, CSRF, viewer, project switch, revoked role, single-use commit, conflicting batch leaves no partial writes')
   except Exception:
    print((root/'http.log').read_text()[-3000:]);raise
