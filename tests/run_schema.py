@@ -21,5 +21,6 @@ with tempfile.TemporaryDirectory(prefix='svm-schema-') as td:
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('measurement_http.py')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('auth_http.py')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('admin_http.py')),socket],check=True)
+            subprocess.run(['python3',str(pathlib.Path(__file__).with_name('import_http.py')),socket],check=True)
         finally:
             db.terminate();db.wait(timeout=20)
