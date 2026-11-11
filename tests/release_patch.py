@@ -16,7 +16,7 @@ with tempfile.TemporaryDirectory(prefix='svm-release-test-') as td:
   raw=update.read('manifest.json');manifest=json.loads(raw)
   assert manifest['from']=='2.24.0' and manifest['version']=='2.24.1'
   assert manifest['migrations']==[] and 'schema_checks' not in manifest
-  required=['map/public/js/map.js', 'map/public/js/markers.js', 'map/public/js/popup.js', 'map/public/js/table.js', 'map/public/photos/.htaccess', 'map/public/project_tools/gpkg_import.js', 'map/public/tree_form/scripts.php', 'map/public/uploads/.htaccess', 'map/public/project_tools/editor_exit.js']
+  required=['map/public/js/project_filters.js', 'map/public/js/advanced_filters.js', 'map/public/advanced_filters.css', 'map/public/project_tools/api.php', 'map/public/project_tools/table.php', 'map/public/project_tools/table.js', 'map/public/api/trees_geojson.php', 'map/public/js/map.js', 'map/public/js/markers.js', 'map/public/js/popup.js', 'map/public/js/table.js', 'map/public/photos/.htaccess', 'map/public/project_tools/gpkg_import.js', 'map/public/tree_form/scripts.php', 'map/public/uploads/.htaccess', 'map/public/project_tools/editor_exit.js']
   assert all(p in manifest['files'] for p in required)
   assert set(update.namelist())=={'manifest.json','signature.txt'}|{'payload/'+p for p in manifest['files']}
   for path,digest in manifest['files'].items():

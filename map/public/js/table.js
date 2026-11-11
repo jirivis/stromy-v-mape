@@ -400,6 +400,8 @@ columnDefs: [
 
 ],
 
+// The shared map/table filter owns searching; omit DataTables' separate input.
+dom: 'lrtip',
 paging: true,
 autoWidth: false
             });

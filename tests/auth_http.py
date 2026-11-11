@@ -1,4 +1,4 @@
-import pathlib,tempfile,shutil,subprocess,sys,time,http.client,urllib.parse,re,hashlib
+import json,pathlib,tempfile,shutil,subprocess,sys,time,http.client,urllib.parse,re,hashlib
 repo=pathlib.Path(__file__).resolve().parent.parent;port=sys.argv[1]
 def sql(q):return subprocess.check_output(['mariadb','--no-defaults','--protocol=tcp','-h127.0.0.1','-P'+port,'-uroot','-N','valuation_fresh','-e',q]).decode().strip()
 hash1=subprocess.check_output(['php','-r',"echo password_hash('Original-password-123',PASSWORD_DEFAULT);"]).decode()
@@ -32,6 +32,22 @@ with tempfile.TemporaryDirectory() as td:
    assert status==302 and h['Location']=='/dashboard.php',(status,body)
    assert login.cookie!=old_cookie
    assert login.request('/map/public/api/tree_measurements.php?tree_id=1')[0]==200
+   status,body,h=login.request('/map/public/project_tools/api.php?action=filter_fields')
+   assert status==200,(status,body)
+   catalog=json.loads(body);assert catalog['project_id']==1 and 'usr_id' in catalog['trees'] and 'area_m2' in catalog['areas']
+   assert 'id' not in catalog['trees'] and 'rows' not in catalog and h['Cache-Control']=='no-store'
+   status,body,h=login.request('/map/public/project_tools/api.php?action=rows&kind=trees')
+   assert status==200 and json.loads(body)['table_fields']==catalog['trees'],(status,body)
+   assert Browser().request('/map/public/project_tools/api.php?action=filter_fields')[0] in (401,403)
+   sql("INSERT INTO trees(id,project_id,usr_id,species,height,lat_wgs84,lng_wgs84) VALUES(90001,1,902,'Filter fixture',NULL,50,14)")
+   status,body,h=login.request('/map/public/api/trees_geojson.php')
+   assert status==200,(status,body)
+   feature=next(f for f in json.loads(body)['features'] if f['properties']['id']==90001)
+   assert feature['properties']['filter_values']['height'] is None
+   assert feature['properties']['filter_values']['species']=='Filter fixture'
+   assert 'id' not in feature['properties']['filter_values'] and 'project_id' not in feature['properties']['filter_values']
+   sql('DELETE FROM trees WHERE id=90001')
+   print('PASS authenticated filter catalog matches table fields, excludes internal IDs, requires login')
    reset_token='b'*64
    sql("INSERT INTO password_reset_tokens(user_id,token_hash,expires_at) VALUES(20,'"+hashlib.sha256(reset_token.encode()).hexdigest()+"',NOW()+INTERVAL 2 DAY)")
    reset=Browser();url='/reset_password.php?token='+reset_token

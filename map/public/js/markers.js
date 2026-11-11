@@ -10,6 +10,7 @@ TreeApp.showTreeLabels = true;
 TreeApp.treeLabelMinZoom = 17;
 
 TreeApp.getMarkerDimension = function (tree, mode) {
+    const minimum = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches ? 20 : 28;
     const firstPositive = function (fields) {
         for (const field of fields) {
             const n = Number(tree[field]);
@@ -19,12 +20,12 @@ TreeApp.getMarkerDimension = function (tree, mode) {
     };
     const girth = firstPositive(["girth1_cm", "girth2_cm", "girth3_cm", "girth4_cm", "girth_cm"]);
     const dbh = firstPositive(["dbh1_cm", "dbh2_cm", "dbh3_cm", "dbh4_cm"]);
-    if (mode === "none") return 28;
-    if (mode === "girth") return Math.max(28, (girth || (dbh ? dbh * Math.PI : 0)) * 0.3);
-    if (mode === "dbh") return Math.max(28, (dbh || (girth ? girth / Math.PI : 0)) * Math.PI * 0.3);
-    if (mode === "spread") return Math.max(28, Math.min(110, Number(tree.spread_m) > 0 ? Number(tree.spread_m) * 4 : 28));
-    if (mode === "height") return Math.max(28, Math.min(110, Number(tree.height) > 0 ? Number(tree.height) * 2 : 28));
-    return 28;
+    if (mode === "none") return minimum;
+    if (mode === "girth") return Math.max(minimum, (girth || (dbh ? dbh * Math.PI : 0)) * 0.3);
+    if (mode === "dbh") return Math.max(minimum, (dbh || (girth ? girth / Math.PI : 0)) * Math.PI * 0.3);
+    if (mode === "spread") return Math.max(minimum, Math.min(110, Number(tree.spread_m) > 0 ? Number(tree.spread_m) * 4 : minimum));
+    if (mode === "height") return Math.max(minimum, Math.min(110, Number(tree.height) > 0 ? Number(tree.height) * 2 : minimum));
+    return minimum;
 };
 
 // Styl popisku je vložen z JS, aby nebylo nutné upravovat další CSS soubor.
@@ -43,6 +44,7 @@ TreeApp.installTreeLabelStyles = function () {
             text-shadow: 1px 1px 1px #202020, -1px -1px 1px #202020,
                          1px -1px 1px #202020, -1px 1px 1px #202020;
         }
+        @media (pointer: coarse) { .leaflet-tooltip.tree-usr-label { font-size: 13px; } }
         .leaflet-tooltip.tree-usr-label::before { display: none; }
     `;
     document.head.appendChild(style);
@@ -314,7 +316,7 @@ TreeApp.createTreeMarkerIcon = function (
 
     const safeSize =
         Math.max(
-            28,
+            TreeApp.getMarkerDimension({}, "none"),
             Math.round(size)
         );
 

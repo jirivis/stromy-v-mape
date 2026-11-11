@@ -8,6 +8,7 @@ try{
  if($_SERVER['REQUEST_METHOD']==='GET'){
   if($action==='templates'){if(!$canConfigure)throw new RuntimeException('Struktury může spravovat administrátor projektu.',403);$templates=ptQuery('SELECT id,name,fields_json,version FROM svm_form_templates WHERE owner_user_id=? ORDER BY name',[(int)$_SESSION['user_id']])->get_result()->fetch_all(MYSQLI_ASSOC);foreach($templates as &$t){$t['hidden']=json_decode($t['fields_json'],true);unset($t['fields_json']);}unset($t);ptOut(['project_id'=>$project,'templates'=>$templates,'catalog'=>ptCatalog()]);}
   if($action==='settings')ptOut(['project_id'=>$project,'catalog'=>ptCatalog(),'settings'=>ptSettings(),'can_configure'=>$canConfigure]);
+  if($action==='filter_fields'){$settings=ptSettings();ptOut(['project_id'=>$project,'trees'=>ptTableFields('trees',$settings['hidden']['trees']??[]),'areas'=>ptTableFields('areas',$settings['hidden']['areas']??[])]);}
   if($action==='rows'){
    $kind=($_GET['kind']??'trees')==='areas'?'areas':'trees';$rows=ptRows($kind);$out=[];
    foreach($rows as $r){$v=$r;if($kind==='areas'){$v=array_merge(json_decode($r['attributes_json'],true),['id'=>$r['id'],'code'=>$r['code'],'area_m2'=>$r['area_m2']]);}$out[]=['id'=>$r['id'],'version'=>ptVersion($r),'values'=>$v,'geometry'=>ptGeometry($kind,$r)];}

@@ -29,15 +29,11 @@ TreeApp.initMap=function(...args){
   if(svg){let defs=svg.querySelector('defs');if(!defs){defs=document.createElementNS(svgNS,'defs');svg.prepend(defs);}let pattern=svg.querySelector('#'+patternId);if(!pattern){pattern=document.createElementNS(svgNS,'pattern');pattern.id=patternId;pattern.setAttribute('patternUnits','userSpaceOnUse');pattern.setAttribute('width','10');pattern.setAttribute('height','10');defs.append(pattern);}pattern.replaceChildren();const path=document.createElementNS(svgNS,'path');path.setAttribute('d',state.pattern==='cross'?'M-1,1 L1,-1 M0,10 L10,0 M9,11 L11,9 M0,0 L10,10':'M-1,1 L1,-1 M0,10 L10,0 M9,11 L11,9');path.setAttribute('stroke',state.color);path.setAttribute('stroke-width','2');pattern.append(path);}
   polygons.eachLayer(l=>{l.setStyle({color:l.feature.properties.attributes.status==='removed'?'#b3483c':state.color,fillColor:state.color,fillOpacity:1-state.transparency/100});if(state.pattern!=='solid'&&l._path)l._path.setAttribute('fill','url(#'+patternId+')');});
  }
- let filter={query:'',status:''};
- const normalize=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
- function filtered(){return features.filter(f=>{const p=f.properties,a=p.attributes;return (!filter.status||(a.status||'existing')===filter.status)&&normalize([p.code,a.name,...(a.species||[]).flatMap(s=>[s.czech_name,s.scientific_name])].join(' ')).includes(normalize(filter.query).trim());});}
+ const areaFilters=TreeApp.projectAreaFilters;
+ function filtered(){return features.filter(f=>areaFilters.matches({...f.properties.attributes,code:f.properties.code,area_m2:f.properties.area_m2}));}
  function applyFilter(){polygons.clearLayers();polygons.addData({type:'FeatureCollection',features:filtered()});applyStyle();updateLabels();renderRows();}
- function filterFields(){const box=el('section');box.className='svm-area-filter';box.append(el('strong','Filtr ploch'));
- const q=el('input');q.type='search';q.placeholder='Číslo, název nebo druh';q.setAttribute('aria-label','Hledat plochy');q.dataset.areaQuery='';q.value=filter.query;
- const state=el('select');state.setAttribute('aria-label','Stav ploch');state.dataset.areaStatus='';for(const [v,t] of [['','Všechny stavy'],['existing','Existující'],['removed','Odstraněné']])state.append(new Option(t,v));state.value=filter.status;
- const sync=()=>{document.querySelectorAll('[data-area-query]').forEach(n=>n.value=filter.query);document.querySelectorAll('[data-area-status]').forEach(n=>n.value=filter.status);applyFilter();};
- q.oninput=()=>{filter.query=q.value;sync();};state.onchange=()=>{filter.status=state.value;sync();};const reset=el('button','Zrušit filtr ploch');reset.type='button';reset.onclick=()=>{filter={query:'',status:''};sync();};box.append(q,state,reset);return box;}
+ areaFilters.subscribe(applyFilter);
+ function filterFields(){const box=el('section');box.className='svm-area-filter';areaFilters.mount(box);return box;}
  function installFilters(){const root=map.getContainer();const toggle=root.querySelector('.tree-filter-control__toggle');if(toggle&&toggle.title!=='Filtr bodů a ploch'){toggle.title='Filtr bodů a ploch';toggle.setAttribute('aria-label','Filtr bodů a ploch');}const content=root.querySelector('.tree-filter-control__content');if(content&&!content.querySelector('.svm-area-filter'))content.append(filterFields());}
  // Use the existing toggle handlers, so panel state remains consistent.
  const closePanels=e=>{if(e.target.closest('.leaflet-control,.leaflet-popup'))return;for(const cls of ['tree-filter-control','tree-marker-color-control']){const panel=map.getContainer().querySelector('.'+cls);if(panel&&!panel.classList.contains(cls+'--collapsed'))panel.querySelector('.'+cls+'__toggle')?.click();}};
@@ -59,6 +55,7 @@ TreeApp.initMap=function(...args){
   const panel=document.getElementById('tablePanelContent');if(!panel||panel.querySelector('.svm-table-tabs'))return;
   const points=el('div');points.className='svm-point-panel';points.id='svmPointsPanel';
   while(panel.firstChild)points.append(panel.firstChild);
+  const pointFilters=el('details');pointFilters.append(el('summary','Filtrování mapy a tabulky'));const pointHost=el('div');pointFilters.append(pointHost);TreeApp.projectTreeFilters.mount(pointHost);points.prepend(pointFilters);
   const areas=el('div');areas.className='svm-area-panel';areas.id='svmAreasPanel';areas.hidden=true;
   const actions=el('div');actions.className='svm-area-actions';const manage=el('a','Otevřít správu ploch');manage.href='/map/public/areas/';actions.append(manage);tableStatus=el('span','Načítám plochy…');actions.append(tableStatus);areas.append(actions,filterFields());
   const table=el('table');table.className='svm-area-table';const head=el('thead'),row=el('tr');for(const name of ['Číslo plochy','Název','Výměra z mapy (m²)','Stav','Datum měření','Další kontrola','Otevřít'])row.append(el('th',name));head.append(row);tableBody=el('tbody');table.append(head,tableBody);areas.append(table);

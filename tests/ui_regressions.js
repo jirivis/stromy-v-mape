@@ -14,3 +14,7 @@ const ctx={TreeApp:{}};vm.createContext(ctx);vm.runInContext(source.slice(a,b),c
 for(const mode of ['none','girth','dbh','spread','height'])assert.equal(ctx.TreeApp.getMarkerDimension({},mode),28);
 assert.equal(ctx.TreeApp.getMarkerDimension({spread_m:20},'spread'),80);
 console.log('PASS image gateway URLs and readable minimum marker dimensions');
+
+ctx.window={matchMedia:()=>({matches:true})};
+for(const mode of ['none','girth','dbh','spread','height'])assert.equal(ctx.TreeApp.getMarkerDimension({},mode),20);
+console.log('PASS touch devices retain original minimum dimensions');

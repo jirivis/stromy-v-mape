@@ -20,6 +20,10 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y mariadb-server mariadb-client apache2
       - name: Map and image URL regressions
         run: node tests/ui_regressions.js
+      - name: Shared map and table filter regressions
+        run: |
+          npm install --prefix /tmp/svm-filter-tests --no-audit --no-fund jsdom@26.1.0
+          NODE_PATH=/tmp/svm-filter-tests/node_modules node tests/project_filters.js
       - name: PHP syntax
         run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
       - name: Export photo captions
