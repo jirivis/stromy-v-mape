@@ -22,8 +22,6 @@ jobs:
         run: node tests/ui_regressions.js
       - name: PHP syntax
         run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
-      - name: Standalone exported galleries
-        run: php tests/photo_gallery.php
       - name: Signed update without database privileges
         run: php tests/update_file_only.php
       - name: Schema and HTTP authorization regression tests
