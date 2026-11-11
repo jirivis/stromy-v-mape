@@ -19,4 +19,5 @@ Fotografie ploch se správně nahrávají a na kartě zobrazují i s popiskem. H
 
 Sdílení karty stromu: odstraněno pole e-mailu zákazníka, po vytvoření odkazu jsou dostupné E-mailem, WhatsApp, kopírování a systémové Sdílet (pokud je prohlížeč podporuje). Poznámka k odkazu zůstává. Zprávu odesílá uživatel ve zvolené aplikaci; systém neposílá poštu jeho jménem. Kopírování již nehlásí úspěch, pokud selže i náhradní způsob.
 
-Na přání uživatele vráceno vkládání fotografií do HTML galerie kvůli velikosti exportu. Galerie opět obsahuje jen relativní odkazy na originály; při otevření samostatného HTML přes Android content URI může být přístup k fotografiím omezený. Úplné odstranění galerie zatím není provedeno.
+
+Export: odstraněny HTML galerie i jejich odkazy z QGISu. Zachovány hlavní fotografie, relační tabulky fotografií a samostatné textové popisky. Nová výchozím stavem vypnutá volba „Přidat popisky fotek pod exportované fotografie“ vytváří JPEG kopie (kvalita 95) s bílým pruhem pod celým snímkem, českou diakritikou, zalamováním textu a zohledněním EXIF orientace. Fotografie bez popisku se nekonvertují; originály na serveru se nemění. Vyžaduje GD/FreeType a pro JPEG EXIF, při nedostatečné paměti se export ukončí s vysvětlením.
