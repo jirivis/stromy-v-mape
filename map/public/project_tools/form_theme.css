@@ -4,3 +4,5 @@ body{font:16px/1.5 system-ui;color:#243b2d;background:#fff;margin:0 auto;padding
 
 /* Shared normal action color; destructive actions remain distinct. */
 .submit-btn,.photo-upload-btn,.editor-close-bar button,.btn-secondary,#tree-photos .compact-photo-button{background:#28613d!important;color:#fff!important;border:1px solid #28613d!important}.editor-close-bar{gap:8px}
+
+.location-actions button,#confirmManualLocation,#cancelManualLocation,#zoomToDeviceLocation,#stopLocationAveraging,#cancelLocationAveraging,.photo-meta-save,.photo-controls .photo-btn{background:#28613d;color:white;border:1px solid #28613d;border-radius:6px}

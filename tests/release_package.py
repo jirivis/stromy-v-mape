@@ -55,7 +55,7 @@ function snapshot(mysqli $db):string{
  foreach(['trees','svm_areas','trees_photo','svm_area_photos','tree_history','svm_area_history','species','cultivars'] as $table){
   $data[$table]=$db->query('SELECT * FROM `'.$table.'` ORDER BY id')->fetch_all(MYSQLI_ASSOC);
  }
- return hash('sha256',json_encode($data,JSON_THROW_ON_ERROR));
+ return hash('sha256',serialize($data));
 }
 $before=snapshot($db);
 if(upApply($argv[2],file_get_contents($argv[3]),$db)!=='2.24.0')throw new Exception('Version');
