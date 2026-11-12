@@ -99,6 +99,7 @@ with tempfile.TemporaryDirectory() as td:
      assert archive.testzip() is None
      names=[n for n in archive.namelist() if n.startswith('fotografie/')];assert len(names)==1 and names[0].startswith('fotografie/strom401_20261112_153341_01'),names
      exported=archive.read(names[0]);assert (exported==image)==(captions=='0')
+     assert names[0].encode() in archive.read('prirazeni_fotografii_stromy.csv')
    status,plan=request('import_photos_api.php','preview',{'kind':'areas','rows':[photo_row]});assert status==200,(status,plan)
    assert photo_upload(plan['token'])[0]==200
    area=sql('SELECT id FROM svm_areas WHERE project_id=40 AND code=401')

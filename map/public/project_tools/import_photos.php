@@ -12,7 +12,7 @@ require_once __DIR__.'/page_access.php';svmRequirePageLogin();require_once __DIR
 <label>Číslo objektu pro jednu složku <input id="photoCode" type="text"></label>
 <label>Přiřazovací tabulka <input id="photoCsv" type="file" accept=".csv,.txt"></label>
 <p><strong>Každá fotografie musí mít v přiřazovací tabulce vlastní řádek.</strong> Sloupce: <code>soubor;cislo;popisek</code>. Soubor je název fotografie nebo její relativní cesta v podsložkách. Při opakovaných názvech je nutná celá cesta. Soubor může být přiřazen jen jednou v jedné dávce.</p>
-<p>Například: <code>strom66/20261112_153000.jpg;66;Pohled na korunu</code>. Současné XLSX přiřazení nejprve v Excelu uložte jako CSV UTF-8 a přiřaďte sloupce na názvy výše.</p>
+<p>Například: <code>strom66/20261112_153000.jpg;66;Pohled na korunu</code>. Nový export přikládá rovnou CSV přiřazení zvlášť pro stromy a plochy. Starší XLSX přiřazení nejprve v Excelu uložte jako CSV UTF-8 a přiřaďte sloupce na názvy výše.</p>
 <p>Nejvýše 500 fotografií v dávce, každá JPG, PNG nebo WebP do 5 MB a 24 megapixelů. Nejednoznačné a nenalezené objekty se neimportují.</p>
 <button id="photoPreview" type="button">Připravit kontrolní náhled</button></fieldset>
 <p id="photoStatus" role="status"></p><div class="scroll"><table><thead><tr><th>Soubor</th><th>Číslo objektu</th><th>Popisek</th><th>Stav</th></tr></thead><tbody id="photoRows"></tbody></table></div>

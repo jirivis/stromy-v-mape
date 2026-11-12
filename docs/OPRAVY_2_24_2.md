@@ -11,3 +11,5 @@ Změny pouze ve zdroji na GitHubu, bez vydání aktualizačního ZIPu. Před bud
 - Kontrolní náhled před zápisem, odmítnutí chybějících/nejednoznačných objektů, potvrzený plán v session s projektem a hashem každé fotografie. Nahrávání postupně, role a projekt ověřené při každém souboru, opakování potvrzeného řádku nevytvoří duplikát. Dávka není atomická: úspěšné soubory zůstávají po přerušení, v otevřené stránce lze pokračovat. Plán vyprší za hodinu; po novém náhledu je třeba vybrat jen dosud nenahrané fotografie. Dávka nejvýše 500, každý soubor do 5 MB/24 MP. XLSX tabulku je zatím nutné převést na CSV UTF-8.
 
 Ověření před vydáním: CI PHP 8.3/8.4/8.5, HTTP import včetně oprávnění, chybného hashe a opakování požadavku, originál/náhled/karta, export se zapnutým i vypnutým popiskem. Reálný velký projekt na WEDOS je nutné po nasazení ověřit; malý test nepotvrzuje časový limit konkrétního hostingu.
+
+Export přikládá také přímo importovatelné CSV přiřazení zvlášť pro stromy a plochy. Obsahují jen přibalené fotografie a jeden řádek pro každý soubor.
