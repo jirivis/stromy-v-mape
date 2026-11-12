@@ -692,9 +692,9 @@ $page_title = $is_edit
 
 </style>
 
-<link rel="stylesheet" href="project_tools/form_theme.css?v=2.3"><style>.svm-history-entry{border:1px solid #ccd8ce;border-radius:6px;padding:12px;margin:8px 0}.svm-history-entry summary{cursor:pointer;font-weight:600}.svm-history-table{border-collapse:collapse;width:100%;margin:12px 0}.svm-history-table th,.svm-history-table td{text-align:left;border-bottom:1px solid #dde4de;padding:7px;vertical-align:top;overflow-wrap:anywhere}.svm-history-table th{width:38%}</style><style>
+<link rel="stylesheet" href="project_tools/form_theme.css?v=2.24.2"><style>.svm-history-entry{border:1px solid #ccd8ce;border-radius:6px;padding:12px;margin:8px 0}.svm-history-entry summary{cursor:pointer;font-weight:600}.svm-history-table{border-collapse:collapse;width:100%;margin:12px 0}.svm-history-table th,.svm-history-table td{text-align:left;border-bottom:1px solid #dde4de;padding:7px;vertical-align:top;overflow-wrap:anywhere}.svm-history-table th{width:38%}</style><style>
 #tree-save-actions{margin:24px 0}#tree-photos{border-top:1px solid #cedbcf;padding-top:18px;margin-top:20px}#tree-photos>h2{margin:0 0 15px}
-#tree-photos .compact-photo-button{display:inline-flex!important;width:auto!important;min-width:0!important;padding:12px 18px!important;margin:0 10px 12px 0!important;background:#edf3e9!important;color:#28573b!important;border:1px solid #90ab92;border-radius:6px;font-weight:500!important}
+#tree-photos .compact-photo-button{display:inline-flex!important;width:auto!important;min-width:0!important;padding:12px 18px!important;margin:0 10px 12px 0!important;background:#28613d!important;color:#fff!important;border:1px solid #90ab92;border-radius:6px;font-weight:500!important}
 #tree-history{border-top:1px solid #cedbcf;margin-top:28px;padding-top:18px}#tree-history>h3{margin-top:0}.tree-record-actions{margin:32px 0 20px;padding-top:24px;border-top:1px solid #cedbcf}.tree-danger-zone{margin-top:24px}.photo-meta-save{margin:16px 0}.photo-item textarea{max-width:100%}
 </style></head>
 

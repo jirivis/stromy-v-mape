@@ -20,7 +20,7 @@ function exCaptionPhoto(string $source,string $note,callable $temp):string{
   if(in_array($orientation,[2,5,7],true))imageflip($image,IMG_FLIP_HORIZONTAL);
   if($orientation===4)imageflip($image,IMG_FLIP_VERTICAL);
   $angle=match($orientation){3=>180,5,8=>90,6,7=>-90,default=>0};
-  if($angle){$rotated=imagerotate($image,$angle,0xffffff);imagedestroy($image);$image=$rotated;}
+  if($angle){$rotated=imagerotate($image,$angle,0xffffff);imagedestroy($image);$image=$rotated;unset($rotated);}
   $w=imagesx($image);$h=imagesy($image);$size=max(10,(int)round($w/75));$pad=max(8,(int)round($w/80));$lineHeight=(int)ceil($size*1.7);$available=max(1,$w-2*$pad);
   $width=function($text)use($font,$size){$b=imagettfbbox($size,0,$font,$text);return max($b[0],$b[2],$b[4],$b[6])-min($b[0],$b[2],$b[4],$b[6]);};
   $lines=[];
@@ -35,7 +35,8 @@ function exCaptionPhoto(string $source,string $note,callable $temp):string{
   $height=$h+2*$pad+count($lines)*$lineHeight;
   if(count($lines)>100||$w*$height>30000000)throw new RuntimeException('Popisek fotografie je příliš dlouhý pro tento snímek.');
   $canvas=imagecreatetruecolor($w,$height);$white=imagecolorallocate($canvas,255,255,255);$black=imagecolorallocate($canvas,25,25,25);imagefill($canvas,0,0,$white);imagecopy($canvas,$image,0,0,0,0,$w,$h);
+  unset($image);$image=null;
   foreach($lines as $i=>$line)imagettftext($canvas,$size,0,$pad,(int)round($h+$pad+($i+1)*$lineHeight-$size/3),$black,$font,$line);
   $output=$temp();if(!imagejpeg($canvas,$output,95))throw new RuntimeException('Nelze uložit fotografii s popiskem.');return $output;
- }finally{if($canvas)imagedestroy($canvas);imagedestroy($image);}
+ }finally{if($canvas)imagedestroy($canvas);if($image)imagedestroy($image);}
 }

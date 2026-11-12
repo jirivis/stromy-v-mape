@@ -167,7 +167,7 @@ TreeApp.popupVersionedImageUrl = function (
         String(url) +
         separator +
         'photo_version=' +
-        encodeURIComponent(version)
+        encodeURIComponent(version) + '&thumb=1'
     );
 };
 

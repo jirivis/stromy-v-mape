@@ -1,5 +1,5 @@
 """Real HTTP import regressions on an isolated database; no production data."""
-import pathlib,tempfile,shutil,subprocess,sys,time,http.client,json,urllib.parse,zipfile,io
+import hashlib,pathlib,tempfile,shutil,subprocess,sys,time,http.client,json,urllib.parse,zipfile,io
 repo=pathlib.Path(__file__).resolve().parent.parent;port=sys.argv[1]
 def sql(q):return subprocess.check_output(['mariadb','--no-defaults','--protocol=tcp','-h127.0.0.1','-P'+port,'-uroot','-N','valuation_fresh','-e',q]).decode().strip()
 sql("INSERT INTO users(id,username,password,active) VALUES(40,'importer','unused',1),(41,'importviewer','unused',1); INSERT INTO projects(id,name,owner_id) VALUES(40,'Import A',NULL),(41,'Import B',40); INSERT INTO project_users VALUES(40,40,'editor',NOW()),(40,41,'viewer',NOW());")
@@ -63,6 +63,44 @@ with tempfile.TemporaryDirectory() as td:
     with zipfile.ZipFile(io.BytesIO(archive.read('tabulky.xlsx'))) as workbook:
      xml=b''.join(workbook.read(n) for n in workbook.namelist() if n.endswith('.xml'))
      assert b'Import test' in xml and b'PRIVATE FOREIGN SPECIES' not in xml
+   # Photo import uses an explicit server-side plan and individual authenticated uploads.
+   image_path=root/'sample.jpg'
+   subprocess.run(['php','-r',"$im=imagecreatetruecolor(1600,1200);imagejpeg($im,$argv[1],90);",str(image_path)],check=True)
+   image=image_path.read_bytes();digest=hashlib.sha256(image).hexdigest()
+   photo_row={'file':'20261112_153341.jpg','code':'401','note':'Koruna – detail','sha256':digest}
+   assert request('import_photos_api.php','preview',{'kind':'trees','rows':[photo_row]},sid='importviewer')[0]==403
+   assert request('import_photos_api.php','preview',{'kind':'trees','rows':[dict(photo_row,code='999')]})[0]==422
+   assert request('import_photos_api.php','preview',{'kind':'trees','rows':[photo_row,photo_row]})[0]==422
+   status,plan=request('import_photos_api.php','preview',{'kind':'trees','rows':[photo_row]});assert status==200,(status,plan)
+   def photo_upload(plan,index=0,data=image):
+    boundary='svmPhotoBoundary'
+    fields={'plan':plan,'index':str(index)}
+    body=b''.join(('--'+boundary+'\r\nContent-Disposition: form-data; name="'+k+'"\r\n\r\n'+v+'\r\n').encode() for k,v in fields.items())
+    body+=('--'+boundary+'\r\nContent-Disposition: form-data; name="photo"; filename="20261112_153341.jpg"\r\nContent-Type: image/jpeg\r\n\r\n').encode()+data+('\r\n--'+boundary+'--\r\n').encode()
+    c=http.client.HTTPConnection('127.0.0.1',33085);c.request('POST','/map/public/project_tools/import_photos_api.php?action=upload',body,{'Content-Type':'multipart/form-data; boundary='+boundary,'Cookie':'PHPSESSID=importer','X-CSRF-Token':'import-token','X-Project-Id':'40'})
+    r=c.getresponse();status=r.status;body=r.read();c.close();return status,json.loads(body)
+   assert photo_upload(plan['token'],data=b'not the previewed file')[0]==422
+   before=int(sql('SELECT COUNT(*) FROM trees_photo WHERE tree_id='+own))
+   assert photo_upload(plan['token'])[0]==200
+   assert photo_upload(plan['token'])[1]['already_imported'] is True
+   assert int(sql('SELECT COUNT(*) FROM trees_photo WHERE tree_id='+own))==before+1
+   photo_id=sql('SELECT MAX(id) FROM trees_photo WHERE tree_id='+own)
+   def get_photo(path,cookie='PHPSESSID=importer'):
+    c=http.client.HTTPConnection('127.0.0.1',33085);c.request('GET',path,headers={'Cookie':cookie});r=c.getresponse();data=r.read();status=r.status;c.close();return status,data
+   endpoint='/map/public/photo.php?photo='+photo_id
+   assert get_photo(endpoint)[1]==image
+   status,thumb=get_photo(endpoint+'&thumb=1');assert status==200 and len(thumb)<len(image),(status,len(thumb),len(image))
+   assert get_photo(endpoint+'&thumb=1',cookie='')[0]==404
+   assert get_photo('/map/public/project_tools/card_photo.php?kind=trees&id='+photo_id)[1]==image
+   for captions in ['0','1']:
+    status,body=export(dict(base,selection=json.dumps({'trees':[own],'areas':[]}),photos='1',photo_captions=captions,photos_flat='1'))
+    assert status==200,(status,body[:500])
+    with zipfile.ZipFile(io.BytesIO(body)) as archive:
+     assert archive.testzip() is None
+     names=[n for n in archive.namelist() if n.startswith('fotografie/')];assert len(names)==1 and names[0].startswith('fotografie/strom401_20261112_153341_01'),names
+     exported=archive.read(names[0]);assert (exported==image)==(captions=='0')
+   status,body=export(dict(base,selection='{}',frame='1'));assert status==422 and b'svmExportError' in body
+   print('PASS photo import: role/project scope, ambiguous/duplicate plans, content fingerprint, idempotent retry; caption and original ZIP downloads')
    print('PASS export HTTP: invalid/null selection rejected; selected ZIP contains only authorized selected tree')
    print('PASS import HTTP: tree/area preview, CSRF, viewer, project switch, revoked role, single-use commit, conflicting batch leaves no partial writes')
   except Exception:

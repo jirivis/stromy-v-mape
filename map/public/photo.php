@@ -53,5 +53,6 @@ try{
  $base=realpath(__DIR__.'/'.explode('/',$requested)[0]);$path=realpath(__DIR__.'/'.$requested);
  if(!$base||!$path||!str_starts_with($path,$base.DIRECTORY_SEPARATOR)||!is_file($path))photoNotFound();
  $mime=(new finfo(FILEINFO_MIME_TYPE))->file($path);if(!in_array($mime,['image/jpeg','image/png','image/webp','image/gif'],true))photoNotFound();
+ if(($_GET['thumb']??'')==='1'){require_once dirname(__DIR__,2).'/app/photo_preview.php';$preview=svmPhotoPreview((string)file_get_contents($path));if($preview){$path=$preview;$mime='image/jpeg';}}
  header('Content-Type: '.$mime);header('Content-Length: '.filesize($path));readfile($path);
 }catch(Throwable $e){error_log('Photo authorization failed: '.get_class($e));photoNotFound();}

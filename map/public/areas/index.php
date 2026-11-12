@@ -12,7 +12,7 @@ $boot=['csrf'=>$_SESSION['areas_csrf'],'project_id'=>(int)$activeProjectId,'can_
 <!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Plochy porostů – Stromy v mapě</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
-<link rel="stylesheet" href="areas.css?v=2.7">
+<link rel="stylesheet" href="areas.css?v=2.24.2">
 </head><body>
 <header><a href="../index.php">← Hlavní mapa</a><strong id="pageMode"><?=!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><a id="areaCardLink" hidden target="_blank" rel="noopener">Karta porostu ↗</a><span id="projectName"></span></header>
 <div id="status" role="status" aria-live="polite">Načítám plochy…</div>
