@@ -99,6 +99,14 @@ with tempfile.TemporaryDirectory() as td:
      assert archive.testzip() is None
      names=[n for n in archive.namelist() if n.startswith('fotografie/')];assert len(names)==1 and names[0].startswith('fotografie/strom401_20261112_153341_01'),names
      exported=archive.read(names[0]);assert (exported==image)==(captions=='0')
+   status,plan=request('import_photos_api.php','preview',{'kind':'areas','rows':[photo_row]});assert status==200,(status,plan)
+   assert photo_upload(plan['token'])[0]==200
+   area=sql('SELECT id FROM svm_areas WHERE project_id=40 AND code=401')
+   assert sql('SELECT COUNT(*) FROM svm_area_photos WHERE area_id='+area)=='1'
+   status,body=export(dict(base,selection=json.dumps({'trees':[],'areas':[area]}),photos='1',photo_captions='1',photos_flat='1'));assert status==200,(status,body[:500])
+   with zipfile.ZipFile(io.BytesIO(body)) as archive:
+    assert archive.testzip() is None
+    assert 'fotografie/plocha401_20261112_153341_01.jpg' in archive.namelist()
    status,body=export(dict(base,selection='{}',frame='1'));assert status==422 and b'svmExportError' in body
    print('PASS photo import: role/project scope, ambiguous/duplicate plans, content fingerprint, idempotent retry; caption and original ZIP downloads')
    print('PASS export HTTP: invalid/null selection rejected; selected ZIP contains only authorized selected tree')
