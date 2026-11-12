@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+"""Build matching fresh-install and 2.24.1 update artifacts; never publishes."""
+import argparse, pathlib, tempfile, shutil, subprocess, zipfile
+p=argparse.ArgumentParser();p.add_argument('--key',required=True);p.add_argument('--output-dir',required=True);a=p.parse_args()
+r=pathlib.Path(__file__).resolve().parent.parent;out=pathlib.Path(a.output_dir).resolve();out.mkdir(parents=True,exist_ok=True)
+key=pathlib.Path(a.key).resolve()
+if key.is_relative_to(r):raise SystemExit('Private key must be outside repository')
+if (r/'app/VERSION').read_text().strip()!='2.24.2':raise SystemExit('Unexpected source version')
+for n in ['install-2.24.2.zip','update-2.24.2.zip','release.json']:
+ if (out/n).exists():raise SystemExit('Output exists: '+n)
+# Check publisher key before signing anything.
+pub=subprocess.check_output(['openssl','pkey','-in',str(key),'-pubout'])
+if pub.strip()!=(r/'app/update-publisher.pem').read_bytes().strip():raise SystemExit('Publisher key mismatch')
+with zipfile.ZipFile(out/'install-2.24.2.zip','w',zipfile.ZIP_DEFLATED) as z:
+ for f in sorted(r.rglob('*')):
+  n=f.relative_to(r).as_posix()
+  if f.is_symlink():raise SystemExit('Symlink: '+n)
+  if not f.is_file() or n.split('/')[0] in ['.git','tests','release-tools'] or '__pycache__' in n:continue
+  if n.startswith('private/') and n not in ['private/.htaccess','private/config.example.php','private/storage/area_photos/.gitkeep']:raise SystemExit('Unexpected private file: '+n)
+  if n.startswith(('map/public/photos/','map/public/uploads/')) and not n.endswith(('/.gitkeep','/.htaccess')):raise SystemExit('Unexpected photo: '+n)
+  z.write(f,n)
+files=['map/public/project_tools/import_photos.php', 'map/public/project_tools/import_photos_api.php', 'map/public/project_tools/import_photos.js', 'map/public/project_tools/import.php', 'map/public/project_tools/import_gpkg.php', 'map/public/project_tools/card_photo.php', 'map/public/photo.php', 'app/includes/topbar.php', 'map/public/project_tools/form_theme.css', 'map/public/areas/areas.css', 'app/photo_preview.php', 'map/public/project_tools/photo_export_helpers.php', 'map/public/js/project_filters.js', 'map/public/js/advanced_filters.js', 'map/public/advanced_filters.css', 'map/public/project_tools/api.php', 'map/public/project_tools/table.php', 'map/public/project_tools/table.js', 'map/public/api/trees_geojson.php', 'map/public/project_tools/photo_caption.php', 'map/public/project_tools/photo_gallery.php', 'map/public/project_tools/export.php', 'map/public/project_tools/qgis_export.php', 'assets/fonts/DejaVuSans-Export.ttf', 'assets/fonts/LICENSE-DejaVu.txt', 'map/public/share_tree.php', 'map/public/js/areas_layer.js', 'map/public/areas/areas.js', 'map/public/areas/index.php', 'map/public/js/map.js', 'map/public/js/markers.js', 'map/public/js/popup.js', 'map/public/js/table.js', 'map/public/photos/.htaccess', 'map/public/project_tools/gpkg_import.js', 'map/public/tree_form/scripts.php', 'map/public/uploads/.htaccess', 'map/public/project_tools/editor_exit.js', 'map/public/index.php', 'map/public/tree_new.php', 'docs/OPRAVY_2_24_1.md', 'docs/OPRAVY_2_24_2.md']
+with tempfile.TemporaryDirectory() as td:
+ payload=pathlib.Path(td)
+ for n in files:
+  dest=payload/n;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(r/n,dest)
+ subprocess.run(['python3',str(r/'release-tools/build.py'),'--payload',str(payload),'--from-version','2.24.1','--version','2.24.2','--key',str(key),'--notes','Oprava exportu s popisky, názvy a složky fotografií, import fotografií, rychlé náhledy a úpravy ovládání. Bez změn databáze.','--output',str(out/'update-2.24.2.zip'),'--download-url','https://github.com/jirivis/stromy-v-mape/releases/download/v2.24.2/update-2.24.2.zip'],check=True)

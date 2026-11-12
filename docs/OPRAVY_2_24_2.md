@@ -1,6 +1,6 @@
-# Rozpracované opravy po nasazené 2.24.1
+# Aktualizace 2.24.2 z verze 2.24.1
 
-Změny pouze ve zdroji na GitHubu, bez vydání aktualizačního ZIPu. Před budoucím vydáním je nutné zvýšit verzi a vytvořit aktualizaci z 2.24.1; původní balíček z 11. listopadu se nenahrazuje a znovu neinstaluje.
+Podepsaný aktualizační ZIP pro instalaci 2.24.1. Bez databázových migrací; konfigurace a fotografie zůstávají zachovány. Nahrát přes Aktualizace aplikace, ověřit balíček a schválit instalaci po záloze. Původní ZIP z 11. listopadu se nepřepisuje.
 
 - Původní minimální značky 20 px a labels 13 px i na PC (příčinou malé velikosti byl zoom prohlížeče 50 %).
 - Export se zapnutými popisky: zdrojový rastr je uvolněn před JPEG kódováním, fotografie ploch se do ZIPu přidávají ze souborů místo hromadění obsahu v paměti, již komprimované fotografie se znovu nekomprimují, hotový ZIP se posílá po 1 MB bez PHP bufferu a komprese odpovědi. Uvolnění session a požadavek na neomezený PHP čas. Pevné limity hostingu zůstávají v platnosti. Přesná příčina uživatelova původního přerušení bez serverového logu není potvrzena. Chyby zpracování se nyní zobrazují přímo na exportní stránce. Limit fotografií 1 GB zůstává a je hlášen.
