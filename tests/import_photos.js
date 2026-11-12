@@ -10,3 +10,6 @@ assert.throws(()=>P.assignments([{name:'x.jpg'}],'folders','trees','',''),/urči
 console.log('PASS photo folder/single/CSV assignment, duplicate names/rows rejected, one-photo-per-row notes');
 
 assert.equal(P.assignments([a],'csv','trees','',`soubor;cislo;popisek\na.jpg;66;"'=1+1"`)[0].note,'=1+1');
+assert.equal(P.assignments([{name:'x.jpg',webkitRelativePath:'Vystup/Strom_01/x.jpg'}],'folders','trees','','')[0].code,'1');
+assert.equal(P.assignments([{name:'x.jpg',webkitRelativePath:'Vystup/strom-002/x.jpg'}],'folders','trees','','')[0].code,'2');
+assert.equal(P.assignments([{name:'x.jpg'}],'folders','trees','','',true)[0].error,'Nelze určit číslo objektu');

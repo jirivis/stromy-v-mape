@@ -20,7 +20,7 @@ with tempfile.TemporaryDirectory() as td:
     try:request('import_api.php','preview',{});break
     except ConnectionRefusedError:time.sleep(.1)
    geom={'type':'Polygon','coordinates':[[[14,50],[14.001,50],[14.001,50.001],[14,50]]]}
-   for endpoint,table,row,field in [('import_api.php','trees',{'usr_id':401,'species':'Import test'},'usr_id'),('import_areas_api.php','svm_areas',{'code':'401','geometry':geom},'code')]:
+   for endpoint,table,row,field in [('import_api.php','trees',{'usr_id':401,'species':'Import test','vitality':0},'usr_id'),('import_areas_api.php','svm_areas',{'code':'401','geometry':geom},'code')]:
     data={'mode':'create','rows':[row]}
     assert request(endpoint,'preview',data,token='wrong')[0]==403
     assert request(endpoint,'preview',data,sid='importviewer')[0]==403
@@ -108,6 +108,21 @@ with tempfile.TemporaryDirectory() as td:
    with zipfile.ZipFile(io.BytesIO(body)) as archive:
     assert archive.testzip() is None
     assert 'fotografie/plocha401_20261112_153341_01.jpg' in archive.namelist()
+   status,body=export(dict(base,selection=json.dumps({'trees':[own],'areas':[]}),photos='1',photo_captions='1',gpkg='1',qgz='1',**{'async':'1'}));assert status==200,(status,body[:500])
+   ready=json.loads(body);url='/map/public/project_tools/'+ready['download']
+   status,archive_bytes=get_photo(url);assert status==200 and len(archive_bytes)==ready['bytes']
+   assert get_photo(url)[1]==archive_bytes # repeated download does not regenerate captions
+   assert get_photo(url,cookie='PHPSESSID=importviewer')[0]==403
+   session('othereditor',41);sql("UPDATE project_users SET project_role='editor' WHERE project_id=40 AND user_id=41")
+   assert get_photo(url,cookie='PHPSESSID=othereditor')[0]==404
+   sql("UPDATE project_users SET project_role='viewer' WHERE project_id=40 AND user_id=41")
+   c=http.client.HTTPConnection('127.0.0.1',33085);c.request('GET',url,headers={'Cookie':'PHPSESSID=importer','Range':'bytes=10-99'});response=c.getresponse();assert response.status==206;assert response.read()==archive_bytes[10:100];c.close()
+   with zipfile.ZipFile(io.BytesIO(archive_bytes)) as archive:
+    qgz=next(n for n in archive.namelist() if n.endswith('.qgz'));gpkg=qgz[:-4]+'.gpkg';assert gpkg in archive.namelist()
+    with zipfile.ZipFile(io.BytesIO(archive.read(qgz))) as q:
+     xml=q.read('projekt.qgs').decode();assert './'+gpkg+'|layername=' in xml
+   status,body=export(dict(base,selection='{}',**{'async':'1'}));assert status==422 and 'error' in json.loads(body)
+   assert sql('SELECT vitality IS NULL FROM trees WHERE id='+own)=='1'
    status,body=export(dict(base,selection='{}',frame='1'));assert status==422 and b'svmExportError' in body
    print('PASS photo import: role/project scope, ambiguous/duplicate plans, content fingerprint, idempotent retry; caption and original ZIP downloads')
    print('PASS export HTTP: invalid/null selection rejected; selected ZIP contains only authorized selected tree')

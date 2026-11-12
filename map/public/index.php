@@ -201,7 +201,7 @@ window.TreeAppUser = {
 <script src="/map/public/js/markers.js?v=2.24.2"></script>
 <script src="/map/public/js/project_filters.js?v=2.24.2"></script>
 <script src="/map/public/js/filters.js"></script>
-<link rel="stylesheet" href="/map/public/advanced_filters.css?v=2.24.2">
+<link rel="stylesheet" href="/map/public/advanced_filters.css?v=2.24.3">
 <script src="/map/public/js/advanced_filters.js?v=2.24.2"></script>
 <script src="/map/public/js/trees.js"></script>
 <script src="/map/public/js/areas_layer.js?v=2.24.2"></script>

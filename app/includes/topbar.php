@@ -45,11 +45,12 @@ $showDashboardLink = $showDashboardLink ?? true;
 </div>
 
     <div class="app-topbar__right">
-        <?php if(!empty($showProjectTableLink)): ?><a class="app-topbar__button" href="/map/public/project_tools/table.php">Tabulka projektu</a><?php endif; ?>
 
         <span class="app-topbar__user">
             <?= htmlspecialchars($topbarUsername) ?>
         </span>
+
+        <?php if(!empty($showProjectTableLink)): ?><a class="app-topbar__button" href="/map/public/project_tools/table.php">Tabulka projektu</a><?php endif; ?>
 
         <?php if ($showDashboardLink): ?>
             <a href="/dashboard.php" class="app-topbar__button">

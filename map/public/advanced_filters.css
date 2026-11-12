@@ -2,4 +2,4 @@
 
 .svm-shared-filters{border-top:1px solid #c9d6ca;padding:10px 0}.svm-shared-filters>label{display:block;margin:8px 0}.svm-shared-filters input:not([type=checkbox]),.svm-shared-filters select{max-width:100%;box-sizing:border-box;min-height:34px}.svm-shared-filters>input{width:100%}.svm-shared-filters details{margin:10px 0}.svm-shared-filters button{margin:4px}.svm-shared-filters p{font-size:.9em}.svm-shared-filters .svm-filter-rule{max-width:650px}
 
-@media(min-width:800px){.tree-filter-control:not(.tree-filter-control--collapsed){width:430px;max-width:calc(100vw - 100px)}.tree-filter-control__content{width:auto;max-height:75dvh;padding:14px}.tree-filter-control .svm-filter-rule{grid-template-columns:minmax(0,1fr) auto}}
+@media(min-width:800px){.tree-filter-control:not(.tree-filter-control--collapsed){width:480px!important;min-width:0!important;max-width:calc(100vw - 100px)!important}.tree-filter-control__content{width:auto;max-height:75dvh;padding:14px}.tree-filter-control .svm-filter-rule{grid-template-columns:minmax(0,1fr) auto}}
