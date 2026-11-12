@@ -23,3 +23,6 @@ function exSendZip(string $path,string $name):void{
  header('Content-Type: application/zip');header('Content-Encoding: identity');header('Cache-Control: private, no-store, no-transform');header('Content-Disposition: attachment; filename="'.$name.'"');header('Content-Length: '.filesize($path));
  try{while(!feof($handle)){if(connection_aborted())break;$chunk=fread($handle,1024*1024);if($chunk===false)throw new RuntimeException('Čtení ZIPu selhalo.');echo $chunk;flush();}}finally{fclose($handle);}
 }
+
+// Prefix formula-looking cells and literal apostrophes; the importer reverses this convention.
+function exPhotoCsvCell(mixed $value):string{$v=(string)$value;return preg_match('/^(?:[\s]*[=+@-]|[\x09\x0d\x0a\x27])/u',$v)?"'".$v:$v;}

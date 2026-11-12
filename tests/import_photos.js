@@ -8,3 +8,5 @@ assert.throws(()=>P.assignments([a],'csv','trees','','soubor;cislo\na.jpg;66\na.
 const result=P.assignments([a,b],'csv','trees','','soubor;cislo;popisek\nstrom66/a.jpg;66;"Koruna; detail"\nstrom67/a.jpg;67;Kmen');assert.equal(result[0].note,'Koruna; detail');assert.equal(result[1].code,'67');
 assert.throws(()=>P.assignments([{name:'x.jpg'}],'folders','trees','',''),/určit/);
 console.log('PASS photo folder/single/CSV assignment, duplicate names/rows rejected, one-photo-per-row notes');
+
+assert.equal(P.assignments([a],'csv','trees','',`soubor;cislo;popisek\na.jpg;66;"'=1+1"`)[0].note,'=1+1');

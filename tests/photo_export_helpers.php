@@ -16,3 +16,5 @@ file_put_contents($source,substr($raw,0,2)."\xff\xe1".pack('n',strlen($exif)+2).
 check(exCaptureStamp($source,'20250101_010101.jpg')==='20261112_153341');
 echo "PASS actual EXIF capture timestamp takes priority over filename\n";
 }finally{unlink($source);}
+
+check(exPhotoCsvCell('=1+1')==="'=1+1");check(exPhotoCsvCell("'literal")==="''literal");check(exPhotoCsvCell('Koruna')==='Koruna');
