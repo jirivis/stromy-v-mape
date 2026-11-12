@@ -10,7 +10,7 @@ TreeApp.showTreeLabels = true;
 TreeApp.treeLabelMinZoom = 17;
 
 TreeApp.getMarkerDimension = function (tree, mode) {
-    const minimum = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches ? 20 : 28;
+    const minimum = 20;
     const firstPositive = function (fields) {
         for (const field of fields) {
             const n = Number(tree[field]);
@@ -37,14 +37,13 @@ TreeApp.installTreeLabelStyles = function () {
         .leaflet-tooltip.tree-usr-label {
             background: transparent; border: 0; box-shadow: none;
             padding: 0; margin: 0; color: #fff;
-            font: 700 16px/1.2 Arial, sans-serif;
+            font: 700 13px/1.2 Arial, sans-serif;
             white-space: nowrap; pointer-events: none;
             -webkit-text-stroke: 2.5px #202020;
             paint-order: stroke fill;
             text-shadow: 1px 1px 1px #202020, -1px -1px 1px #202020,
                          1px -1px 1px #202020, -1px 1px 1px #202020;
         }
-        @media (pointer: coarse) { .leaflet-tooltip.tree-usr-label { font-size: 13px; } }
         .leaflet-tooltip.tree-usr-label::before { display: none; }
     `;
     document.head.appendChild(style);

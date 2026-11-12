@@ -11,10 +11,13 @@ for(const file of ['map/public/js/popup.js','map/public/tree_form/scripts.php'])
 }
 const source=fs.readFileSync('map/public/js/markers.js','utf8');const a=source.indexOf('TreeApp.getMarkerDimension'),b=source.indexOf('// Styl popisku',a);
 const ctx={TreeApp:{}};vm.createContext(ctx);vm.runInContext(source.slice(a,b),ctx);
-for(const mode of ['none','girth','dbh','spread','height'])assert.equal(ctx.TreeApp.getMarkerDimension({},mode),28);
+for(const mode of ['none','girth','dbh','spread','height'])assert.equal(ctx.TreeApp.getMarkerDimension({},mode),20);
 assert.equal(ctx.TreeApp.getMarkerDimension({spread_m:20},'spread'),80);
 console.log('PASS image gateway URLs and readable minimum marker dimensions');
 
 ctx.window={matchMedia:()=>({matches:true})};
 for(const mode of ['none','girth','dbh','spread','height'])assert.equal(ctx.TreeApp.getMarkerDimension({},mode),20);
 console.log('PASS touch devices retain original minimum dimensions');
+
+assert.match(source,/font: 700 13px\/1\.2/);
+assert.doesNotMatch(source,/font: 700 16px/);
