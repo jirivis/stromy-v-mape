@@ -10,6 +10,30 @@
  const warning=L.control({position:'bottomleft'});warning.onAdd=()=>{const box=el('div','Podklad se nenačetl. Vyberte jiný v ovladači vrstev.');box.className='tile-warning';return box;};let warned=false;
  for(const tiles of [osm,ortho,cadastre])tiles.on('tileerror',()=>{if(!warned){warning.addTo(map);warned=true;}});
  map.on('baselayerchange',()=>{if(warned){map.removeControl(warning);warned=false;}});let layer;
+ // Device location stays in this browser; never included in API requests.
+ let locationWatch=null,locationEpoch=0,locationDot=null,accuracyCircle=null,locationEnabled=false,firstLocation=true;
+ function stopLocation(message='Poloha je vypnutá.'){
+  locationEnabled=false;locationEpoch++;if(locationWatch!==null)navigator.geolocation.clearWatch(locationWatch);locationWatch=null;
+  if(locationDot)map.removeLayer(locationDot);if(accuracyCircle)map.removeLayer(accuracyCircle);locationDot=accuracyCircle=null;
+  $('deviceLocation').setAttribute('aria-pressed','false');$('deviceLocation').textContent='Moje poloha';$('locationStatus').textContent=message;
+ }
+ $('deviceLocation').onclick=()=>{
+  if(locationEnabled){stopLocation();return;}
+  if(!navigator.geolocation){$('locationStatus').textContent='Tento prohlížeč nepodporuje polohu zařízení.';return;}
+  if(!window.isSecureContext){$('locationStatus').textContent='Poloha zařízení vyžaduje zabezpečené připojení HTTPS.';return;}
+  locationEnabled=true;firstLocation=true;const epoch=++locationEpoch;$('deviceLocation').setAttribute('aria-pressed','true');$('deviceLocation').textContent='Vypnout polohu';$('locationStatus').textContent='Zjišťuji polohu…';
+  try{locationWatch=navigator.geolocation.watchPosition(position=>{
+   if(!locationEnabled||epoch!==locationEpoch)return;
+   const {latitude,longitude,accuracy}=position.coords;if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||!Number.isFinite(accuracy)||accuracy<0)return;
+   const point=[latitude,longitude];
+   if(!locationDot){accuracyCircle=L.circle(point,{radius:accuracy,color:'#1976d2',weight:1,fillOpacity:.12,interactive:false}).addTo(map);locationDot=L.circleMarker(point,{radius:7,color:'#fff',weight:3,fillColor:'#1976d2',fillOpacity:1,interactive:false}).addTo(map);}
+   else{locationDot.setLatLng(point);accuracyCircle.setLatLng(point).setRadius(accuracy);}
+   if(firstLocation){map.setView(point,Math.max(map.getZoom(),17));firstLocation=false;}
+   $('locationStatus').textContent='Přesnost polohy přibližně '+Math.round(accuracy)+' m.';
+  },error=>{if(!locationEnabled||epoch!==locationEpoch)return;stopLocation(error.code===1?'Přístup k poloze byl zamítnut. Povolte jej v nastavení prohlížeče.':error.code===3?'Zjištění polohy trvalo příliš dlouho. Zkuste ji zapnout znovu.':'Polohu se nepodařilo zjistit. Zkuste ji zapnout znovu.');},{enableHighAccuracy:true,maximumAge:10000,timeout:20000});}
+  catch{stopLocation('Polohu se nepodařilo zapnout.');}
+ };
+ window.addEventListener('pagehide',()=>stopLocation());
  $('close').onclick=()=>{generation++;$('detail').hidden=true;map.invalidateSize();};
  async function open(feature){const seq=++generation;$('detail').hidden=false;$('card').textContent='Načítám…';map.invalidateSize();try{const d=await api('detail',feature.properties.token);if(seq!==generation)return;const card=$('card');card.replaceChildren(el('h2',(d.kind==='trees'?'Strom ':'Plocha ')+d.code));const dl=el('dl');for(const v of d.values)dl.append(el('dt',v.label),el('dd',v.value));card.append(dl);
   for(const photo of d.photos){const figure=el('figure'),a=el('a'),img=el('img');a.href=photo.url;a.target='_blank';a.rel='noopener';img.src=photo.url;img.alt='Fotografie objektu '+d.code;img.loading='lazy';a.append(img);figure.append(a);if(photo.note)figure.append(el('figcaption',photo.note));card.append(figure);}
