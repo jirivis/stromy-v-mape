@@ -293,7 +293,8 @@ TreeApp.getTreeMarkerColor = function (
  */
 TreeApp.createTreeMarkerIcon = function (
     tree,
-    size
+    size,
+    backgroundOverride
 ) {
 
     let iconUrl =
@@ -308,7 +309,7 @@ TreeApp.createTreeMarkerIcon = function (
     }
 
     const backgroundColor =
-        TreeApp.getTreeMarkerColor(
+        backgroundOverride ?? TreeApp.getTreeMarkerColor(
             tree,
             TreeApp.markerColorMode
         );
