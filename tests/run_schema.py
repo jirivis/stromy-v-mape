@@ -22,6 +22,7 @@ with tempfile.TemporaryDirectory(prefix='svm-schema-') as td:
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('auth_http.py')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('admin_http.py')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('import_http.py')),socket],check=True)
+            subprocess.run(['python3',str(pathlib.Path(__file__).with_name('public_map_http.py')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('release_package.py')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('release_patch.py')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('release_patch_2_24_2.py')),socket],check=True)

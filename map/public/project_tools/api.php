@@ -2,6 +2,7 @@
 if(in_array($_GET['action']??'', ['templates','save_template','delete_template'],true))define('PT_TEMPLATES_ONLY',true);
 require_once __DIR__.'/common.php';
 require_once __DIR__.'/../areas/history.php';
+require_once dirname(__DIR__,3).'/app/public_map.php';
 $transaction=false;
 try{
  $action=$_GET['action']??'rows';
@@ -10,9 +11,9 @@ try{
   if($action==='settings')ptOut(['project_id'=>$project,'catalog'=>ptCatalog(),'settings'=>ptSettings(),'can_configure'=>$canConfigure]);
   if($action==='filter_fields'){$settings=ptSettings();ptOut(['project_id'=>$project,'trees'=>ptTableFields('trees',$settings['hidden']['trees']??[]),'areas'=>ptTableFields('areas',$settings['hidden']['areas']??[])]);}
   if($action==='rows'){
-   $kind=($_GET['kind']??'trees')==='areas'?'areas':'trees';$rows=ptRows($kind);$out=[];
-   foreach($rows as $r){$v=$r;if($kind==='areas'){$v=array_merge(json_decode($r['attributes_json'],true),['id'=>$r['id'],'code'=>$r['code'],'area_m2'=>$r['area_m2']]);}$out[]=['id'=>$r['id'],'version'=>ptVersion($r),'values'=>$v,'geometry'=>ptGeometry($kind,$r)];}
-   ptOut(['project_id'=>$project,'rows'=>$out,'fields'=>$kind==='trees'?ptTreeFields():ptAreaFields(),'can_edit'=>$canEdit,'table_fields'=>ptTableFields($kind,ptSettings()['hidden'][$kind]??[])]);
+   $kind=($_GET['kind']??'trees')==='areas'?'areas':'trees';$rows=ptRows($kind);$out=[];$public=[];if(pmReady($mysqli))foreach(pmQuery($mysqli,'SELECT object_id,enabled FROM svm_public_objects WHERE project_id=? AND kind=?',[$project,$kind])->get_result()->fetch_all(MYSQLI_ASSOC) as $pub)$public[(string)$pub['object_id']]=(bool)$pub['enabled'];
+   foreach($rows as $r){$v=$r;if($kind==='areas'){$v=array_merge(json_decode($r['attributes_json'],true),['id'=>$r['id'],'code'=>$r['code'],'area_m2'=>$r['area_m2']]);}$out[]=['public'=>$public[(string)$r['id']]??false,'id'=>$r['id'],'version'=>ptVersion($r),'values'=>$v,'geometry'=>ptGeometry($kind,$r)];}
+   ptOut(['project_id'=>$project,'rows'=>$out,'fields'=>$kind==='trees'?ptTreeFields():ptAreaFields(),'can_publish'=>$canConfigure&&pmReady($mysqli),'can_edit'=>$canEdit,'table_fields'=>ptTableFields($kind,ptSettings()['hidden'][$kind]??[])]);
   }
   throw new RuntimeException('Neznámá operace.',404);
  }

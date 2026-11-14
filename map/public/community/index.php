@@ -1,0 +1,4 @@
+<!doctype html><html lang="cs"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Veřejná mapa stromů a ploch</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="community.css">
+<header><strong id="title">Veřejná mapa stromů a ploch</strong><label>Hledat číslo objektu <input id="search" type="search" placeholder="Číslo objektu"></label><label><input type="checkbox" id="trees" checked> Stromy</label><label><input type="checkbox" id="areas" checked> Plochy</label><span id="status" role="status"></span></header><main><div id="map" aria-label="Mapa"></div><aside id="detail" hidden><button id="close" type="button">Zavřít</button><div id="card"></div></aside></main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="community.js?v=1"></script></html>
