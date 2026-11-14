@@ -26,3 +26,11 @@ Volitelný e-mail je upozornění na novou aktivitu, nejvýše jednou za hodinu 
 Databázová příprava 08_public_map.sql přidává čtyři samostatné tabulky (nastavení, zveřejněné objekty, podněty, krátkodobé limity). Nemění trees, fotografie ani historii a nic nezveřejňuje. Opakované spuštění existující nastavení nepřepíše. Na hostingu s omezenými databázovými právy je potřeba SQL přípravu provést účtem správce databáze; běžné přihlášení aplikace administrátorská databázová práva nedostává.
 
 Testy: anonymní mapa bez přihlášení, dvojí zapnutí, soukromé údaje a interní ID, oprávnění a CSRF, cizí projekty, odvolání přístupu k fotografii, neveřejné podněty a kontakty, stavy, mazání, opakování odeslání a limitování. Produkční data se při testech nepoužívají.
+
+## Veřejné prohlížení – rozšíření po 2.25.0
+
+Veřejná mapa nabízí OSM, ortofoto ČÚZK, bílý podklad a překryv katastru. Pro OSM používá standardní adresu tile.openstreetmap.org a politiku strict-origin-when-cross-origin: poskytovatel obdrží jen původ webu, nikoli token projektu. Při chybě dlaždic je nabídnuto přepnutí podkladu; trvalé blokování poskytovatelem tím nelze zaručeně odstranit.
+
+Návštěvník může zvolit značku stromu (kruh, čtverec, trojúhelník, strom), čísla objektů a kategoriální barvení dle zveřejněného údaje s legendou. Devět barev se u většího počtu kategorií opakuje. Vyhledávání v číslech a veřejných hodnotách, přepínače geometrie a jedna atributová podmínka společně filtrují mapu i tabulku. Číselné porovnání podporuje desetinnou čárku. Tabulka je pouze pro čtení, řaditelná, stránkovaná po 50 objektech; kliknutí na číslo otevře detail a přiblíží objekt. Zatím obsahuje stejně jako mapa jen objekty s použitelnou geometrií.
+
+Mapová odpověď obsahuje jen výslovně publikované objekty a hodnoty z téhož povoleného seznamu jako karta. Filtry ani symbolizace neposkytují skryté hodnoty. Tabulka nevolá přihlašované editační API. Nastavení zobrazení návštěvníka nemění databázi.

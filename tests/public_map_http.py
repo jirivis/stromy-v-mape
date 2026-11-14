@@ -41,8 +41,9 @@ with tempfile.TemporaryDirectory() as td:
    assert pub()[0]==404
    settings.update(version=1,enabled=True);assert admin('settings',settings)[0]==200
    status,data,_=pub();assert status==200 and len(data['features'])==2,data
-   encoded=json.dumps(data);assert all(s not in encoded for s in ['PRIVATE_TREE','OTHER_PROJECT','NEVER_PUBLIC','object_id','project_id'])
+   encoded=json.dumps(data);assert all(s not in encoded for s in ['PRIVATE_TREE','OTHER_PROJECT','NEVER_PUBLIC','object_id','project_id','AREA_SECRET','attributes_json','photo_url'])
    feature=next(f for f in data['features'] if f['properties']['kind']=='trees');ot=feature['properties']['token'];at=next(f['properties']['token'] for f in data['features'] if f['properties']['kind']=='areas')
+   assert 'Public text' in json.dumps(feature['properties']['values'])
    status,detail,_=pub('detail',ot);assert status==200 and detail['photos']==[];assert 'Public text' in json.dumps(detail) and 'NEVER_PUBLIC' not in json.dumps(detail)
    assert 'AREA_SECRET' not in json.dumps(pub('detail',at)[1]);assert pub('detail',foreign)[0]==404
    settings.update(version=2,photos=True);assert admin('settings',settings)[0]==200

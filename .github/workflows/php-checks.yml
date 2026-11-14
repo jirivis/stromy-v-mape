@@ -27,6 +27,7 @@ jobs:
           npm install --prefix /tmp/svm-filter-tests --no-audit --no-fund jsdom@26.1.0
           NODE_PATH=/tmp/svm-filter-tests/node_modules node tests/project_filters.js
           NODE_PATH=/tmp/svm-filter-tests/node_modules node tests/import_photo_ui.js
+          NODE_PATH=/tmp/svm-filter-tests/node_modules node tests/community_ui.js
       - name: PHP syntax
         run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
       - name: Export photo captions
