@@ -1,0 +1,176 @@
+[
+  {
+    "table": "svm_public_maps",
+    "column": "project_id",
+    "type": "int(11)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_maps",
+    "column": "token",
+    "type": "char(48)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_maps",
+    "column": "enabled",
+    "type": "tinyint(4)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_maps",
+    "column": "fields_json",
+    "type": "text",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_maps",
+    "column": "photos",
+    "type": "tinyint(4)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_maps",
+    "column": "photo_notes",
+    "type": "tinyint(4)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_maps",
+    "column": "reports",
+    "type": "tinyint(4)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_maps",
+    "column": "email_notify",
+    "type": "tinyint(4)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_maps",
+    "column": "last_mail_at",
+    "type": "datetime",
+    "nullable": true
+  },
+  {
+    "table": "svm_public_maps",
+    "column": "version",
+    "type": "int(11)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_objects",
+    "column": "project_id",
+    "type": "int(11)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_objects",
+    "column": "kind",
+    "type": "varchar(5)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_objects",
+    "column": "object_id",
+    "type": "int(11)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_objects",
+    "column": "token",
+    "type": "char(48)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_objects",
+    "column": "enabled",
+    "type": "tinyint(4)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "id",
+    "type": "bigint(20)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "project_id",
+    "type": "int(11)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "kind",
+    "type": "varchar(5)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "object_id",
+    "type": "int(11)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "object_code",
+    "type": "varchar(100)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "message",
+    "type": "text",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "contact",
+    "type": "varchar(200)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "status",
+    "type": "varchar(12)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "created_at",
+    "type": "datetime",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "updated_at",
+    "type": "datetime",
+    "nullable": true
+  },
+  {
+    "table": "svm_public_reports",
+    "column": "updated_by",
+    "type": "int(11)",
+    "nullable": true
+  },
+  {
+    "table": "svm_public_rate",
+    "column": "bucket",
+    "type": "char(64)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_rate",
+    "column": "hits",
+    "type": "int(11)",
+    "nullable": false
+  },
+  {
+    "table": "svm_public_rate",
+    "column": "expires_at",
+    "type": "datetime",
+    "nullable": false
+  }
+]
