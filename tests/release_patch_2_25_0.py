@@ -50,7 +50,8 @@ $db=new mysqli('127.0.0.1','root','','valuation_fresh',(int)$argv[4]);
 function snapshot(mysqli $db):string{
  $data=[];
  foreach(['trees','svm_areas','trees_photo','svm_area_photos','tree_history','svm_area_history','species','cultivars','svm_public_maps','svm_public_objects','svm_public_reports','svm_public_rate'] as $table){
-  $data[$table]=$db->query('SELECT * FROM `'.$table.'` ORDER BY id')->fetch_all(MYSQLI_ASSOC);
+  $order=match($table){'svm_public_maps'=>'project_id','svm_public_objects'=>'project_id,kind,object_id','svm_public_rate'=>'bucket',default=>'id'};
+  $data[$table]=$db->query('SELECT * FROM `'.$table.'` ORDER BY '.$order)->fetch_all(MYSQLI_ASSOC);
  }
  return hash('sha256',serialize($data));
 }
