@@ -86,3 +86,5 @@ body{height:100dvh;display:flex;flex-direction:column}header{flex-shrink:0}main{
 .public-location-control button:hover{background:#f4f4f4}
 .public-location-control button[aria-pressed=true]{background:#dceee0;box-shadow:inset 0 0 0 2px #28613d}
 .public-location-control button:focus-visible{outline:3px solid #1976d2;outline-offset:2px}
+
+.public-location-control button:disabled{opacity:.45;cursor:default}

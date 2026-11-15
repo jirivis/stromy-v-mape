@@ -17,6 +17,14 @@
   box.append(button);L.DomEvent.disableClickPropagation(box);L.DomEvent.disableScrollPropagation(box);return box;
  };
  locationControl.addTo(map);
+ const fitControl=L.control({position:'topright'});
+ fitControl.onAdd=()=>{
+  const box=el('div');box.className='leaflet-bar public-location-control';
+  const button=el('button','⛶');button.id='showAll';button.type='button';button.title='Zobrazit vše';button.setAttribute('aria-label','Zobrazit vše');button.disabled=true;
+  button.onclick=()=>{if(layer&&layer.getLayers().length)map.fitBounds(layer.getBounds(),{padding:[20,20],maxZoom:18});};
+  box.append(button);L.DomEvent.disableClickPropagation(box);L.DomEvent.disableScrollPropagation(box);return box;
+ };
+ fitControl.addTo(map);
  function locationButtonState(enabled){
   const button=$('deviceLocation'),label=enabled?'Vypnout polohu':'Moje poloha';
   button.setAttribute('aria-pressed',String(enabled));button.setAttribute('aria-label',label);button.title=label;
@@ -74,6 +82,7 @@
    if(layer)map.removeLayer(layer);visible=data.features.filter(matches);const key=$('colorField').value;colors=new Map();$('legend').replaceChildren();
    if(key){const categories=[...new Set(data.features.map(f=>value(f,key)))].sort((a,b)=>a.localeCompare(b,'cs',{numeric:true}));categories.forEach((v,i)=>{const field=mainColorFields[key],sample=field&&data.features.find(f=>f.properties.kind==='trees'&&value(f,key)===v&&Object.hasOwn(f.properties.marker||{},field));colors.set(v,sample?TreeApp.getTreeMarkerColor(sample.properties.marker,field==='next_insp_at'?'next_inspection':field):v===''?'#777777':palette[i%palette.length]);});for(const v of categories){const item=el('span'),swatch=el('i');swatch.style.backgroundColor=colors.get(v);item.append(swatch,document.createTextNode(v||'Nevyplněno'));$('legend').append(item);}}
    layer=L.geoJSON(visible,{style:f=>({color:color(f),weight:2,fillOpacity:.25}),pointToLayer:(f,ll)=>{const tree=f.properties.marker||{},size=TreeApp.getMarkerDimension(tree,$('sizeMode').value),background=$('colorField').value?color(f):$('symbol').value==='transparent'?'transparent':'#ffffff';return L.marker(ll,{icon:TreeApp.createTreeMarkerIcon(tree,size,background)});},onEachFeature:(f,l)=>{const code=f.properties.code,tip=el('span',(f.properties.kind==='areas'&&!/^p/i.test(code)?'p':'')+code);l.bindTooltip(tip,{permanent:$('labels').checked,direction:'top'});l.on('click',()=>open(f));}}).addTo(map);
+   $('showAll').disabled=layer.getLayers().length===0;
    $('status').textContent='Zobrazeno '+visible.length+' z '+data.features.length+' objektů.';$('filterValue').disabled=['empty','filled'].includes($('filterOp').value);drawTable();
   }
   for(const id of ['search','trees','areas','symbol','sizeMode','labels','colorField','filterField','filterOp','filterValue'])$(id).addEventListener('input',()=>{page=0;render();});
