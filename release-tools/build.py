@@ -31,6 +31,6 @@ with tempfile.TemporaryDirectory() as td:
   z.writestr('manifest.json',raw);z.writestr('signature.txt',base64.b64encode(sig))
   for name in files:z.write(root/name,'payload/'+name)
 if a.download_url:
- release={'version':a.version,'url':a.download_url,'sha256':hashlib.sha256(pathlib.Path(a.output).read_bytes()).hexdigest(),'notes':a.notes}
+ release={'from':a.from_version,'version':a.version,'url':a.download_url,'sha256':hashlib.sha256(pathlib.Path(a.output).read_bytes()).hexdigest(),'notes':a.notes}
  pathlib.Path(a.output).with_name('release.json').write_text(json.dumps(release,ensure_ascii=False,indent=2))
 print('Created',a.output)
