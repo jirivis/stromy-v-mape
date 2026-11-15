@@ -38,6 +38,9 @@ $showVersion = $showVersion ?? true;
 <body class="admin-page">
 
 <div class="admin-wrapper">
+    <?php if (!empty($_SESSION['user_id']) && basename($_SERVER['SCRIPT_NAME'] ?? '') !== 'dashboard.php'): ?>
+    <nav aria-label="Návrat do přehledu" style="margin-bottom:12px"><a href="/dashboard.php" style="display:inline-block;padding:8px 12px;border:1px solid #9aac9a;border-radius:6px;color:#235536;background:#edf4ea;text-decoration:none">← Dashboard</a></nav>
+    <?php endif; ?>
     <main class="<?= htmlspecialchars($cardClass) ?>">
 
         <div class="admin-brand">

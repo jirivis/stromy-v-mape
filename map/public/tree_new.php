@@ -699,6 +699,7 @@ $page_title = $is_edit
 </style></head>
 
 <body>
+<nav style="margin:12px 0"><a href="/dashboard.php" target="_top" style="display:inline-block;padding:8px 12px;border:1px solid #9aac9a;border-radius:6px;color:#235536;background:#edf4ea;text-decoration:none">← Dashboard</a></nav>
 
 <h1>
     <?= htmlspecialchars(

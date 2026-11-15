@@ -14,7 +14,7 @@ $boot=['csrf'=>$_SESSION['areas_csrf'],'project_id'=>(int)$activeProjectId,'can_
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
 <link rel="stylesheet" href="areas.css?v=2.24.2">
 </head><body>
-<header><a href="../index.php">← Hlavní mapa</a><strong id="pageMode"><?=!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><a id="areaCardLink" hidden target="_blank" rel="noopener">Karta porostu ↗</a><span id="projectName"></span></header>
+<header><a href="/dashboard.php" target="_top">← Dashboard</a><a href="../index.php">← Hlavní mapa</a><strong id="pageMode"><?=!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><a id="areaCardLink" hidden target="_blank" rel="noopener">Karta porostu ↗</a><span id="projectName"></span></header>
 <div id="status" role="status" aria-live="polite">Načítám plochy…</div>
 <main><section class="map-column" aria-label="Mapa porostů">
 <button id="newArea" type="button" hidden>Nová plocha</button><button id="allAreas" type="button" hidden>Zobrazit všechny</button>

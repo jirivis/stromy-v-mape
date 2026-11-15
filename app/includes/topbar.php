@@ -54,7 +54,7 @@ $showDashboardLink = $showDashboardLink ?? true;
 
         <?php if ($showDashboardLink): ?>
             <a href="/dashboard.php" class="app-topbar__button">
-                Administrace
+                ← Dashboard
             </a>
         <?php endif; ?>
 
