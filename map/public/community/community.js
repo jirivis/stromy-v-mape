@@ -10,18 +10,29 @@
  const warning=L.control({position:'bottomleft'});warning.onAdd=()=>{const box=el('div','Podklad se nenačetl. Vyberte jiný v ovladači vrstev.');box.className='tile-warning';return box;};let warned=false;
  for(const tiles of [osm,ortho,cadastre])tiles.on('tileerror',()=>{if(!warned){warning.addTo(map);warned=true;}});
  map.on('baselayerchange',()=>{if(warned){map.removeControl(warning);warned=false;}});let layer;
+ const locationControl=L.control({position:'topright'});
+ locationControl.onAdd=()=>{
+  const box=el('div');box.className='leaflet-bar public-location-control';
+  const button=$('deviceLocation');button.textContent='🎯';button.title='Moje poloha';button.setAttribute('aria-label','Moje poloha');
+  box.append(button);L.DomEvent.disableClickPropagation(box);L.DomEvent.disableScrollPropagation(box);return box;
+ };
+ locationControl.addTo(map);
+ function locationButtonState(enabled){
+  const button=$('deviceLocation'),label=enabled?'Vypnout polohu':'Moje poloha';
+  button.setAttribute('aria-pressed',String(enabled));button.setAttribute('aria-label',label);button.title=label;
+ }
  // Device location stays in this browser; never included in API requests.
  let locationWatch=null,locationEpoch=0,locationDot=null,accuracyCircle=null,locationEnabled=false,firstLocation=true;
  function stopLocation(message='Poloha je vypnutá.'){
   locationEnabled=false;locationEpoch++;if(locationWatch!==null)navigator.geolocation.clearWatch(locationWatch);locationWatch=null;
   if(locationDot)map.removeLayer(locationDot);if(accuracyCircle)map.removeLayer(accuracyCircle);locationDot=accuracyCircle=null;
-  $('deviceLocation').setAttribute('aria-pressed','false');$('deviceLocation').textContent='Moje poloha';$('locationStatus').textContent=message;
+  locationButtonState(false);$('locationStatus').textContent=message;
  }
  $('deviceLocation').onclick=()=>{
   if(locationEnabled){stopLocation();return;}
   if(!navigator.geolocation){$('locationStatus').textContent='Tento prohlížeč nepodporuje polohu zařízení.';return;}
   if(!window.isSecureContext){$('locationStatus').textContent='Poloha zařízení vyžaduje zabezpečené připojení HTTPS.';return;}
-  locationEnabled=true;firstLocation=true;const epoch=++locationEpoch;$('deviceLocation').setAttribute('aria-pressed','true');$('deviceLocation').textContent='Vypnout polohu';$('locationStatus').textContent='Zjišťuji polohu…';
+  locationEnabled=true;firstLocation=true;const epoch=++locationEpoch;locationButtonState(true);$('locationStatus').textContent='Zjišťuji polohu…';
   try{locationWatch=navigator.geolocation.watchPosition(position=>{
    if(!locationEnabled||epoch!==locationEpoch)return;
    const {latitude,longitude,accuracy}=position.coords;if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||!Number.isFinite(accuracy)||accuracy<0)return;
