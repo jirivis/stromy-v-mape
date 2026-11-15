@@ -71,6 +71,7 @@ require_once __DIR__ . '/app/includes/header.php';
         <h2>Zákazníci</h2>
         <p>Subjekty, pro které jsou vedeny projekty.</p>
     </div>
+<div class="admin-toolbar-actions"><a class="btn btn-secondary" href="/dashboard.php">← Dashboard</a>
 
     <a
         href="/client_new.php"
@@ -79,6 +80,7 @@ require_once __DIR__ . '/app/includes/header.php';
         + Nový zákazník
     </a>
 
+</div>
 </div>
 
 <?php if (!$clients): ?>
@@ -201,16 +203,7 @@ require_once __DIR__ . '/app/includes/header.php';
 
 <?php endif; ?>
 
-<div class="admin-actions">
 
-    <a
-        href="/dashboard.php"
-        class="btn btn-secondary"
-    >
-        Zpět na dashboard
-    </a>
-
-</div>
 
 <?php
 require_once __DIR__ . '/app/includes/footer.php';

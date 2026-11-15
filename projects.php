@@ -214,6 +214,7 @@ require_once __DIR__
             Projekty, ke kterým máte přístup.
         </p>
     </div>
+<div class="admin-toolbar-actions"><a class="btn btn-secondary" href="/dashboard.php">← Dashboard</a>
 
     <?php if (
         $isSuperAdmin === 1
@@ -229,6 +230,7 @@ require_once __DIR__
 
     <?php endif; ?>
 
+</div>
 </div>
 
 
@@ -415,16 +417,7 @@ require_once __DIR__
 <?php endif; ?>
 
 
-<div class="admin-actions">
 
-    <a
-        href="/dashboard.php"
-        class="btn btn-secondary"
-    >
-        Zpět na dashboard
-    </a>
-
-</div>
 
 <?php
 

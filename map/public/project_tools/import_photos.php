@@ -16,5 +16,5 @@ require_once __DIR__.'/page_access.php';svmRequirePageLogin();require_once __DIR
 <p>Nejvýše 500 fotografií v dávce, každá JPG, PNG nebo WebP do 5 MB a 24 megapixelů. Fotografie nad limitem a nerozpoznané složky se zobrazí jako přeskočené. Další fotografie můžete před potvrzením odškrtnout. Nejednoznačné a nenalezené objekty se neimportují.</p>
 <button id="photoPreview" type="button">Připravit kontrolní náhled</button></fieldset>
 <p id="photoStatus" role="status"></p><div class="scroll"><table><thead><tr><th>Importovat</th><th>Soubor</th><th>Číslo objektu</th><th>Popisek</th><th>Stav</th></tr></thead><tbody id="photoRows"></tbody></table></div>
-<button id="photoCommit" type="button" disabled>Potvrdit import fotografií</button><p>Fotografie se nahrávají postupně. Při přerušení zůstávají úspěšně uložené fotografie zachované; během této stránky lze pokračovat bez jejich opakování.</p></main>
+<button id="photoCommit" type="button" disabled>Potvrdit import fotografií</button><p>Fotografie se nahrávají postupně. Při přerušení zůstávají úspěšně uložené fotografie zachované; během této stránky lze pokračovat bez jejich opakování.</p><nav class="tools no-print" aria-label="Návrat do přehledu"><a class="button" href="/dashboard.php" target="_top">← Dashboard</a></nav></main>
 <?php ptBoot(); ?><script src="import_photos.js?v=2.24.3"></script>

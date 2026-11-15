@@ -576,9 +576,10 @@ require_once __DIR__
         </p>
 
     </div>
+<div class="admin-toolbar-actions"><a class="btn btn-secondary" href="/dashboard.php">← Dashboard</a>
 
 </div>
-
+</div>
 
 <?php if ($availableUsers): ?>
 

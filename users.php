@@ -136,6 +136,7 @@ require_once __DIR__
         </p>
 
     </div>
+<div class="admin-toolbar-actions"><a class="btn btn-secondary" href="/dashboard.php">← Dashboard</a>
 
     <a
         href="/user_new.php"
@@ -144,6 +145,7 @@ require_once __DIR__
         + Nový uživatel
     </a>
 
+</div>
 </div>
 
 
@@ -347,16 +349,7 @@ require_once __DIR__
 <?php endif; ?>
 
 
-<div class="admin-actions">
 
-    <a
-        href="/dashboard.php"
-        class="btn btn-secondary"
-    >
-        Zpět na dashboard
-    </a>
-
-</div>
 
 
 <?php
