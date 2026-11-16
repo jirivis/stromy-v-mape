@@ -12,7 +12,6 @@ $isSuperAdmin = (int) ($_SESSION['is_super_admin'] ?? 0);
 
 if (
     $isSuperAdmin !== 1
-    && $role !== 'admin'
 ) {
     http_response_code(403);
     die('Nemáte oprávnění spravovat zákazníky.');

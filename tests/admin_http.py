@@ -27,16 +27,43 @@ with tempfile.TemporaryDirectory() as td:
    status,body=request('/project_edit.php?id=30','owner',dict(valid,name='changed',client_id='0',visibility='private',owner_id='30'))
    assert status==200,(status,body)
    assert sql('SELECT CONCAT(name,":",owner_id) FROM projects WHERE id=30')=='changed:31'
-   assert request('/project_users.php?id=30','owner',dict(valid,action='add',user_id='32',project_role='editor'))[0]==200
+   assert request('/project_users.php?id=30','owner',dict(valid,action='add',user_id='32',user_email='r@example.invalid',project_role='editor'))[0]==200
    assert sql('SELECT project_role FROM project_users WHERE project_id=30 AND user_id=32')=='editor'
+   # Directories must not leak contacts across projects.
+   sql("INSERT INTO clients(id,name,email,note) VALUES(30,'OWN CLIENT','ownclient@example.invalid','OWN NOTE'),(31,'FOREIGN CLIENT','secretclient@example.invalid','SECRET NOTE'); UPDATE projects SET client_id=30 WHERE id=30; UPDATE projects SET client_id=31 WHERE id=31;")
+   for who in ['owner','reader','globaladmin']:
+    for route in ['/clients.php','/client_new.php','/client_edit.php?id=31']:
+     status,body=request(route,who);assert status==403,(route,who,status)
+     assert 'secretclient@example.invalid' not in body
+     assert request(route,who,dict(valid,name='overwrite'))[0]==403
+   assert sql('SELECT name FROM clients WHERE id=31')=='FOREIGN CLIENT'
+   status,body=request('/project_users.php?id=30','owner')
+   assert status==200 and 'ga@example.invalid' not in body and 'user_email' in body
+   request('/project_users.php?id=30','owner',dict(valid,action='add',user_id='34',project_role='admin'))
+   assert sql('SELECT COUNT(*) FROM project_users WHERE project_id=30 AND user_id=34')=='0'
+   for route,who in [('/project_edit.php?id=30','owner'),('/project_new.php','globaladmin')]:
+    status,body=request(route,who);assert status==200,(route,status,body)
+    assert 'FOREIGN CLIENT' not in body and 's@example.invalid' not in body
+   request('/project_edit.php?id=30','owner',dict(valid,name='changed',client_id='31',visibility='private'))
+   assert sql('SELECT client_id FROM projects WHERE id=30')=='30'
+   status,body=request('/clients.php','super');assert status==200 and 'FOREIGN CLIENT' in body
+   _,body=request('/project_new.php','globaladmin')
+   new_csrf=re.search(r'name="project_new_csrf" value="([a-f0-9]+)"',body)[1]
+   new_data=dict(valid,project_new_csrf=new_csrf,structure_ready='1',structure_hidden='{"trees":[],"areas":[]}',structure_name='Test',name='New isolated project',visibility='private',owner_id='30',client_id='31')
+   request('/project_new.php','globaladmin',new_data)
+   assert sql("SELECT COUNT(*) FROM projects WHERE name='New isolated project'")=='0'
+   new_data['client_id']='0';status,body=request('/project_new.php','globaladmin',new_data)
+   assert status==302,(status,body)
+   assert sql("SELECT owner_id FROM projects WHERE name='New isolated project'")=='34'
+
    # A global admin without project membership cannot manage or take over a project.
    for route in ['/project_edit.php?id=30','/project_users.php?id=30']:
     assert request(route,'globaladmin')[0]==403,route
-    assert request(route,'globaladmin',dict(valid,action='add',user_id='34',project_role='admin',name='hijacked',owner_id='34'))[0]==403,route
+    assert request(route,'globaladmin',dict(valid,action='add',user_id='34',user_email='ga@example.invalid',project_role='admin',name='hijacked',owner_id='34'))[0]==403,route
    assert sql('SELECT owner_id FROM projects WHERE id=30')=='31'
    assert sql('SELECT COUNT(*) FROM project_users WHERE project_id=30 AND user_id=34')=='0'
    # Project admins may manage membership but cannot transfer ownership.
-   assert request('/project_users.php?id=30','owner',dict(valid,action='add',user_id='34',project_role='admin'))[0]==200
+   assert request('/project_users.php?id=30','owner',dict(valid,action='add',user_id='34',user_email='ga@example.invalid',project_role='admin'))[0]==200
    assert request('/project_users.php?id=30','globaladmin',dict(valid,action='change_role',user_id='32',project_role='viewer'))[0]==200
    assert sql('SELECT project_role FROM project_users WHERE project_id=30 AND user_id=32')=='viewer'
    assert request('/project_edit.php?id=30','globaladmin',dict(valid,name='changed',client_id='0',visibility='private',owner_id='34'))[0]==200
@@ -47,7 +74,7 @@ with tempfile.TemporaryDirectory() as td:
     assert sql('SELECT project_role FROM project_users WHERE project_id=30 AND user_id=31')=='owner'
    # A demotion and then removal take effect in the existing session, without a new login.
    request('/project_users.php?id=30','owner',dict(valid,action='change_role',user_id='34',project_role='viewer'))
-   assert request('/project_users.php?id=30','globaladmin',dict(valid,action='add',user_id='34',project_role='admin'))[0]==403
+   assert request('/project_users.php?id=30','globaladmin',dict(valid,action='add',user_id='34',user_email='ga@example.invalid',project_role='admin'))[0]==403
    assert request('/project_edit.php?id=30','globaladmin')[0]==403
    request('/project_users.php?id=30','owner',dict(valid,action='remove',user_id='34'))
    assert sql('SELECT COUNT(*) FROM project_users WHERE project_id=30 AND user_id=34')=='0'

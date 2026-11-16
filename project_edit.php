@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/auth.php';
+require_once __DIR__.'/app/project_directory.php';
 require_once __DIR__.'/app/auth_form.php';
 require_once __DIR__ . '/config_app.php';
 require_once __DIR__ . '/map/public/api/db.php';
@@ -137,29 +138,7 @@ $canChangeOwner =
 ---------------------------------------------------
 */
 
-$clients = [];
-
-$clientResult =
-    $mysqli->query(
-        'SELECT
-            id,
-            name,
-            ico
-         FROM clients
-         ORDER BY
-            name,
-            id'
-    );
-
-if ($clientResult) {
-
-    while (
-        $client =
-            $clientResult->fetch_assoc()
-    ) {
-        $clients[] = $client;
-    }
-}
+$clients = svmProjectClients($mysqli,$userId,$isSuperAdmin === 1);
 
 
 /*
@@ -169,29 +148,9 @@ if ($clientResult) {
 */
 
 $users = [];
-
-$userResult =
-    $mysqli->query(
-        'SELECT
-            id,
-            username,
-            email
-         FROM users
-         WHERE active = 1
-         ORDER BY
-            username,
-            id'
-    );
-
-if ($userResult) {
-
-    while (
-        $user =
-            $userResult->fetch_assoc()
-    ) {
-        $users[] = $user;
-    }
-}
+$ownerQuery=$mysqli->prepare('SELECT id,username,email FROM users WHERE active=1'.($canChangeOwner?'':' AND id=?').' ORDER BY username,id');
+if(!$canChangeOwner){$visibleOwner=(int)$project['owner_id'];$ownerQuery->bind_param('i',$visibleOwner);}
+$ownerQuery->execute();$users=$ownerQuery->get_result()->fetch_all(MYSQLI_ASSOC);$ownerQuery->close();
 
 
 /*
@@ -279,6 +238,10 @@ if ($canChangeOwner) {
             'private';
     }
 
+
+    if ($clientId > 0 && !in_array($clientId,array_map('intval',array_column($clients,'id')),true)) {
+        $error='K vybranému zadavateli nemáte přístup.';
+    }
 
     /*
      * Ověření zákazníka.
@@ -733,6 +696,7 @@ require_once __DIR__
         <select
             id="owner_id"
             name="owner_id"
+            <?= $canChangeOwner ? '' : 'disabled' ?>
             required
         >
 

@@ -272,6 +272,7 @@ foreach ($projects as $dashboardProject) {
     </p>
 </a>
 
+<?php if ($isSuperAdmin === 1): ?>
 <a
     href="/clients.php"
     class="admin-menu-card"
@@ -282,8 +283,6 @@ foreach ($projects as $dashboardProject) {
         Správa zadavatelů a jejich kontaktních údajů.
     </p>
 </a>
-
-<?php if ($isSuperAdmin === 1): ?>
 
 <a
     href="/users.php"

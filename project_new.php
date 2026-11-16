@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/auth.php';
+require_once __DIR__.'/app/project_directory.php';
 require_once __DIR__.'/app/auth_form.php';
 require_once __DIR__ . '/config_app.php';
 require_once __DIR__ . '/map/public/api/db.php';
@@ -45,7 +46,7 @@ if (
 $error = '';
 
 require_once __DIR__.'/map/public/project_tools/structure_catalog.php';
-$canChangeOwner = $isSuperAdmin === 1 || $role === 'admin';
+$canChangeOwner = $isSuperAdmin === 1;
 $_SESSION['project_new_csrf'] ??= bin2hex(random_bytes(32));
 $structureHidden=['trees'=>[],'areas'=>[]];
 $structureName='Vlastní výběr polí';
@@ -103,29 +104,9 @@ $ownerId =
 ---------------------------------------------------
 */
 
-$clients = [];
+if (!$canChangeOwner) $ownerId=$userId;
 
-$clientResult =
-    $mysqli->query(
-        'SELECT
-            id,
-            name,
-            ico
-         FROM clients
-         ORDER BY
-            name,
-            id'
-    );
-
-if ($clientResult) {
-
-    while (
-        $client =
-            $clientResult->fetch_assoc()
-    ) {
-        $clients[] = $client;
-    }
-}
+$clients = svmProjectClients($mysqli,$userId,$isSuperAdmin === 1);
 
 
 /*
@@ -136,29 +117,9 @@ if ($clientResult) {
 */
 
 $users = [];
-
-$userResult =
-    $mysqli->query(
-        'SELECT
-            id,
-            username,
-            email
-         FROM users
-         WHERE active = 1
-         ORDER BY
-            username,
-            id'
-    );
-
-if ($userResult) {
-
-    while (
-        $user =
-            $userResult->fetch_assoc()
-    ) {
-        $users[] = $user;
-    }
-}
+$ownerQuery=$mysqli->prepare('SELECT id,username,email FROM users WHERE active=1'.($canChangeOwner?'':' AND id=?').' ORDER BY username,id');
+if(!$canChangeOwner){$visibleOwner=$userId;$ownerQuery->bind_param('i',$visibleOwner);}
+$ownerQuery->execute();$users=$ownerQuery->get_result()->fetch_all(MYSQLI_ASSOC);$ownerQuery->close();
 
 
 /*
@@ -203,6 +164,8 @@ if (
             ?? $userId
         );
 		
+if (!$canChangeOwner) $ownerId=$userId;
+
 $action =
     $_POST['action']
     ?? 'create_project';
@@ -213,6 +176,7 @@ $action =
  * před přechodem na založení zákazníka.
  */
 if ($action === 'new_client') {
+    if ($isSuperAdmin !== 1) { http_response_code(403); exit('Zákazníky zakládá správce aplikace.'); }
 
     $_SESSION['project_new_draft'] = [
         'name' =>
@@ -266,6 +230,10 @@ if ($action === 'new_client') {
             'private';
     }
 
+
+    if ($clientId > 0 && !in_array($clientId,array_map('intval',array_column($clients,'id')),true)) {
+        $error='K vybranému zadavateli nemáte přístup.';
+    }
 
     /*
      * Ověření zákazníka.
@@ -651,6 +619,7 @@ require_once __DIR__
     </div>
 
 
+<?php if ($isSuperAdmin === 1): ?>
 <div class="admin-field-help">
 
     <button
@@ -664,6 +633,7 @@ require_once __DIR__
     </button>
 
 </div>
+<?php endif; ?>
 
 
     <div class="admin-field">

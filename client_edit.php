@@ -13,7 +13,6 @@ $isSuperAdmin =
 
 if (
     $isSuperAdmin !== 1
-    && $role !== 'admin'
 ) {
     http_response_code(403);
 

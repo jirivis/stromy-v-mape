@@ -138,6 +138,18 @@ if (
     */
 
     if ($action === 'add') {
+        if ($isSuperAdmin !== 1) {
+            // Never accept a guessed account ID or enumerate the global directory.
+            $targetUserId=0;
+            $email=trim((string)($_POST['user_email']??''));
+            if (filter_var($email,FILTER_VALIDATE_EMAIL) && strlen($email)<=255) {
+                $lookup=$mysqli->prepare('SELECT id FROM users WHERE email=? AND active=1 LIMIT 2');
+                $lookup->bind_param('s',$email);$lookup->execute();
+                $matches=$lookup->get_result()->fetch_all(MYSQLI_ASSOC);$lookup->close();
+                if(count($matches)===1)$targetUserId=(int)$matches[0]['id'];
+            }
+        }
+
 
         $projectRole =
             $_POST['project_role']
@@ -160,7 +172,7 @@ if (
         if ($targetUserId < 1) {
 
             $error =
-                'Vyberte uživatele.';
+                'Zadejte e-mail aktivního uživatele. Pokud jej nelze přiřadit, obraťte se na správce aplikace.';
 
         } elseif (
             $targetUserId
@@ -449,6 +461,7 @@ $usersStmt->close();
 
 $availableUsers = [];
 
+if ($isSuperAdmin === 1) {
 $availableStmt =
     $mysqli->prepare(
         'SELECT
@@ -497,6 +510,7 @@ while (
 }
 
 $availableStmt->close();
+}
 
 
 $roleLabels = [
@@ -580,7 +594,7 @@ require_once __DIR__
 </div>
 </div>
 
-<?php if ($availableUsers): ?>
+<?php if ($availableUsers || $isSuperAdmin !== 1): ?>
 
     <section class="admin-section">
 
@@ -602,6 +616,11 @@ require_once __DIR__
 
             <div class="admin-field">
 
+                <?php if ($isSuperAdmin !== 1): ?>
+                <label for="user_email">E-mail uživatele</label>
+                <input type="email" id="user_email" name="user_email" required maxlength="255" autocomplete="off">
+                <p>Zadejte přesný e-mail existujícího účtu. Nový účet zakládá správce aplikace.</p>
+                <?php else: ?>
                 <label for="user_id">
                     Uživatel
                 </label>
@@ -649,6 +668,7 @@ require_once __DIR__
 
                 </select>
 
+                <?php endif; ?>
             </div>
 
 
