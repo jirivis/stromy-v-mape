@@ -7,7 +7,7 @@ def sql(q): return subprocess.check_output(['mariadb',*base,'-N','-e',q]).decode
 def dump(): return subprocess.check_output(['mariadb-dump',*base,'--single-transaction','--hex-blob','--skip-comments','--skip-dump-date',dbname])
 sql('CREATE DATABASE '+dbname)
 with tempfile.TemporaryDirectory() as td:
- root=pathlib.Path(td); app=root/'app';shutil.copytree(repo,app);sessions=root/'sessions';sessions.mkdir()
+ root=pathlib.Path(td); app=root/'app';shutil.copytree(repo,app,ignore=shutil.ignore_patterns('.git'));sessions=root/'sessions';sessions.mkdir()
  for p in ['private/storage/area_photos','map/public/photos','map/public/uploads']:(app/p).mkdir(parents=True,exist_ok=True)
  config="<?php return ['installation_key'=>'"+'k'*48+"','app'=>['url'=>'http://127.0.0.1:33088'],'database'=>['host'=>'127.0.0.1','port'=>"+port+",'user'=>'root','password'=>'','name'=>'"+dbname+"']];"
  (app/'private/config.php').write_text(config)
