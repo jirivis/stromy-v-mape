@@ -86,7 +86,6 @@ $currentProjectRole =
 
 $canManageUsers =
     $isSuperAdmin === 1
-    || $globalRole === 'admin'
     || in_array(
         $currentProjectRole,
         [

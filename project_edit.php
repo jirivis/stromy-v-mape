@@ -110,7 +110,6 @@ $globalRole =
 
 $canEditProject =
     $isSuperAdmin === 1
-    || $globalRole === 'admin'
     || in_array(
         $projectRole,
         [
@@ -129,8 +128,7 @@ if (!$canEditProject) {
 }
 
 $canChangeOwner =
-    $isSuperAdmin === 1
-    || $globalRole === 'admin';
+    $isSuperAdmin === 1;
 
 
 /*
