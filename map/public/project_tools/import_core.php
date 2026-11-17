@@ -7,6 +7,8 @@ function imValue(string $key,mixed $raw,array $field,array $column):mixed {
  if(!is_scalar($raw)&&$raw!==null)throw new InvalidArgumentException('Neplatná hodnota '.$key);
  $v=trim((string)$raw);if(mb_strlen($v)>5000)throw new InvalidArgumentException('Příliš dlouhý text '.$key);
  if($v==='')return null;
+ // Imported zero explicitly means unassessed vitality; do not invent a rating.
+ if($key==='vitality'&&$v==='0')return null;
  if(($field['type']??'')==='number'){
   $v=str_replace(',','.',$v);if(!is_numeric($v)||!is_finite((float)$v))throw new InvalidArgumentException('Neplatné číslo '.$key);$v=(float)$v;
   if(!in_array($key,['lat_wgs84','lng_wgs84','x_sjtsk','y_sjtsk'],true)&&$v<0)throw new InvalidArgumentException('Záporná hodnota '.$key);

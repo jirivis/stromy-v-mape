@@ -5,6 +5,7 @@ require_once __DIR__.'/app/bootstrap.php';
 
 
 require_once __DIR__ . '/auth.php';
+require_once __DIR__.'/app/auth_form.php';
 require_once __DIR__ . '/config_app.php';
 require_once __DIR__ . '/map/public/api/db.php';
 require_once __DIR__ . '/app/mail/send_mail.php';
@@ -874,6 +875,7 @@ require_once __DIR__
         method="post"
         class="admin-form"
     >
+<input type="hidden" name="auth_form_token" value="<?= htmlspecialchars($_SESSION['auth_form_token'],ENT_QUOTES,'UTF-8') ?>">
 
         <div class="admin-field">
 

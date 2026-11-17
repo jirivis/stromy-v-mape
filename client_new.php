@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/auth.php';
+require_once __DIR__.'/app/auth_form.php';
 require_once __DIR__ . '/config_app.php';
 require_once __DIR__ . '/map/public/api/db.php';
 
@@ -11,7 +12,6 @@ $isSuperAdmin = (int) ($_SESSION['is_super_admin'] ?? 0);
 
 if (
     $isSuperAdmin !== 1
-    && $role !== 'admin'
 ) {
     http_response_code(403);
     die('Nemáte oprávnění vytvářet zákazníky.');
@@ -146,6 +146,7 @@ require_once __DIR__ . '/app/includes/header.php';
     method="post"
     class="admin-form"
 >
+<input type="hidden" name="auth_form_token" value="<?= htmlspecialchars($_SESSION['auth_form_token'],ENT_QUOTES,'UTF-8') ?>">
 
 <input
     type="hidden"

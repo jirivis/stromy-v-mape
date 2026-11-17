@@ -480,7 +480,7 @@ function updatePreview() {
         const img = document.createElement('img');
 
         if (item.type === 'existing') {
-            img.src = item.url;
+            img.src = protectedTreePhotoUrl(item.url);
             img.alt = 'Existující fotografie stromu';
         } else {
             img.src = URL.createObjectURL(item.file);
@@ -870,30 +870,51 @@ return;
 }
 });
 
+function protectedTreePhotoUrl(value) {
+    try {
+        const url = new URL(value, location.href);
+        const match = url.pathname.match(/^\/map\/public\/(uploads|photos)\/(.+)$/);
+        if (url.origin !== location.origin || !match) return value;
+        const target = new URL('photo.php', new URL('/map/public/', location.origin));
+        target.search = url.search;
+        target.searchParams.set('folder', match[1]);
+        target.searchParams.set('file', decodeURIComponent(match[2]));
+        return target.href;
+    } catch { return value; }
+}
+
 	function createAutocomplete(input, box, fetchUrl, onSelect, formatItem) {
     if (!input || !box) return;
-    let requestId = 0;
-    function close() { requestId++; box.style.display = "none"; }
+    let requestId = 0, timer = null, controller = null;
+    const cache = new Map();
+    function close() { requestId++; clearTimeout(timer); controller?.abort(); box.style.display = "none"; }
     let activeIndex = -1;
     let items = [];
-
     input.addEventListener("input", () => {
         const currentRequest = ++requestId;
-        box.style.display = "none";
+        clearTimeout(timer); controller?.abort(); items = []; activeIndex = -1;
         const q = input.value.trim();
-        if (q.length < 2) {
-            box.style.display = "none";
-            return;
-        }
-
-        fetch(fetchUrl + encodeURIComponent(q))
-            .then(r => { if (!r.ok) throw new Error("Autocomplete"); return r.json(); })
-            .then(data => {
+        box.replaceChildren();
+        if (q.length < 2) { box.style.display = "none"; return; }
+        if (cache.has(q)) { items = cache.get(q); render(); return; }
+        box.textContent = "Načítám nabídku…";
+        box.style.display = "block";
+        timer = setTimeout(async () => {
+            controller = new AbortController();
+            try {
+                const response = await fetch(fetchUrl + encodeURIComponent(q), {signal: controller.signal});
+                if (!response.ok) throw new Error("Autocomplete");
+                const data = await response.json();
                 if (currentRequest !== requestId) return;
                 items = Array.isArray(data) ? data : [];
-                activeIndex = -1;
-                render();
-            }).catch(() => { if (currentRequest === requestId) close(); });
+                if (cache.size >= 50) cache.delete(cache.keys().next().value);
+                cache.set(q, items); render();
+            } catch (error) {
+                if (currentRequest === requestId && error.name !== 'AbortError') {
+                    box.textContent = "Nabídku se nepodařilo načíst. Zkuste psát znovu.";
+                }
+            }
+        }, 180);
     });
 
     function render() {

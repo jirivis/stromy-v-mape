@@ -15,6 +15,8 @@ $pageTitle = $pageTitle ?? APP_NAME;
 $pageSubtitle = $pageSubtitle ?? '';
 $cardClass = $cardClass ?? 'admin-card';
 $showVersion = $showVersion ?? true;
+$dashboardNavigation = !empty($_SESSION['user_id']) && basename($_SERVER['SCRIPT_NAME'] ?? '') !== 'dashboard.php';
+$dashboardInToolbar = in_array(basename($_SERVER['SCRIPT_NAME'] ?? ''), ['clients.php','projects.php','users.php','project_users.php'], true);
 ?>
 <!DOCTYPE html>
 <html lang="cs">
@@ -31,7 +33,7 @@ $showVersion = $showVersion ?? true;
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
-    <link rel="stylesheet" href="/assets/css/admin_style.css">
+    <link rel="stylesheet" href="/assets/css/admin_style.css?v=dashboard-nav-2">
 	<script src="/assets/js/admin.js" defer></script>
 </head>
 
@@ -63,3 +65,6 @@ $showVersion = $showVersion ?? true;
                 </p>
             <?php endif; ?>
         </div>
+<?php if ($dashboardNavigation && !$dashboardInToolbar): ?>
+<nav class="admin-actions dashboard-navigation" aria-label="Návrat do přehledu"><a class="btn btn-secondary" href="/dashboard.php">← Dashboard</a></nav>
+<?php endif; ?>

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-session_start();
+require_once __DIR__.'/app/auth_form.php';
 
 require_once __DIR__ . '/config_app.php';
 require_once __DIR__ . '/map/public/api/db.php';
@@ -58,6 +58,8 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 $stmt->close();
+require_once __DIR__.'/app/auth_limit.php';
+svmEnforceAuthLimit('login',$user?'user:'.(int)$user['id']:'name:'.mb_strtolower($username,'UTF-8'));
 
 if (
     !$user ||
@@ -79,6 +81,8 @@ if ((int) $user['active'] !== 1) {
  * Ochrana proti session fixation.
  */
 session_regenerate_id(true);
+$_SESSION=[];
+$_SESSION['password_version']=hash('sha256',(string)$user['password']);
 
 $userId = (int) $user['id'];
 $isSuperAdmin = (int) $user['is_super_admin'];

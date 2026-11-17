@@ -30,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 
+if(empty($_SESSION['tree_form_csrf'])||!hash_equals($_SESSION['tree_form_csrf'],(string)($_POST['tree_form_token']??'')))apiAuthError(403,'invalid_csrf','Obnovte formulář historie.');
+
 $treeId =
     isset($_POST['tree_id'])
         ? (int) $_POST['tree_id']

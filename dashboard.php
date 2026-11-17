@@ -272,6 +272,7 @@ foreach ($projects as $dashboardProject) {
     </p>
 </a>
 
+<?php if ($isSuperAdmin === 1): ?>
 <a
     href="/clients.php"
     class="admin-menu-card"
@@ -282,8 +283,6 @@ foreach ($projects as $dashboardProject) {
         Správa zadavatelů a jejich kontaktních údajů.
     </p>
 </a>
-
-<?php if ($isSuperAdmin === 1): ?>
 
 <a
     href="/users.php"
@@ -307,6 +306,10 @@ function dashboardTool(string $href,string $title,string $text,bool $enabled,str
 dashboardTool('/map/public/project_tools/table.php','Tabulka projektu','Stromy a plochy: přehled, filtrování, úpravy a výběr k exportu.',$activeProjectId>0);
 dashboardTool('/map/public/project_tools/export.php','Export / Import','Excel, QGIS, fotografie, přehledka a import CSV/TXT či GPKG.',in_array($dashboardProjectRole,['owner','admin','editor'],true),$activeProjectId?'Vyžaduje oprávnění editora':'Nejprve vyberte projekt');
 if($mayManageStructures) dashboardTool('/map/public/project_tools/templates.php','Moje struktury formulářů','Evidence a úpravy vlastních struktur pro stromy a plochy.',true);
+if(in_array($dashboardProjectRole,['owner','admin'],true)){
+ require_once __DIR__.'/app/public_map.php';$newReports=0;if(pmReady($mysqli))$newReports=(int)pmQuery($mysqli,"SELECT COUNT(*) AS n FROM svm_public_reports WHERE project_id=? AND status='new'",[$activeProjectId])->get_result()->fetch_assoc()['n'];
+ dashboardTool('/map/public/project_tools/public_settings.php','Veřejná mapa a podněty'.($newReports?' ('.$newReports.' nových)':''),'Zveřejněné objekty, výběr údajů a podněty obyvatel.',true);
+}
 dashboardTool('/map/public/project_tools/settings.php','Nastavení projektu','Vlastní výběr polí nebo uložená struktura pro všechny uživatele projektu.',in_array($dashboardProjectRole,['owner','admin'],true),$activeProjectId?'Vyžaduje oprávnění správce projektu':'Nejprve vyberte projekt');
 ?>
 

@@ -50,9 +50,11 @@ $showDashboardLink = $showDashboardLink ?? true;
             <?= htmlspecialchars($topbarUsername) ?>
         </span>
 
+        <?php if(!empty($showProjectTableLink)): ?><a class="app-topbar__button" href="/map/public/project_tools/table.php">Tabulka projektu</a><?php endif; ?>
+
         <?php if ($showDashboardLink): ?>
             <a href="/dashboard.php" class="app-topbar__button">
-                Administrace
+                ← Dashboard
             </a>
         <?php endif; ?>
 

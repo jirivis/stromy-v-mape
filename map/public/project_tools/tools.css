@@ -2,3 +2,7 @@
 .project-table .selection-cell{width:34px;min-width:34px;max-width:34px;padding:4px;text-align:center}.project-table .selection-cell input{width:17px;height:17px;padding:0}.missing-geometry td{background:#dcedff}.missing-legend{background:#dcedff;padding:3px 6px}.project-table small{display:block}.row-menu{position:fixed;z-index:2000;background:white;border:1px solid #9db093;border-radius:8px;padding:6px;box-shadow:0 4px 18px #0003;width:260px}.row-menu button,.row-menu a{display:block;width:100%;padding:10px;text-align:left}.quick-dialog{width:min(900px,95vw);border:1px solid #80997a;border-radius:10px}.quick-dialog::backdrop{background:#0006}#quickMap{height:65vh;min-height:250px}.tools button[aria-pressed=true]{background:#28613d;color:white}.table-help{font-size:13px;color:#53654b}
 
 .column-grip{display:inline-block;cursor:grab;padding:8px 4px;touch-action:none;color:#526e4d}.column-grip:active{cursor:grabbing}.project-table td input:not([type=checkbox]),.project-table td select,.project-table td textarea{background:#fff;border:1px solid #8fa98b;min-height:36px}.project-table td:has(input.changed),.project-table td:has(select.changed){background:#fff0b8}.project-table th{white-space:nowrap}
+
+/* Checkbox columns stay compact; text fields retain their normal width. */
+.project-table td input[type=checkbox]{width:17px;height:17px;padding:0}
+.project-table th:nth-child(3),.project-table td:nth-child(3){width:1%;text-align:center}

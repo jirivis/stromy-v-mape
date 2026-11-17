@@ -12,6 +12,25 @@ copy(dirname(__DIR__).'/app/update.php',$root.'/app/update.php');
 copy(dirname(__DIR__).'/app/update_database.php',$root.'/app/update_database.php');
 require $root.'/app/update.php';
 try {
+ file_put_contents($root.'/app/VERSION',"2.25.1\n");
+ $base=['repository'=>'owner/old','public_key'=>'trusted','check_on_dashboard'=>false];
+ upSaveSource('owner/releases',true);$cfg=upConfig($base);
+ check($cfg['repository']==='owner/releases'&&$cfg['check_on_dashboard']&&$cfg['public_key']==='trusted','Source settings preserve trust key');
+ try{upSaveSource('https://evil.example/repo',true);throw new LogicException('Invalid source accepted');}catch(RuntimeException $e){}
+ $entry=fn($from,$version)=>['from'=>$from,'version'=>$version,'url'=>'https://github.com/owner/releases/releases/download/v'.$version.'/update.zip','sha256'=>str_repeat('a',64),'notes'=>'test'];
+ $index=['packages'=>[$entry('2.25.0','2.25.1'),$entry('2.25.1','2.25.2'),$entry('2.25.2','2.26.0')]];
+ check(upSelectRelease($index,'owner/releases','2.25.1')['version']==='2.25.2','Select compatible update instead of newest incompatible');
+ check(upSelectRelease($index,'owner/releases','2.26.0')['available']===false,'No downgrade or missing path offered');
+ $bad=$entry('2.25.1','2.25.2');$bad['url']='https://evil.example/update.zip';
+ try{upSelectRelease($bad,'owner/releases','2.25.1');throw new LogicException('Foreign asset accepted');}catch(RuntimeException $e){}
+ $cached=$entry('2.25.1','2.25.2')+['repository'=>'owner/releases','installed_version'=>'2.25.1','checked_at'=>time()];
+ upAtomic(upDir().'/release-cache.json',json_encode($cached));
+ check(upCachedRelease($cfg)!==null,'Matching cache accepted');
+ check(upCachedRelease($base)===null,'Foreign repository cache rejected');
+ file_put_contents($root.'/app/VERSION',"2.25.2\n");check(upCachedRelease($cfg)===null,'Old installed-version cache rejected');
+ upSaveSource('',false);check(!is_file(upDir().'/release-cache.json'),'Changing source clears cache');
+ check(upPath("map/public/uploads/.htaccess")&&upPath("map/public/photos/.htaccess"),"Allow signed storage protection");
+ foreach(["map/public/uploads/a.jpg","map/public/photos/a.php","map/public/uploads/sub/.htaccess","private/config.php","map/public/uploads/../a.php"] as $path)check(!upPath($path),"Protected storage path: ".$path);
  $key=openssl_pkey_new(['private_key_bits'=>2048,'private_key_type'=>OPENSSL_KEYTYPE_RSA]);
  check($key!==false,'Test signing key');$public=openssl_pkey_get_details($key)['key'];
  // Deliberately disconnected: any query would fail, including CREATE IF NOT EXISTS.

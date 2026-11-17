@@ -12,9 +12,9 @@ $boot=['csrf'=>$_SESSION['areas_csrf'],'project_id'=>(int)$activeProjectId,'can_
 <!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Plochy porostů – Stromy v mapě</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
-<link rel="stylesheet" href="areas.css?v=2.7">
+<link rel="stylesheet" href="areas.css?v=2.24.2">
 </head><body>
-<header><a href="../index.php">← Hlavní mapa</a><strong id="pageMode"><?=!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><a id="areaCardLink" hidden target="_blank" rel="noopener">Karta porostu ↗</a><span id="projectName"></span></header>
+<header><a href="/dashboard.php" target="_top">← Dashboard</a><a href="../index.php">← Hlavní mapa</a><strong id="pageMode"><?=!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><a id="areaCardLink" hidden target="_blank" rel="noopener">Karta porostu ↗</a><span id="projectName"></span></header>
 <div id="status" role="status" aria-live="polite">Načítám plochy…</div>
 <main><section class="map-column" aria-label="Mapa porostů">
 <button id="newArea" type="button" hidden>Nová plocha</button><button id="allAreas" type="button" hidden>Zobrazit všechny</button>
@@ -49,5 +49,5 @@ $boot=['csrf'=>$_SESSION['areas_csrf'],'project_id'=>(int)$activeProjectId,'can_
 <h2>Fotografie</h2><p id="photoHelp">Nejdříve uložte plochu, potom přidejte fotografie.</p><div class="tools"><button type="button" id="pickPhotos" disabled>Nahrát foto</button><button type="button" id="takePhoto" disabled>Fotit</button></div><input id="cameraFile" type="file" accept="image/*" capture="environment" hidden disabled><input id="photoFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden disabled><p id="photoSelection"></p><div id="photos"></div><div class="editor-close-bottom"><button id="closeEditorBottom" type="button">Zavřít · Esc</button></div>
 </section></main>
 <script>window.AreasBoot=<?= json_encode($boot,JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_UNESCAPED_UNICODE) ?>;</script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script><script src="boundary_editor.js?v=2.12"></script><script src="areas.js?v=2.12-project2.7"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script><script src="boundary_editor.js?v=2.12"></script><script src="areas.js?v=2.24.1"></script>
 <script>window.FormFieldsBoot={kind:'areas',project_id:<?= (int)$activeProjectId ?>};</script><script src="../project_tools/visibility.js?v=2.3"></script></body></html>

@@ -127,6 +127,19 @@ TreeApp.popupAttributeRow = function (
 /**
  * Sestavení URL obrázku s verzí proti cache.
  */
+function protectedTreePhotoUrl(value) {
+    try {
+        const url = new URL(value, location.href);
+        const match = url.pathname.match(/^\/map\/public\/(uploads|photos)\/(.+)$/);
+        if (url.origin !== location.origin || !match) return value;
+        const target = new URL('photo.php', new URL('/map/public/', location.origin));
+        target.search = url.search;
+        target.searchParams.set('folder', match[1]);
+        target.searchParams.set('file', decodeURIComponent(match[2]));
+        return target.href;
+    } catch { return value; }
+}
+
 TreeApp.popupVersionedImageUrl = function (
     url,
     photo = null
@@ -135,6 +148,7 @@ TreeApp.popupVersionedImageUrl = function (
         return '';
     }
 
+    url = protectedTreePhotoUrl(url);
     const separator =
         String(url).includes('?')
             ? '&'
@@ -153,7 +167,7 @@ TreeApp.popupVersionedImageUrl = function (
         String(url) +
         separator +
         'photo_version=' +
-        encodeURIComponent(version)
+        encodeURIComponent(version) + '&thumb=1'
     );
 };
 

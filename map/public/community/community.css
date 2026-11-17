@@ -1,0 +1,90 @@
+*{box-sizing:border-box}body{margin:0;font:16px system-ui,sans-serif;color:#203c27;background:#f4f7f0}header{padding:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}input,textarea,button{font:inherit;padding:8px}button{background:#28613d;color:white;border:0;border-radius:5px;cursor:pointer}main{display:flex;height:calc(100dvh - 100px);min-height:400px}#map{flex:1;min-width:0}aside{width:380px;max-width:100%;overflow:auto;padding:16px;background:white}aside[hidden]{display:none}dl{display:grid;grid-template-columns:1fr 1fr;gap:10px}dt{font-weight:600}dd{margin:0;overflow-wrap:anywhere}figure{margin:16px 0}figure img{width:100%;height:auto}figcaption{white-space:pre-wrap}form label{display:block;margin:12px 0}form input:not([type=checkbox]),textarea{width:100%}.trap{position:absolute;left:-10000px}#status{font-size:.9em}@media(max-width:700px){main{position:relative;height:calc(100dvh - 150px)}aside{position:absolute;right:0;top:0;bottom:0;z-index:1000;width:min(92vw,380px)}}
+body{height:100dvh;display:flex;flex-direction:column}header{flex-shrink:0}main{flex:1;min-height:260px;height:auto}select{font:inherit;padding:8px;max-width:100%}#controls{padding:8px 12px;background:#fff;border-block:1px solid #d4ddcf;max-height:40vh;overflow:auto}summary{cursor:pointer;font-weight:600}.controls{display:flex;flex-wrap:wrap;align-items:end;gap:10px;padding:10px 0}.controls label{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.controls input[type=text]{width:180px}#legend{display:flex;gap:12px;flex-wrap:wrap;max-height:100px;overflow:auto}#legend span{display:inline-flex;align-items:center;gap:5px}#legend i{width:14px;height:14px;display:inline-block}.public-symbol{display:block;font-size:24px;line-height:24px;text-align:center;text-shadow:0 0 2px white}.tile-warning{max-width:260px;background:white;padding:8px;border:1px solid #b33}#tablePanel{max-height:40vh;background:#fff;overflow:auto;flex-shrink:0}.table-scroll{overflow:auto;max-height:30vh}table{border-collapse:collapse;min-width:100%}th,td{padding:6px 10px;border:1px solid #d4ddcf;white-space:nowrap}th{position:sticky;top:0;background:#e8f0e3}th button{background:transparent;color:#203c27;padding:4px}.pager{display:flex;align-items:center;gap:12px;padding:8px}[hidden]{display:none!important}@media(max-width:700px){main{height:auto;min-height:240px}header{gap:8px;padding:8px}header input[type=search]{width:180px}.controls{align-items:stretch;flex-direction:column}}
+
+/* Same SVG marker styling as the main map. */
+.tree-map-div-icon {
+    border: 0 !important;
+    background: transparent !important;
+}
+
+.tree-map-removed-symbol {
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid rgba(255, 255, 255, 0.98);
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 1px 5px rgba(0, 0, 0, 0.35);
+}
+
+.tree-map-removed-symbol img {
+    display: block;
+
+    width: 72%;
+    height: 72%;
+
+    object-fit: contain;
+}
+
+
+/*
+ * Barevné kolečko pod černým SVG.
+ */
+.tree-map-symbol {
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+
+    background:
+        var(
+            --tree-marker-background,
+            #ffffff
+        );
+
+    box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.65);
+
+    overflow: hidden;
+}
+
+
+/*
+ * Původní symbol stromu zůstane černý.
+ */
+.tree-map-symbol__svg {
+    display: block;
+
+    width: 85%;
+    height: 85%;
+
+    object-fit: contain;
+
+    filter:
+        brightness(0)
+        contrast(1.35)
+        drop-shadow(0 0 0 #000)
+        drop-shadow(0 0 0 #000);
+
+    pointer-events: none;
+    user-select: none;
+}
+
+
+.public-location-control button{display:block;width:30px;height:30px;padding:0;border:0;border-radius:2px;background:#fff;color:#222;font-size:18px;line-height:30px;text-align:center}
+.leaflet-touch .public-location-control button{width:34px;height:34px;line-height:34px}
+.public-location-control button:hover{background:#f4f4f4}
+.public-location-control button[aria-pressed=true]{background:#dceee0;box-shadow:inset 0 0 0 2px #28613d}
+.public-location-control button:focus-visible{outline:3px solid #1976d2;outline-offset:2px}
+
+.public-location-control button:disabled{opacity:.45;cursor:default}

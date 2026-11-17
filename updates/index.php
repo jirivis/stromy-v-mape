@@ -4,15 +4,16 @@ define('SVM_UPDATE_ENTRY',true);
 require_once dirname(__DIR__).'/auth.php';require_once dirname(__DIR__).'/app/update.php';
 if((int)($_SESSION['is_super_admin']??0)!==1){http_response_code(403);exit('Aktualizace může spravovat pouze správce systému.');}
 header('Cache-Control: no-store');header('X-Content-Type-Options: nosniff');
-$_SESSION['update_csrf']??=bin2hex(random_bytes(32));$cfg=svmConfig()['updates']??[];$message='';$error='';$pending=null;
+$_SESSION['update_csrf']??=bin2hex(random_bytes(32));$cfg=upConfig(svmConfig()['updates']??[]);$message='';$error='';$pending=null;
 try{
  if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
   if(!hash_equals($_SESSION['update_csrf'],(string)($_POST['csrf']??'')))throw new RuntimeException('Obnovte stránku. Platnost formuláře vypršela.');
   $action=$_POST['action']??'';
-  if($action==='check'){upCheck($cfg);$message='Informace o vydání byly obnoveny.';}
+  if($action==='source'){upSaveSource((string)($_POST['repository']??''),($_POST['automatic']??'')==='yes');$cfg=upConfig(svmConfig()['updates']??[]);$message='Zdroj byl uložen. Dostupnost ověřte tlačítkem Zkontrolovat vydání. Podpisový klíč zůstává beze změny.';}
+  elseif($action==='check'){upCheck($cfg);$message='Informace o vydání byly obnoveny.';}
   elseif($action==='prepare'||$action==='download'){
    $token=bin2hex(random_bytes(16));$path=upDir().'/pending-'.$token.'.zip';
-   if($action==='download'){$release=upCheck($cfg);$bytes=upFetch($release['url'],30*1024*1024);if(!hash_equals($release['sha256'],hash('sha256',$bytes)))throw new RuntimeException('Stažený balíček má nesprávný kontrolní součet.');upAtomic($path,$bytes);}
+   if($action==='download'){$release=upCheck($cfg);if(empty($release['url']))throw new RuntimeException('Není dostupný kompatibilní balíček.');$bytes=upFetch($release['url'],30*1024*1024);if(!hash_equals($release['sha256'],hash('sha256',$bytes)))throw new RuntimeException('Stažený balíček má nesprávný kontrolní součet.');upAtomic($path,$bytes);}
    else{if(($_FILES['package']['error']??UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_OK||!is_uploaded_file($_FILES['package']['tmp_name']))throw new RuntimeException('Vyberte aktualizační ZIP v limitu hostingu.');if(!move_uploaded_file($_FILES['package']['tmp_name'],$path))throw new RuntimeException('Balíček nelze uložit.');chmod($path,0600);}
    try{$pending=upInspect($path,(string)($cfg['public_key']??''),upVersion());}catch(Throwable $e){unlink($path);throw $e;}
    if(isset($_SESSION['update_pending']))@unlink(upDir().'/pending-'.$_SESSION['update_pending'].'.zip');
@@ -35,13 +36,17 @@ try{
 }catch(Throwable $e){$error=$e->getMessage();}
 $databaseReady=true;$databaseMessage='';
 if($pending){try{upDatabasePreflight($pending,$mysqli);}catch(Throwable $e){$databaseReady=false;$databaseMessage=$e->getMessage();}}
-$release=is_file(upDir().'/release-cache.json')?json_decode(file_get_contents(upDir().'/release-cache.json'),true):null;
+$release=upCachedRelease($cfg);
 function uh($s):string{return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
 function ut():void{echo '<input type="hidden" name="csrf" value="'.uh($_SESSION['update_csrf']).'">';}
 ?><!doctype html><html lang="cs"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Aktualizace aplikace</title><link rel="stylesheet" href="../map/public/project_tools/tools.css"><main>
 <a href="../dashboard.php">← Dashboard</a><h1>Aktualizace aplikace</h1><p>Nainstalovaná verze: <strong><?=uh(upVersion())?></strong></p>
 <?php if($message):?><p role="status"><?=uh($message)?></p><?php endif;?><?php if($error):?><p role="alert"><?=uh($error)?></p><?php endif;?>
 <?php if(is_file(upDir().'/maintenance.json')):?><p role="alert">Aplikace je v režimu údržby. Před pokračováním postupujte podle docs/AKTUALIZACE.md.</p><?php endif;?>
+<details><summary>Nastavení zdroje aktualizací</summary>
+<p>Veřejný distribuční repozitář musí mít release.json ve větvi main a podepsané balíčky v Releases. Soukromý repozitář bez přihlášení fungovat nebude.</p>
+<form method="post"><?php ut();?><p><label>GitHub repozitář <input name="repository" value="<?=uh($cfg['repository']??'')?>" placeholder="vlastník/název" maxlength="200"></label></p><p><label><input type="checkbox" name="automatic" value="yes" <?=!empty($cfg['check_on_dashboard'])?'checked':''?>> Kontrolovat vydání při otevření dashboardu správce (nejvýše jednou za 6 hodin)</label></p><button name="action" value="source">Uložit zdroj</button></form>
+<p>Instalace vždy vyžaduje váš souhlas. Změna zdroje nemění důvěryhodný podpisový klíč.</p></details>
 <h2>Dostupné vydání</h2>
 <?php if(empty($cfg['repository'])):?><p>GitHub repozitář ještě není nastaven. Automatická kontrola vydání není aktivní.</p><?php endif;?>
 <?php if($release):?><p>Poslední zjištěná verze: <?=uh($release['version']??'')?> · kontrola <?=uh(date('d. m. Y H:i',(int)($release['checked_at']??0)))?></p><p><?=nl2br(uh($release['notes']??''))?></p><?php endif;?>

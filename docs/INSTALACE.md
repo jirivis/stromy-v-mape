@@ -1,30 +1,37 @@
-# Nová testovací instalace V2.23.0
+# Stromy v mapě 2.25.4 – nová instalace
 
-Tento balíček instalujte na samostatnou testovací doménu/subdoménu s novou prázdnou databází. Není aktualizačním balíčkem pro stávající stromyvmape.cz. Nevkládejte do něj konfiguraci produkční databáze.
+Kompletní balíček pro samostatnou doménu nebo subdoménu a **novou prázdnou databázi**. Nejde o aktualizační ZIP: nenahrávejte jej přes existující aplikaci a nenahrávejte jej do jejího aktualizátoru. Prezentační weby ani zákaznická data nejsou součástí.
 
-1. Připravte PHP 8.2+ a rozšíření mysqli/mysqlnd, mbstring, GD, fileinfo, ZipArchive, SQLite3, DOM a OpenSSL. Všechny požadavky kontroluje instalační stránka. Povolte HTTPS. Balíček předpokládá Apache 2.4 s účinnými pravidly .htaccess.
-2. U hostingu vytvořte novou prázdnou MariaDB databázi a uživatele s právy pro vytvoření tabulek a běžnou práci aplikace. Instalátor nevytváří samotnou databázi ani hostingový účet.
-3. Nahrajte obsah application do kořene samostatné domény. Podadresářová instalace zatím podporována není.
-4. Zkopírujte private/config.example.php na private/config.php a vyplňte app.url, databázi a případně SMTP. app.url je např. https://test.example.cz bez koncového lomítka a bez podadresáře.
-5. Do installation_key zadejte jednorázový náhodný klíč alespoň 32 znaků. Vygenerujte jej správcem hesel, případně lokálním příkazem PHP: php -r "echo bin2hex(random_bytes(32));". Klíč ani config.php nepatří do GitHubu.
-6. Otevřete https://vase-domena/install/. Vyřešte chybějící požadavky, zadejte instalační klíč a údaje prvního správce. Instalátor odmítne každou neprázdnou databázi a vyžaduje HTTPS (výjimka lokální loopback).
-7. Po dokončení vymažte installation_key, odstraňte složku install a přihlaste se. Vytvořte projekt a několik testovacích stromů/ploch. Číselníky druhů a kultivarů zatím nemají předvyplněný obsah.
-8. Ověřte přidání, editaci, historii, nahrání fotografie, import, export a chování uživatelů s různými rolemi. Ověřte, že URL /private/config.php a /database/schema.sql nelze stáhnout.
+## Požadavky
 
-## Pokud instalace selže
-Instalátor nikdy automaticky nemaže tabulky. DDL operace MariaDB mohou zanechat částečně vytvořené schéma. Pro opakovaný test použijte jinou novou prázdnou databázi nebo ručně odstraňte výhradně tabulky neúspěšné testovací instalace po ověření, že neobsahují potřebná data. Podrobnosti chyby jsou v serverovém PHP logu. Jestli byl správce již vytvořen, ale selhal zápis zámku, instalaci neopakujte; vymažte klíč a složku install a ověřte přihlášení.
+- Apache 2.4, účinné `.htaccess` a mod_rewrite; HTTPS.
+- PHP 8.3 nebo novější; automatické testy běží na 8.3, 8.4 a 8.5.
+- mysqli/mysqlnd, mbstring, fileinfo, GD, ZIP, SQLite3, DOM, OpenSSL. EXIF doporučeno pro datum pořízení fotografií.
+- MariaDB; testovací prostředí používá MariaDB 10.11. Účet instalace musí mít právo vytvořit tabulky. Samotnou databázi zakládá správce v administraci hostingu.
+- PHP musí zapisovat do private (včetně podsložek), map/public/photos a map/public/uploads. Aktualizátor potřebuje také zápis do aktualizovaných aplikačních souborů. Nepoužívejte plošně oprávnění 777.
+- Pro mapové podklady a externí knihovny je potřeba internet; server potřebuje odchozí HTTPS ke GitHubu pro aktualizace. SMTP je volitelné, ale nutné pro odesílání e-mailů.
 
-## Co tato etapa mění
-- Instalátor pro prázdnou databázi a prvního správce; souběžné spuštění chrání souborový zámek. Neprázdná databáze tvoří druhou ochranu proti opakování.
-- Eviduje se baseline-2.23.0 v svm_schema_migrations. Aktualizátor pro navazující podepsané balíčky je popsán v AKTUALIZACE.md.
-- Chráněné stránky i API znovu čtou aktivitu a systémové role uživatele z databáze. Kontroly přístupu k projektu v API zůstávají zachovány.
-- Nová databáze má unikátní username; staré databázi se index automaticky nepřidává.
+## Postup
 
-## Co ještě není dokončené
-Úplný audit všech zápisových endpointů a CSRF, sjednocení typů cizích klíčů, hotová licence veřejného release a distribuovatelná data číselníků. Jde o testovací sestavení, ne o hotovou veřejnou distribuci nebo potvrzení bezpečnosti celé aplikace.
+1. Založte samostatnou doménu/subdoménu s HTTPS a novou prázdnou databázi. Instalace do podadresáře není podporovaná.
+2. Rozbalte ZIP na počítači. Obsah **application/** nahrajte do webového kořene, včetně skrytých souborů `.htaccess`. Vedle sebe musí být dashboard.php, app, private, install a map. Složku application samu do URL nevkládejte.
+3. Zkopírujte `private/config.example.php` na `private/config.php`. Vyplňte URL bez podadresáře, databázový server, název, uživatele a heslo; případně SMTP. Žádné skutečné přístupy nejsou v balíčku.
+4. Do `installation_key` vložte vlastní náhodný jednorázový klíč alespoň 32 znaků. Lze jej vytvořit správcem hesel nebo příkazem `php -r "echo bin2hex(random_bytes(32));"`. Klíč ani konfiguraci nikam veřejně neposílejte.
+5. Otevřete `https://vase-domena/install/`. Po splnění požadavků zadejte klíč, jméno, e-mail a heslo prvního správce. Instalátor vytvoří tabulky, číselníky a správce. Existující nebo částečně naplněnou databázi odmítne; nic nemaže.
+6. Po úspěchu vymažte instalační klíč z konfigurace a odstraňte složku install. Ponechte `private/installed.lock`. Přihlaste se a založte první projekt.
+7. Ověřte strom i plochu, fotografii, import/export a práva dalšího uživatele. Soukromá data nesmějí být dostupná přes URL `/private/` ani `/database/`; ověřte také, že fotografie soukromého projektu nelze zobrazit bez oprávnění. Pokud server pravidla ignoruje, instalaci nepoužívejte, dokud hosting ochrany neopraví.
+8. V Aktualizacích zkontrolujte vydání. Zdroj `jirivis/stromy-v-mape-updates`, veřejný podpisový klíč a kontrola na dashboardu jsou již ve vzoru nastavené. Instalaci každé aktualizace schvaluje správce. Před ní zálohujte databázi, konfiguraci a fotografie.
 
-## Fotografie a převod
-Nové fotografie ploch se ukládají do private/storage/area_photos. Databáze obsahuje cestu, popisek a vazby. Postup převodu existujících fotografií a záloh je v FOTOGRAFIE.md.
+## Číselníky a veřejná distribuce
 
-## Ověření
-Lokální integrace byla provedena na PHP 8.3 a MariaDB 10.11.14. Podrobnosti a hranice ověření: OVERENI.md.
+Instalátor obsahuje 557 taxonů a 1 099 názvů kultivarů. Kultivar se automaticky nepřiřazuje. Mapování POWO/WCVP a jeho původ popisuje `application/database/catalogs/README.md`; nejde o živou synchronizaci s POWO. Vlastní kód aplikace je GPL-3.0-or-later, viz LICENSE a LICENSING.md. Původ původního seznamu českých názvů a kultivarů dosud není doložen. Tento balíček je připraven k ověření vlastní instalace; před veřejným nabízením úplné distribuce je potřeba původ těchto dat uzavřít. Licence přibalených komponent zůstávají v jejich složkách.
+
+## Aktualizace a obnova
+
+Balíček obsahuje verzi 2.25.4. Aktualizátor nabízí balíček podle nainstalované výchozí verze; při větším odstupu se postupuje po kompatibilních krocích. Databázové změny mohou vyžadovat samostatnou SQL přípravu správcem. Automatická kontrola neznamená automatickou instalaci bez souhlasu.
+
+Instalátor není určen pro obnovu produkčních dat. Postup zálohy a obnovy je v `docs/OBNOVA_A_OPRAVNENI.md`, fotografie v `docs/FOTOGRAFIE.md`. Při chybě instalace mohou zůstat některé tabulky; neopakujte ji nad důležitými daty. Použijte novou prázdnou databázi a původ chyby zjistěte z PHP logu.
+
+## Rozsah ověření
+
+Automatický test sestavuje tento ZIP, rozbalí jej a provádí webovou instalaci do prázdné databáze, kontroluje číselníky, uzamčení instalátoru, odmítnutí chybného klíče a neprázdné databáze, přihlášení správce a obnovu syntetické zálohy. Testy nejsou úplným bezpečnostním auditem ani ověřením konfigurace konkrétního hostingu. Na čistém WEDOS hostingu je ještě potřeba ověřit funkčnost, pravidla Apache, poštu a odchozí HTTPS.

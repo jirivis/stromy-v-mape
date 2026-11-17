@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/app/auth_form.php';
 require_once __DIR__.'/app/bootstrap.php';
 
 
@@ -22,6 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['email']
             ?? ''
         );
+
+    require_once __DIR__.'/app/auth_limit.php';
+    $limitLookup=$mysqli->prepare('SELECT id FROM users WHERE email=? LIMIT 1');
+    $limitLookup->execute([$email]);$limitUser=$limitLookup->get_result()->fetch_assoc();$limitLookup->close();
+    svmEnforceAuthLimit('reset',$limitUser?'user:'.(int)$limitUser['id']:'email:'.mb_strtolower($email,'UTF-8'));
 
     /*
      * Vždy stejná neutrální odpověď.
@@ -257,6 +263,7 @@ require_once __DIR__
         method="post"
         class="admin-form"
     >
+<input type="hidden" name="auth_form_token" value="<?= htmlspecialchars($_SESSION['auth_form_token'],ENT_QUOTES,'UTF-8') ?>">
 
         <div class="admin-field">
 

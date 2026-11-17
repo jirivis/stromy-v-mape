@@ -91,6 +91,22 @@ function treeSaveReject(string $message,int $status=409):never {
  global $mysqli;$mysqli->rollback();http_response_code($status);header('Content-Type: application/json; charset=utf-8');echo json_encode(['success'=>false,'message'=>$message],JSON_UNESCAPED_UNICODE);exit;
 }
 if ((int)($_POST['project_id']??0)!==(int)$activeProjectId || !hash_equals($_SESSION['tree_form_csrf']??'',(string)($_POST['tree_form_token']??'')) || empty($_SESSION['tree_form_csrf'])) treeSaveReject('Platnost formuláře nebo aktivní projekt se změnil. Obnovte formulář.',403);
+// Validate every uploaded file before changing any tree data.
+$validatedPhotoExtensions=[];
+if(isset($_FILES['photos'])){
+ $files=$_FILES['photos'];
+ if(!is_array($files['name']??null)||!is_array($files['error']??null)||count($files['name'])>50)treeSaveReject('Neplatný seznam fotografií.',422);
+ foreach($files['name'] as $i=>$unused){
+  $error=$files['error'][$i]??null;
+  if($error===UPLOAD_ERR_NO_FILE)continue;
+  $tmp=$files['tmp_name'][$i]??null;
+  if($error!==UPLOAD_ERR_OK||!is_string($tmp)||!is_uploaded_file($tmp))treeSaveReject('Fotografii se nepodařilo přijmout.',422);
+  $size=filesize($tmp);$info=@getimagesize($tmp);$mime=(new finfo(FILEINFO_MIME_TYPE))->file($tmp);
+  $ext=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'][$mime]??null;
+  if(!$size||$size>5*1024*1024||!$info||!$ext||($info['mime']??'')!==$mime||$info[0]*$info[1]>24000000)treeSaveReject('Použijte JPG, PNG nebo WebP do 5 MB a 24 megapixelů.',422);
+  $validatedPhotoExtensions[$i]=$ext;
+ }
+}
 $mysqli->begin_transaction();
 if($is_edit){
  $lock=$mysqli->prepare('SELECT * FROM trees WHERE id=? AND project_id=? FOR UPDATE');$lock->bind_param('ii',$tree_id,$activeProjectId);$lock->execute();$lockedTree=$lock->get_result()->fetch_assoc();if(!$lockedTree)treeSaveReject('Strom nebyl nalezen.',404);
@@ -675,10 +691,10 @@ if (is_array($existing_photo_ids)) {
 
 if (!empty($_FILES['photos']['name'][0])) {
 
-    $upload_dir = 'uploads/';
+    $upload_dir = __DIR__.'/uploads/';
 
     if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0777, true);
+        mkdir($upload_dir, 0755, true);
     }
 
     $photo_order    = $_POST['photo_order'] ?? [];
@@ -704,7 +720,8 @@ if (!empty($_FILES['photos']['name'][0])) {
         $uploaded_files[$orig_name] = [
             'tmp_name' => $_FILES['photos']['tmp_name'][$i],
             'type'     => $_FILES['photos']['type'][$i] ?? '',
-            'size'     => $_FILES['photos']['size'][$i] ?? 0
+            'size'     => $_FILES['photos']['size'][$i] ?? 0,
+            'extension' => $validatedPhotoExtensions[$i]
         ];
     }
 
@@ -724,18 +741,7 @@ if (!empty($_FILES['photos']['name'][0])) {
             $new_photo_sort[$index] ?? $index
         );
 
-        $safe_name = preg_replace(
-            '/[^a-zA-Z0-9._-]/',
-            '_',
-            basename($ordered_filename)
-        );
-
-        $new_filename =
-            time()
-            . '_'
-            . bin2hex(random_bytes(4))
-            . '_'
-            . $safe_name;
+        $new_filename = bin2hex(random_bytes(20)).'.'.$uploaded_files[$ordered_filename]['extension'];
 
         $target_file = $upload_dir . $new_filename;
 
@@ -762,10 +768,11 @@ if (!empty($_FILES['photos']['name'][0])) {
             continue;
         }
 
+        $photo_url='uploads/'.$new_filename;
         $stmt_insert_photo->bind_param(
             "issi",
             $tree_id,
-            $target_file,
+            $photo_url,
             $note_photo,
             $sort_order
         );

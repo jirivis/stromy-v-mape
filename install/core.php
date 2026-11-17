@@ -20,7 +20,12 @@ function siInstall(mysqli $db,string $schema,array $admin):void{
  foreach(siStatements($schema) as $sql)$db->query($sql);
  $db->query('CREATE TABLE svm_schema_migrations (version VARCHAR(80) PRIMARY KEY, applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
  $db->begin_transaction();try{
+  foreach(['baseline.sql','additions.sql','powo-ids.sql'] as $catalog){
+   $sql=file_get_contents(dirname(__DIR__).'/database/catalogs/'.$catalog);
+   if($sql===false)throw new RuntimeException('Chybí instalační číselník.');
+   foreach(siStatements($sql) as $statement)$db->query($statement);
+  }
   [$name,$email,$hash]=$admin;$s=$db->prepare("INSERT INTO users(username,email,password,role,is_super_admin,active) VALUES(?,?,?,'admin',1,1)");$s->bind_param('sss',$name,$email,$hash);$s->execute();$s->close();
-  $db->query("INSERT INTO svm_schema_migrations(version) VALUES('baseline-2.23.0')");$db->commit();
+  $db->query("INSERT INTO svm_schema_migrations(version) VALUES('baseline-2.24.0')");$db->commit();
  }catch(Throwable $e){$db->rollback();throw $e;}
 }

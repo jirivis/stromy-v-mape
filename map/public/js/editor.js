@@ -774,6 +774,7 @@ TreeApp.loadTreeMeasurements = function (treeId) {
                 );
             }
 
+            TreeApp.measurementCsrf = data.csrf_token || '';
             TreeApp.renderTreeMeasurements(
                 data.measurements || []
             );
@@ -1413,7 +1414,8 @@ TreeApp.saveTreeMeasurement = function (
 
             headers: {
                 "Content-Type":
-                    "application/json"
+                    "application/json",
+                "X-CSRF-Token": TreeApp.measurementCsrf || ""
             },
 
             body: JSON.stringify(payload)

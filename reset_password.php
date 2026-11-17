@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+require_once __DIR__.'/app/auth_form.php';
 
 require_once __DIR__ . '/config_app.php';
 require_once __DIR__ . '/map/public/api/db.php';
@@ -139,7 +140,9 @@ if (
             ?? ''
         );
 
-    if (
+    if (strlen($password)>72 || str_contains($password,"\0")) {
+        $error='Heslo může mít nejvýše 72 bajtů a nesmí obsahovat nulový znak.';
+    } elseif (
         mb_strlen(
             $password,
             'UTF-8'
@@ -432,6 +435,7 @@ require_once __DIR__
         method="post"
         class="admin-form"
     >
+<input type="hidden" name="auth_form_token" value="<?= htmlspecialchars($_SESSION['auth_form_token'],ENT_QUOTES,'UTF-8') ?>">
 
         <input
             type="hidden"

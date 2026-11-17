@@ -19,7 +19,8 @@ TreeApp.initMap = function () {
     const osm = L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
-            maxZoom: 20,
+            maxZoom: 22,
+            maxNativeZoom: 19,
             attribution: "&copy; OpenStreetMap"
         }
     ).addTo(TreeApp.map);

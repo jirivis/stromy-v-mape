@@ -1,0 +1,28 @@
+{
+  "checked_on": "2026-11-17",
+  "source_record": "https://kew.iro.bl.uk/entities/product/998399a0-4b87-4a93-8303-6abc8a2de281",
+  "doi": "10.34885/egs6-cp24",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0/",
+  "source_sha256_recorded_at_matching": "d32ea2b3a85e489b14e83bcc9eae7274532e1d113753f7be290d4b2dfde573fa",
+  "original_source_re_downloaded_this_check": false,
+  "records": 551,
+  "matching_methods": {
+    "name_and_author": 473,
+    "unique_name_author_diff": 67,
+    "reviewed": 11
+  },
+  "taxonomic_status": {
+    "Accepted": 492,
+    "Synonym": 42,
+    "Artificial Hybrid": 13,
+    "Unplaced": 2,
+    "Illegitimate": 2
+  },
+  "unverified": [
+    "Original Czech names",
+    "Original cultivar list",
+    "Family/genus fields from original baseline"
+  ],
+  "automatic_cultivar_assignment": false
+}

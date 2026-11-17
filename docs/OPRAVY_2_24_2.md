@@ -1,0 +1,15 @@
+# Aktualizace 2.24.2 z verze 2.24.1
+
+Podepsaný aktualizační ZIP pro instalaci 2.24.1. Bez databázových migrací; konfigurace a fotografie zůstávají zachovány. Nahrát přes Aktualizace aplikace, ověřit balíček a schválit instalaci po záloze. Původní ZIP z 11. listopadu se nepřepisuje.
+
+- Původní minimální značky 20 px a labels 13 px i na PC (příčinou malé velikosti byl zoom prohlížeče 50 %).
+- Export se zapnutými popisky: zdrojový rastr je uvolněn před JPEG kódováním, fotografie ploch se do ZIPu přidávají ze souborů místo hromadění obsahu v paměti, již komprimované fotografie se znovu nekomprimují, hotový ZIP se posílá po 1 MB bez PHP bufferu a komprese odpovědi. Uvolnění session a požadavek na neomezený PHP čas. Pevné limity hostingu zůstávají v platnosti. Přesná příčina uživatelova původního přerušení bez serverového logu není potvrzena. Chyby zpracování se nyní zobrazují přímo na exportní stránce. Limit fotografií 1 GB zůstává a je hlášen.
+- Export má volbu všech fotografií do jedné složky. Názvy obsahují typ, uživatelské číslo, EXIF datum/čas pořízení (nebo datum z původního názvu) a pořadí pro rozlišení. Při chybějícím datu je výslovně bez_data, nepoužívá se čas nahrání. QGIS i tabulka fotografií odkazují na skutečné cesty; interní ID se do názvů nedávají.
+- Popup a miniatura v tabulce používají autorizovaný náhled do 640 px s neveřejnou diskovou cache. Před každým vrácením náhledu se znovu kontrolují práva. Otevřená fotografie a karty používají původní snímek, bez automatického převodu na 1200 px/JPEG 80. Při nedostupném GD nebo paměti se vrací originál.
+- Širší filtr na počítači, přímé odkazy mapa ↔ projektová tabulka. Běžná tlačítka editorů mají sjednocenou zelenou; destruktivní akce zůstávají odlišené.
+- Import fotografií do existujících stromů i ploch: výběr složek/podsložek nebo souborů, přiřazení dle čísla podsložky, celé dávky jednomu objektu nebo CSV UTF-8 se sloupci soubor;cislo;popisek. Každá fotografie je samostatný řádek. Při stejných názvech se vyžaduje relativní cesta. Číselné podsložky a strom66/plocha66 jsou podporované, libovolné kódy lze přiřadit přes CSV.
+- Kontrolní náhled před zápisem, odmítnutí chybějících/nejednoznačných objektů, potvrzený plán v session s projektem a hashem každé fotografie. Nahrávání postupně, role a projekt ověřené při každém souboru, opakování potvrzeného řádku nevytvoří duplikát. Dávka není atomická: úspěšné soubory zůstávají po přerušení, v otevřené stránce lze pokračovat. Plán vyprší za hodinu; po novém náhledu je třeba vybrat jen dosud nenahrané fotografie. Dávka nejvýše 500, každý soubor do 5 MB/24 MP. XLSX tabulku je zatím nutné převést na CSV UTF-8.
+
+Ověření před vydáním: CI PHP 8.3/8.4/8.5, HTTP import včetně oprávnění, chybného hashe a opakování požadavku, originál/náhled/karta, export se zapnutým i vypnutým popiskem. Reálný velký projekt na WEDOS je nutné po nasazení ověřit; malý test nepotvrzuje časový limit konkrétního hostingu.
+
+Export přikládá také přímo importovatelné CSV přiřazení zvlášť pro stromy a plochy. Obsahují jen přibalené fotografie a jeden řádek pro každý soubor.

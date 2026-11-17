@@ -3226,3 +3226,6 @@ body {
         display: flex !important;
     }
 }
+.admin-toolbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+.dashboard-navigation{margin:20px 0}
+@media(max-width:600px){.admin-toolbar-actions{justify-content:flex-start}}

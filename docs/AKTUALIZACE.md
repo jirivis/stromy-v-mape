@@ -1,3 +1,5 @@
+> Historický dokument starší etapy. Aktuální instalace a nastavený veřejný zdroj aktualizací jsou popsány v docs/INSTALACE.md; licence je GPL-3.0-or-later (LICENSING.md). Aktuální původ taxonomie rozlišuje database/catalogs/PROVENANCE.md. Níže uvedená tvrzení o dosud nevydaných balíčcích nebo nezvolené licenci popisují tehdejší stav, nikoli stav 2.25.4.
+
 # Aktualizace aplikace — V2.23.0
 
 ## Co se aktualizuje
@@ -56,3 +58,30 @@ Automatický rollback databáze není součástí této verze. Zálohy a připra
 PHP 8.2+, OpenSSL, ZipArchive, HTTPS odchozí spojení a zapisovatelné programové soubory a private. Limit ZIPu 30 MB, rozbaleného obsahu 100 MB, nejvýše 2500 položek. Hosting může mít nižší upload limit. Aktualizace jsou určeny pro jednu instalaci na jednom souborovém systému (nikoli více serverů s oddělenými disky).
 
 Údržba chrání aplikační PHP požadavky, které používají společný bootstrap. Nejde o náhradu úplného auditu starších endpointů ani o zálohovací systém. Automatická kontrola GitHubu se dosud netestovala proti skutečnému vydavatelskému repozitáři, a není aktivovaná na produkci. Repozitář jirivis/stromy-v-mape je zatím soukromý; anonymní stahování vyžaduje veřejný zdroj vydání.
+
+
+## Zdroj v administraci (od 2.25.2)
+Správce systému může v Aktualizace → Nastavení zdroje aktualizací uložit
+`vlastník/repozitář` a zapnout kontrolu při otevření dashboardu. Nastavení je
+v `private/updates/source.json`; obsahuje jen repozitář a přepínač, nikdy klíč
+ani heslo. Podpisový klíč se dál přebírá z původní konfigurace. Uložení zdroje
+není ověření jeho dostupnosti; následuje Zkontrolovat vydání.
+
+Distribuční repozitář musí být veřejný. Soukromý zdrojový repozitář může zůstat
+soukromý; pro distribuci lze použít samostatný veřejný repozitář pouze s
+release.json a podepsanými ZIPy. Konfigurace, databáze, fotografie ani soukromý
+podpisový klíč se nezveřejňují. Samotný commit do zdrojového repozitáře není vydání.
+
+Pro více výchozích verzí má release.json podobu `{"packages": [...]}`. Každá
+položka obsahuje `from`, `version`, `url`, `sha256`, `notes` jako metadata
+vygenerovaná build.py. Aktualizátor vybere nejvyšší novější verzi s přesně
+odpovídajícím `from`. Uchovávejte i přechody pro starší instalace, aby mohly
+postupovat po verzích. Legacy manifest bez `from` zůstává čitelný, přesnou
+kompatibilitu však vždy kontroluje podepsaný manifest ZIPu před instalací.
+Cache je vázána na repozitář a nainstalovanou verzi. Změna zdroje ji smaže.
+Kontrola na dashboardu probíhá nejvýše jednou za šest hodin; nejde o vzdálené
+spuštění instalace. Stažení i instalaci zahajuje správce, instalaci potvrzuje.
+
+Před spuštěním distribuce: nahrát podepsaný ZIP do GitHub Release, vložit
+odpovídající metadata do main/release.json a ověřit kontrolu i stažení bez
+přihlášení na zkušební instalaci. Tento krok nelze nahradit lokálním testem.

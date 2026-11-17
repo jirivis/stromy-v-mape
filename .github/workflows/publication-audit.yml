@@ -1,0 +1,13 @@
+name: Publication history checks
+on: [push, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  history:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check all fetched Git history for publication candidates
+        run: python3 tests/publication_history.py

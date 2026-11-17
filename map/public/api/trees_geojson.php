@@ -16,6 +16,10 @@ header('Content-Type: application/geo+json; charset=utf-8');
 require_once __DIR__ . '/../../../auth_api.php';
 require_once __DIR__ . '/db.php';
 
+require_once __DIR__.'/../project_tools/structure_catalog.php';
+// Preserve raw NULL/numeric values for exactly the same filtering as the table.
+$filterKeys=array_fill_keys([...array_keys(ptTreeFields()),'usr_id','status','lat_wgs84','lng_wgs84','x_sjtsk','y_sjtsk'],true);
+
 // Knihovna Proj4php
 require_once __DIR__ . '/proj4php/Proj4php.php';
 require_once __DIR__ . '/proj4php/common.php';
@@ -269,6 +273,7 @@ $photoStatement = $db->prepare("
             ],
 
             'properties' => [
+                'filter_values' => array_intersect_key($row,$filterKeys),
                 'id' => $treeId,
 				'project_id' => $activeProjectId,
                 'usr_id' => (int) ($row['usr_id'] ?? 0),

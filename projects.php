@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/auth.php';
+require_once __DIR__.'/app/auth_form.php';
 require_once __DIR__ . '/config_app.php';
 require_once __DIR__ . '/map/public/api/db.php';
 
@@ -213,6 +214,7 @@ require_once __DIR__
             Projekty, ke kterým máte přístup.
         </p>
     </div>
+<div class="admin-toolbar-actions"><a class="btn btn-secondary" href="/dashboard.php">← Dashboard</a>
 
     <?php if (
         $isSuperAdmin === 1
@@ -228,6 +230,7 @@ require_once __DIR__
 
     <?php endif; ?>
 
+</div>
 </div>
 
 
@@ -369,6 +372,7 @@ require_once __DIR__
                         action="/switch_project.php"
                         method="post"
                     >
+<input type="hidden" name="auth_form_token" value="<?= htmlspecialchars($_SESSION['auth_form_token'],ENT_QUOTES,'UTF-8') ?>">
                         <input
                             type="hidden"
                             name="project_id"
@@ -413,16 +417,7 @@ require_once __DIR__
 <?php endif; ?>
 
 
-<div class="admin-actions">
 
-    <a
-        href="/dashboard.php"
-        class="btn btn-secondary"
-    >
-        Zpět na dashboard
-    </a>
-
-</div>
 
 <?php
 

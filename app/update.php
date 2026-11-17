@@ -6,6 +6,8 @@ function upDir():string{$p=upRoot().'/private/updates';if(!is_dir($p)&&!mkdir($p
 function upVersion():string{return trim(file_get_contents(upRoot().'/app/VERSION'));}
 function upPath(string $p):bool{
  if(!preg_match('~^[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$~D',$p)||str_contains($p,'..'))return false;
+ // Only these publisher-managed protection files may enter photo storage.
+ if(in_array($p,['map/public/photos/.htaccess','map/public/uploads/.htaccess'],true))return true;
  foreach(['private','map/public/photos','map/public/uploads','.git','install'] as $x)if($p===$x||str_starts_with($p,$x.'/'))return false;
  return !in_array($p,['app/VERSION','release.json','manifest.json','signature.txt'],true);
 }
@@ -69,9 +71,52 @@ function upFetch(string $url,int $limit):string{
   $bytes=stream_get_contents($stream,$limit+1);$meta=stream_get_meta_data($stream);fclose($stream);if($bytes===false||strlen($bytes)>$limit||!empty($meta['timed_out']))throw new RuntimeException('Stažení není úplné nebo překročilo limit.');return $bytes;
  }throw new RuntimeException('Příliš mnoho přesměrování.');
 }
+// The distribution source may change; the trusted signing key never comes from it.
+function upConfig(array $base):array{
+ $p=upDir().'/source.json';
+ if(is_file($p)){
+  $saved=json_decode(file_get_contents($p),true,8,JSON_THROW_ON_ERROR);
+  if(!is_array($saved))throw new RuntimeException('Neplatné nastavení aktualizací.');
+  $base['repository']=upRepository((string)($saved['repository']??''));
+  $base['check_on_dashboard']=($saved['check_on_dashboard']??false)===true;
+ }
+ return $base;
+}
+function upRepository(string $repo):string{
+ $repo=trim($repo);
+ if($repo!==''&&!preg_match('~^[A-Za-z0-9_-]+/[A-Za-z0-9_.-]+$~D',$repo))throw new RuntimeException('Zadejte repozitář ve tvaru vlastník/název, bez URL.');
+ return $repo;
+}
+function upSaveSource(string $repo,bool $automatic):void{
+ $repo=upRepository($repo);
+ if($automatic&&$repo==='')throw new RuntimeException('Pro automatickou kontrolu vyplňte repozitář.');
+ upAtomic(upDir().'/source.json',json_encode(['repository'=>$repo,'check_on_dashboard'=>$automatic],JSON_THROW_ON_ERROR));
+ if(is_file(upDir().'/release-cache.json'))unlink(upDir().'/release-cache.json');
+}
+function upSelectRelease(array $index,string $repo,string $current):array{
+ $entries=$index['packages']??[$index];
+ if(!is_array($entries)||!array_is_list($entries)||count($entries)>200)throw new RuntimeException('Neplatný seznam vydání.');
+ $selected=null;
+ foreach($entries as $r){
+  if(!is_array($r)||!is_string($r['version']??null)||!preg_match('/^\d+\.\d+\.\d+$/D',$r['version'])||!is_string($r['sha256']??null)||!preg_match('/^[a-f0-9]{64}$/D',$r['sha256'])||!is_string($r['url']??null)||!str_starts_with($r['url'],'https://github.com/'.$repo.'/releases/download/')||!is_string($r['notes']??''))throw new RuntimeException('Neplatné informace o vydání.');
+  if(isset($r['from'])&&(!is_string($r['from'])||!preg_match('/^\d+\.\d+\.\d+$/D',$r['from'])))throw new RuntimeException('Neplatná výchozí verze vydání.');
+  // Legacy indexes remain readable; the signed manifest always enforces exact compatibility.
+  if(isset($r['from'])&&$r['from']!==$current)continue;
+  if(!version_compare($r['version'],$current,'>'))continue;
+  if($selected===null||version_compare($r['version'],$selected['version'],'>'))$selected=$r;
+ }
+ return $selected??['version'=>$current,'available'=>false,'notes'=>'Pro tuto instalaci není ve zdroji dostupná novější kompatibilní aktualizace.'];
+}
+function upCachedRelease(array $cfg):?array{
+ $p=upDir().'/release-cache.json';$r=is_file($p)?json_decode(file_get_contents($p),true):null;
+ if(!is_array($r)||($r['repository']??null)!==($cfg['repository']??'')||($r['installed_version']??null)!==upVersion())return null;
+ return $r;
+}
 function upCheck(array $cfg):array{
- $repo=(string)($cfg['repository']??'');if(!preg_match('~^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$~D',$repo))throw new RuntimeException('Zdroj aktualizací ještě není nastaven.');
- $r=json_decode(upFetch('https://raw.githubusercontent.com/'.$repo.'/main/release.json',65536),true,16,JSON_THROW_ON_ERROR);
- if(!preg_match('/^\d+\.\d+\.\d+$/D',$r['version']??'')||!preg_match('/^[a-f0-9]{64}$/D',$r['sha256']??'')||!str_starts_with($r['url']??'','https://github.com/'.$repo.'/releases/download/'))throw new RuntimeException('Neplatné informace o vydání.');
- $r['checked_at']=time();upAtomic(upDir().'/release-cache.json',json_encode($r,JSON_THROW_ON_ERROR));return $r;
+ $repo=upRepository((string)($cfg['repository']??''));if($repo==='')throw new RuntimeException('Zdroj aktualizací ještě není nastaven.');
+ $index=json_decode(upFetch('https://raw.githubusercontent.com/'.$repo.'/main/release.json',65536),true,16,JSON_THROW_ON_ERROR);
+ if(!is_array($index))throw new RuntimeException('Neplatný seznam vydání.');
+ $r=upSelectRelease($index,$repo,upVersion());
+ $r['checked_at']=time();$r['repository']=$repo;$r['installed_version']=upVersion();
+ upAtomic(upDir().'/release-cache.json',json_encode($r,JSON_THROW_ON_ERROR));return $r;
 }

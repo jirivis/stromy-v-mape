@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/api/db.php';
 
 header('Content-Type: text/html; charset=utf-8');
+header('Cache-Control: no-store');
+header('Referrer-Policy: no-referrer');
 
 $mysqli->set_charset('utf8mb4');
 
@@ -99,6 +101,7 @@ $photoStatement = $mysqli->prepare(
         sort_order
      FROM trees_photo
      WHERE tree_id = ?
+       AND status = \'active\'
      ORDER BY
         sort_order,
         id'
@@ -125,6 +128,7 @@ while (
     $photo =
         $photoResult->fetch_assoc()
 ) {
+    $photo['url']='/map/public/photo.php?photo='.(int)$photo['id'].'&token='.rawurlencode($token);
     $gallery[] = $photo;
 }
 

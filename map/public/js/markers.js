@@ -10,6 +10,7 @@ TreeApp.showTreeLabels = true;
 TreeApp.treeLabelMinZoom = 17;
 
 TreeApp.getMarkerDimension = function (tree, mode) {
+    const minimum = 20;
     const firstPositive = function (fields) {
         for (const field of fields) {
             const n = Number(tree[field]);
@@ -19,12 +20,12 @@ TreeApp.getMarkerDimension = function (tree, mode) {
     };
     const girth = firstPositive(["girth1_cm", "girth2_cm", "girth3_cm", "girth4_cm", "girth_cm"]);
     const dbh = firstPositive(["dbh1_cm", "dbh2_cm", "dbh3_cm", "dbh4_cm"]);
-    if (mode === "none") return 20;
-    if (mode === "girth") return Math.max(20, (girth || (dbh ? dbh * Math.PI : 0)) * 0.3);
-    if (mode === "dbh") return Math.max(20, (dbh || (girth ? girth / Math.PI : 0)) * Math.PI * 0.3);
-    if (mode === "spread") return Math.max(20, Math.min(110, Number(tree.spread_m) > 0 ? Number(tree.spread_m) * 4 : 20));
-    if (mode === "height") return Math.max(20, Math.min(110, Number(tree.height) > 0 ? Number(tree.height) * 2 : 20));
-    return 20;
+    if (mode === "none") return minimum;
+    if (mode === "girth") return Math.max(minimum, (girth || (dbh ? dbh * Math.PI : 0)) * 0.3);
+    if (mode === "dbh") return Math.max(minimum, (dbh || (girth ? girth / Math.PI : 0)) * Math.PI * 0.3);
+    if (mode === "spread") return Math.max(minimum, Math.min(110, Number(tree.spread_m) > 0 ? Number(tree.spread_m) * 4 : minimum));
+    if (mode === "height") return Math.max(minimum, Math.min(110, Number(tree.height) > 0 ? Number(tree.height) * 2 : minimum));
+    return minimum;
 };
 
 // Styl popisku je vložen z JS, aby nebylo nutné upravovat další CSS soubor.
@@ -36,7 +37,7 @@ TreeApp.installTreeLabelStyles = function () {
         .leaflet-tooltip.tree-usr-label {
             background: transparent; border: 0; box-shadow: none;
             padding: 0; margin: 0; color: #fff;
-            font: 700 13px/1.15 Arial, sans-serif;
+            font: 700 13px/1.2 Arial, sans-serif;
             white-space: nowrap; pointer-events: none;
             -webkit-text-stroke: 2.5px #202020;
             paint-order: stroke fill;
@@ -292,7 +293,8 @@ TreeApp.getTreeMarkerColor = function (
  */
 TreeApp.createTreeMarkerIcon = function (
     tree,
-    size
+    size,
+    backgroundOverride
 ) {
 
     let iconUrl =
@@ -307,14 +309,14 @@ TreeApp.createTreeMarkerIcon = function (
     }
 
     const backgroundColor =
-        TreeApp.getTreeMarkerColor(
+        backgroundOverride ?? TreeApp.getTreeMarkerColor(
             tree,
             TreeApp.markerColorMode
         );
 
     const safeSize =
         Math.max(
-            20,
+            TreeApp.getMarkerDimension({}, "none"),
             Math.round(size)
         );
 
