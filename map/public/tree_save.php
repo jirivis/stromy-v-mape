@@ -17,6 +17,22 @@ function treeSaveDebug(string $message): void
     );
 }
 
+// Return a safe diagnostic code instead of an empty HTTP 500 response.
+set_exception_handler(static function (Throwable $error): void {
+    global $mysqli;
+    if (isset($mysqli) && $mysqli instanceof mysqli) {
+        try { $mysqli->rollback(); } catch (Throwable $rollbackError) {}
+    }
+    error_log('Tree save failed: ' . $error->getMessage());
+    $code = $error instanceof mysqli_sql_exception ? (int) $error->getCode() : 0;
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Uložení stromu selhalo.' . ($code ? ' Kód databázové chyby: ' . $code . '.' : '') . ' Zkuste to znovu; pokud chyba trvá, předejte tuto zprávu správci.'
+    ], JSON_UNESCAPED_UNICODE);
+});
+
 treeSaveDebug('START tree_save.php');
 
 // Ověření přihlášení, aktivního projektu
@@ -148,12 +164,12 @@ $phy_age           = $_POST['phy_age'] !== '' ? (int)$_POST['phy_age'] : null;
 $ageInput=trim((string)($_POST['age']??''));
 if($ageInput!==''&&(!ctype_digit($ageInput)||(float)$ageInput>32767)){treeSaveReject('Stáří musí být celé číslo od 0 do 32767 let.',422);}
 $age=$ageInput===''?null:(int)$ageInput;
-$vitality          = $_POST['vitality'] ?? null;
-$tree_health       = $_POST['tree_health'] ?? null;
-$stability         = $_POST['stability'] ?? null;
-$operational_safety= $_POST['operational_safety'] ?? null;
-$longevity         = $_POST['longevity'] ?? null;
-$ecological_value  = $_POST['ecological_value'] ?? null;
+$vitality          = (isset($_POST['vitality']) && $_POST['vitality'] !== '') ? $_POST['vitality'] : null;
+$tree_health       = (isset($_POST['tree_health']) && $_POST['tree_health'] !== '') ? $_POST['tree_health'] : null;
+$stability         = (isset($_POST['stability']) && $_POST['stability'] !== '') ? $_POST['stability'] : null;
+$operational_safety= (isset($_POST['operational_safety']) && $_POST['operational_safety'] !== '') ? $_POST['operational_safety'] : null;
+$longevity         = (isset($_POST['longevity']) && $_POST['longevity'] !== '') ? $_POST['longevity'] : null;
+$ecological_value  = (isset($_POST['ecological_value']) && $_POST['ecological_value'] !== '') ? $_POST['ecological_value'] : null;
 $landscape_value   = $_POST['landscape_value'] !== '' ? (int)$_POST['landscape_value'] : null;
 $note_tree         = trim($_POST['note_tree'] ?? '');
 
