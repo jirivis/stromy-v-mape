@@ -21,3 +21,7 @@ Pro uzavření původu potřebujeme původní odkazy/exporty a jejich podmínky,
 ## Strojový přehled
 
 provenance-audit.json shrnuje rozsah a omezení kontroly. Neobsahuje klientská data. Změny autorů a přijatých jmen mají projít náhledem a souhlasem správce; nejsou automaticky promítány do uložených stromů.
+
+## Doplnění správce 17. 11. 2026
+
+Správce upřesnil, že možnými zdroji původního seznamu byly BOTANY.cz a BioLib.cz; uvádí to z paměti, nikoli jako doložený export nebo licenci. Přesné záznamy a způsob převzetí nejsou známé. BOTANY.cz uvádí ochranu fotografií a většiny textů (https://botany.cz/cs/cookies/); to samo nerozhoduje o podmínkách použití jednotlivých názvů ani o původu tohoto seznamu. Oba weby proto evidujeme jako nepotvrzené zdrojové vodítko, nikoli jako ověřenou licenční oporu.
