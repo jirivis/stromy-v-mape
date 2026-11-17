@@ -29,3 +29,7 @@ Celý původní seznam je porovnán s oficiálním **WCVP v16 (4. 6. 2026)**, ta
 473 položek se shoduje jménem i autorem (bez rozdílů v mezerách), 67 má jedinou shodu názvu, ale odlišného autora; 11 je samostatně posouzených. Rozdíly autorů jsou upozornění k další redakci, nikoli automatické opravy. Identifikátor ukazuje na odpovídající **původní jméno**, tedy i synonymum nebo neplatné jméno; nezaměňovat jej s ID přijatého taxonu. Například chybně psané Eleagnus × ebbingei odkazuje na Elaeagnus × ebbingei (status Illegitimate). Zpětně názvy stromů neměníme.
 
 Reprodukce: `python release-tools/catalogs/match_powo.py /cesta/wcvp.zip`. Celý zdrojový ZIP se do repozitáře nepřidává. Údaje o původu původních českých názvů a kultivarů zůstávají neověřené. Doplnění ID není ověření českých jmen či kultivarů a nezavádí vazbu kultivar–druh. Kultivar u stromu zůstává volitelný.
+
+## Kontrola původu 17. 11. 2026
+
+Aktuální rozlišení doložených a nedoložených částí: PROVENANCE.md. Souhrn auditního JSON: provenance-audit.json. Seznam 67 rozdílů autorů a 11 individuálně posouzených případů: author-review.csv. Licence vlastní aplikace neznamená přelicencování těchto dat.

@@ -24,7 +24,7 @@ Kompletní balíček pro samostatnou doménu nebo subdoménu a **novou prázdnou
 
 ## Číselníky a veřejná distribuce
 
-Instalátor obsahuje 557 taxonů a 1 099 názvů kultivarů. Kultivar se automaticky nepřiřazuje. Mapování POWO/WCVP a jeho původ popisuje `application/database/catalogs/README.md`; nejde o živou synchronizaci s POWO. Původ původního seznamu českých názvů a kultivarů není doložen a licence celé aplikace dosud nebyla zvolena. Tento balíček je připraven k ověření vlastní instalace; před veřejným nabízením úplné distribuce je potřeba tyto otázky uzavřít. Licence přibalených komponent zůstávají v jejich složkách.
+Instalátor obsahuje 557 taxonů a 1 099 názvů kultivarů. Kultivar se automaticky nepřiřazuje. Mapování POWO/WCVP a jeho původ popisuje `application/database/catalogs/README.md`; nejde o živou synchronizaci s POWO. Vlastní kód aplikace je GPL-3.0-or-later, viz LICENSE a LICENSING.md. Původ původního seznamu českých názvů a kultivarů dosud není doložen. Tento balíček je připraven k ověření vlastní instalace; před veřejným nabízením úplné distribuce je potřeba původ těchto dat uzavřít. Licence přibalených komponent zůstávají v jejich složkách.
 
 ## Aktualizace a obnova
 
