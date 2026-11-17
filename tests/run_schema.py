@@ -29,5 +29,6 @@ with tempfile.TemporaryDirectory(prefix='svm-schema-') as td:
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('release_patch_2_24_2.py')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('release_patch_2_24_3.py')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('release_patch_2_25_0.py')),socket],check=True)
+            subprocess.run(['python3',str(pathlib.Path(__file__).with_name('release_patch_2_25_4.py'))],check=True)
         finally:
             db.terminate();db.wait(timeout=20)
