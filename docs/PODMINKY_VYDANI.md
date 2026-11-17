@@ -1,3 +1,5 @@
+> Historický dokument starší etapy. Aktuální instalace a nastavený veřejný zdroj aktualizací jsou popsány v docs/INSTALACE.md; licence je GPL-3.0-or-later (LICENSING.md). Aktuální původ taxonomie rozlišuje database/catalogs/PROVENANCE.md. Níže uvedená tvrzení o dosud nevydaných balíčcích nebo nezvolené licenci popisují tehdejší stav, nikoli stav 2.25.4.
+
 # Stav přípravy vydání – 9. 11. 2026
 
 Pracovní větev release/2.24.0, PR #3. Živý web nebyl změněn. Dříve předaný ZIP 2.24.0 neobsahuje všechny bezpečnostní opravy a nesmí být použit jako aktuální instalační balíček.

@@ -1,3 +1,5 @@
+> Historický dokument starší etapy. Aktuální instalace a nastavený veřejný zdroj aktualizací jsou popsány v docs/INSTALACE.md; licence je GPL-3.0-or-later (LICENSING.md). Aktuální původ taxonomie rozlišuje database/catalogs/PROVENANCE.md. Níže uvedená tvrzení o dosud nevydaných balíčcích nebo nezvolené licenci popisují tehdejší stav, nikoli stav 2.25.4.
+
 # Aktualizace aplikace — V2.23.0
 
 ## Co se aktualizuje
