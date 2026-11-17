@@ -1,26 +1,21 @@
-# Stromy v mapě – instalační balíček V2.24.0
+# Stromy v mapě – aplikace 2.25.4
 
-Kompletní samostatná aplikace pro novou doménu/subdoménu a prázdnou databázi. Nenahrávat přes běžící produkční web. Neobsahuje prezentační weby, přístupové údaje ani zákaznická data.
+Aplikace pro evidenci stromů a porostních ploch, fotografie, historii, import/export a volitelnou veřejnou mapu. Prezentační weby ani zákaznická data nejsou součástí.
 
-Postup: docs/INSTALACE.md. Fotografie a zálohy: docs/FOTOGRAFIE.md. Provedené testy: docs/OVERENI.md.
+## Nová instalace
 
-## Uspořádání
-- app/: společná konfigurace, ověření účtu, úložiště fotografií, pošta.
-- private/: konfigurace a soukromé fotografie ploch; přístup zakazuje .htaccess.
-- database/: schéma nové databáze a oddělené migrace.
-- install/: jednorázový instalátor správce a schématu.
-- maintenance/: dávkový převod fotografií ploch pro správce.
-- map/public/: mapy, formuláře, historie, importy a exporty.
+Postup a požadavky: [docs/INSTALACE.md](docs/INSTALACE.md). Kompletní balíček se sestavuje příkazem:
 
-Aktuální hodnoty zůstávají v trees, historické snapshoty a jejich vazby se zachovávají. Tree_measurements se nemaže. Rozměry jsou celá čísla, stáří podporuje 1000 let. Existující interní ID se nepřečíslují. Exporty používají evidenční čísla objektů.
+```sh
+python3 release-tools/package_installer.py --output /cesta/install-2.25.4.zip
+```
 
-Nové schéma používá utf8mb4 a dlouhé poznámky TEXT, aby se vešlo do limitu řádku MariaDB. Rozdílné typy starších ID se na existujících databázích automaticky nepřepisují.
-
-## Rozsah vydání
-Jde o sjednocený instalační balíček pro ověření na cílovém hostingu, nikoli automatickou aktualizaci produkce. Zůstává nutné dokončit úplný bezpečnostní audit starších endpointů, zvolit licenci pro zveřejnění a ověřit práva k distribuci číselníků. Číselníky druhů a kultivarů obsahují pouze strukturu. Instalace do podadresáře zatím není podporována.
+ZIP obsahuje application/ a návod. Používá explicitní seznam souborů, nepřibaluje místní konfiguraci, fotografie, testy, podpisové soukromé klíče ani vývojové nástroje. Test čisté instalace rozbaluje tento ZIP, nikoli vývojový checkout. Před veřejnou distribucí zbývá rozhodnout licenci aplikace a doložit původ původních českých názvů a kultivarů; podrobnosti jsou v instalačním návodu a database/catalogs/README.md.
 
 ## Aktualizace
-Dashboard správce nyní obsahuje Aktualizace aplikace. Podporuje kontrolu GitHub vydání, ruční ZIP, ověřené podepsané balíčky, schválení správce a databázové migrace. Veřejný podpisový klíč je přiložen. Automatická kontrola je zatím vypnutá; veřejné GitHub vydání není publikované. Podrobnosti a obnova při chybě: docs/AKTUALIZACE.md. Modul ocenění AOPK zatím není implementován.
 
-## GitHub
-Příprava repozitáře `jirivis/stromy-v-mape`: [stav a další kroky](docs/GITHUB.md).
+Veřejný distribuční zdroj je jirivis/stromy-v-mape-updates. Nové instalace mají ve vzoru konfigurace tento zdroj, veřejný podpisový klíč a kontrolu vydání na dashboardu. Každou instalaci aktualizace schvaluje správce. Instalační ZIP není aktualizační balíček. SQL změny mohou vyžadovat přípravu správcem databáze.
+
+Verze 2.25.4 zpřesňuje projektová oprávnění a chrání adresář kontaktů. Oprávnění a obnova: [docs/OBNOVA_A_OPRAVNENI.md](docs/OBNOVA_A_OPRAVNENI.md). Fotografie: [docs/FOTOGRAFIE.md](docs/FOTOGRAFIE.md).
+
+Čistou instalaci a regresní testy ověřuje CI na PHP 8.3/8.4/8.5 s MariaDB. Cílový hosting, doručování pošty a obnovu reálných záloh je potřeba ověřit samostatně. Nejde o potvrzení úplného bezpečnostního auditu. Modul ocenění AOPK zatím není implementován; databázová příprava není kalkulačka.

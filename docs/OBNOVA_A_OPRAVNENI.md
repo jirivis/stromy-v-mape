@@ -18,4 +18,4 @@
 
 Automatizovaný test tests/install_restore_http.py používá výhradně dočasnou databázi a syntetická data: webový instalátor, nesprávný klíč, uzamčení instalace, zákaz opakované instalace do neprázdné databáze, číselníky a neveřejné výchozí nastavení. Poté porovnává SQL export před/po obnově, konfigurační soubor, verzi a zkušební soubory fotografií a ověří přihlášení obnoveného správce. Nenahrazuje zkoušku skutečné zálohy na WEDOS; neověřuje doručení e-mailů ani nastavení Apache cílového hostingu.
 
-Tyto opravy jsou v pracovní větvi. Zveřejněný aktualizační balíček 2.25.3 je neobsahuje; před nasazením je nutné vytvořit a ověřit nové vydání včetně app/project_directory.php.
+Opravy oprávnění jsou součástí vydání 2.25.4, včetně app/project_directory.php. Instalační balíček obsahuje stejnou verzi; zveřejněný aktualizační ZIP je určen pouze pro přechod z 2.25.3.
