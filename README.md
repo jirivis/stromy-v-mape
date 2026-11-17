@@ -10,7 +10,7 @@ Postup a požadavky: [docs/INSTALACE.md](docs/INSTALACE.md). Kompletní balíče
 python3 release-tools/package_installer.py --output /cesta/install-2.25.4.zip
 ```
 
-ZIP obsahuje application/ a návod. Používá explicitní seznam souborů, nepřibaluje místní konfiguraci, fotografie, testy, podpisové soukromé klíče ani vývojové nástroje. Test čisté instalace rozbaluje tento ZIP, nikoli vývojový checkout. Vlastní kód je GPL-3.0-or-later (LICENSE a LICENSING.md). Před veřejnou distribucí zbývá doložit původ původních českých názvů a kultivarů; podrobnosti jsou v instalačním návodu a database/catalogs/README.md.
+ZIP obsahuje application/ a návod. Používá explicitní seznam souborů, nepřibaluje místní konfiguraci, fotografie, testy, podpisové soukromé klíče ani vývojové nástroje. Test čisté instalace rozbaluje tento ZIP, nikoli vývojový checkout. Vlastní kód je GPL-3.0-or-later (LICENSE a LICENSING.md). Původ původních českých názvů a kultivarů není úplně doložen. BOTANY a BioLib jsou možné zdroje podle vzpomínky autora seznamu; nejde o potvrzení licence těchto dat. Podrobnosti: database/catalogs/PROVENANCE.md.
 
 ## Aktualizace
 
@@ -24,4 +24,4 @@ Verze 2.25.4 zpřesňuje projektová oprávnění a chrání adresář kontaktů
 
 Vlastní kód: **GPL-3.0-or-later**, viz LICENSE a LICENSING.md. Cizí komponenty: THIRD_PARTY_NOTICES.md. Příspěvky a testy: CONTRIBUTING.md. Bezpečnostní hlášení: SECURITY.md. Taxonomický původ: database/catalogs/PROVENANCE.md.
 
-Issues jsou zapnuté a pull requesty podporované. Zdrojový repozitář je zatím soukromý; veřejnost nemá přístup, dokud správce nerozhodne o zveřejnění. Aktuální vývoj je ve větvi release/2.24.0; šablony příspěvků se běžně nabídnou až po začlenění do výchozí větve.
+Chyby a návrhy přijímáme přes [Issues](https://github.com/jirivis/stromy-v-mape/issues), opravy přes pull requesty. Výchozím zdrojem je větev main. Bezpečnostní nálezy posílejte neveřejně podle SECURITY.md.

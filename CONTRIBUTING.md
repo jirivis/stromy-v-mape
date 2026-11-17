@@ -8,7 +8,7 @@ Pro běžné chyby a návrhy použijte Issues. Uveďte verzi aplikace, prohlíž
 
 ## Pull request
 
-1. Vytvořte pracovní větev z aktuální vývojové větve. Do dokončení sjednocení větví je to release/2.24.0; výchozí main zatím nepovažujte za aktuální instalační zdroj. Externí fork/PR vyžaduje veřejný repozitář nebo přidělený přístup.
+1. Vytvořte fork a pracovní větev z aktuální main. Pull request směřujte do main.
 2. Omezte PR na jednu srozumitelnou změnu. Popište problém, výsledné chování a způsob ověření.
 3. Zachovejte serverovou kontrolu projektových oprávnění a CSRF. Interní ID nesmějí být zveřejněná jako uživatelská označení.
 4. Databázové změny musí mít migrační postup i aktualizované schéma nové instalace; nesmějí přepsat místní data. Přidejte příslušné testy.
