@@ -34,6 +34,15 @@ setImmediate(()=>{try{
  assert.equal($('treeFilters').textContent.includes('Naléhavost zásahu'),false);
  assert.equal($('treeFilters').querySelector('[aria-label="Příští kontrola"]')!==null,true);
  assert.equal(shown.length,2);assert.equal(clusters.length,1);assert.equal(polygons.length,1);
+ assert.equal($('tableBody').children.length,1);assert.equal($('tableBody').textContent.includes('P2'),false);
+ assert.equal($('tableHead').textContent.includes('Druh'),true);
+ $('tableAreas').click();assert.equal($('tableBody').textContent.includes('P2'),true);assert.equal($('tableHead').textContent.includes('Druh'),false);
+ $('toggleTable').click();$('tableAreas').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft'}));assert.equal($('tableTrees').getAttribute('aria-selected'),'true');assert.equal(w.document.activeElement,$('tableTrees'));$('toggleTable').click();
+ const originalTimeout=w.setTimeout;let delay,fade;
+ w.setTimeout=(fn,ms)=>{delay=ms;fade=fn;return 123};
+ w.SVMFilters.notice(true);assert.equal(delay,1500);assert.ok(w.document.getElementById('svm-filter-notice-style').textContent.includes('top:50%;left:50%;transform:translate(-50%,-50%)'));
+ fade();assert.equal($('svm-active-filter-notice').style.opacity,'0');w.setTimeout=originalTimeout;w.SVMFilters.notice(false);
+
  assert.equal(clusters[0].tip.options.direction,'bottom');assert.equal(polygons[0].tip.options.direction,'center');
  zoom=14;events.zoomend();assert.equal(clusters[0].tip,null);assert.equal(polygons[0].tip,null);
  zoom=15;events.zoomend();assert.equal(clusters[0].tip,null);assert.ok(polygons[0].tip);
@@ -43,7 +52,7 @@ setImmediate(()=>{try{
  $('showAll').click();assert.equal(fitted.features.length,2);
  const host=$('treeFilters'),button=text=>[...host.querySelectorAll('button')].find(b=>b.textContent===text);
  button('Přidat podmínku').click();let row=host.querySelector('.svm-filter-rule');row.children[0].value='height';row.children[1].value='gt';row.children[2].value='15';
- button('Použít podmínky').click();assert.equal(shown.length,1);assert.equal(clusters.length,0);assert.equal($('tableBody').children.length,1);assert.equal($('filterSummary').classList.contains('has-active-filters'),true);
+ button('Použít podmínky').click();assert.equal(shown.length,1);assert.equal(clusters.length,0);assert.equal($('tableBody').children.length,0);$('tableAreas').click();assert.equal($('tableBody').children.length,1);assert.equal($('tableAreas').getAttribute('aria-selected'),'true');assert.equal($('tableContent').getAttribute('aria-labelledby'),'tableAreas');assert.equal($('filterSummary').classList.contains('has-active-filters'),true);
  c.set({...c.state,mode:'any',rules:[...c.state.rules,{field:'species',op:'eq',value:'Buk'}]});assert.equal(shown.length,2);
  c.set({...c.state,mode:'all'});assert.equal(shown.length,1);
  assert.equal(w.SVMFilters.create('trees',data.fields.trees,{public:true,storage_scope:'public:other'}).state.rules.length,0);
@@ -60,3 +69,4 @@ setImmediate(()=>{try{
  $('deviceLocation').click();assert.equal(clears,1);$('deviceLocation').click();locateError({code:1});assert.equal(clears,2);assert.equal(requests,1);
  console.log('PASS public shared filters, public-only field scope, all/any, table, cluster, zoom labels, area styles and device location');
 }catch(e){console.error(e);process.exitCode=1}finally{w.close()}});
+

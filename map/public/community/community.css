@@ -96,3 +96,6 @@ body{height:100dvh;display:flex;flex-direction:column}header{flex-shrink:0}main{
 #filterSummary.has-active-filters::after{content:" · Aktivní filtry"}
 .leaflet-tooltip.public-area-label{background:transparent;border:0;box-shadow:none;color:#fff;font:700 13px/1.2 Arial,sans-serif;-webkit-text-stroke:2.5px #202020;paint-order:stroke fill;pointer-events:none}
 .leaflet-tooltip.public-area-label::before{display:none}
+
+
+.table-tabs{display:flex;gap:8px;padding:8px 12px}.table-tabs [aria-selected="true"]{background:#28613d;color:#fff;font-weight:700}.table-tabs button:focus-visible{outline:3px solid #2166ac;outline-offset:2px}

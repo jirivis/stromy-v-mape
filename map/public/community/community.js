@@ -75,7 +75,7 @@
   }}catch{}
   function saveDisplay(){try{localStorage.setItem(displayKey,JSON.stringify(Object.fromEntries(displayIds.map(id=>[id,$(id).type==='checkbox'?$(id).checked:id==='areaTransparency'?Number($(id).value):$(id).value]))));}catch{}}
   for(const id of displayIds)$(id).addEventListener('input',saveDisplay);
-  let page=0,sort='@code',ascending=true,visible=[];
+  let page=0,sort='@code',ascending=true,visible=[],tableKind='trees';
   const filters={};
   for(const kind of ['trees','areas']){
    filters[kind]=SVMFilters.create(kind,data.fields[kind],{public:true,storage_scope:'public:'+p});
@@ -122,12 +122,28 @@
   const palette=['#26733f','#2166ac','#b35806','#762a83','#b2182b','#00877a','#826b00','#bb4980','#555555'];
   let colors=new Map();
   function color(f){return $('colorField').value?colors.get(value(f,$('colorField').value))||'#777777':'#28613d';}
+  function selectTable(kind,focus=false){
+   tableKind=kind;page=0;sort='@code';ascending=true;
+   for(const [k,id] of [['trees','tableTrees'],['areas','tableAreas']]){
+    const selected=k===kind;$(id).setAttribute('aria-selected',String(selected));$(id).tabIndex=selected?0:-1;
+    if(selected){$('tableContent').setAttribute('aria-labelledby',id);if(focus)$(id).focus();}
+   }
+   drawTable();
+  }
+  for(const [kind,id] of [['trees','tableTrees'],['areas','tableAreas']]){
+   $(id).onclick=()=>selectTable(kind);
+   $(id).onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){
+    e.preventDefault();selectTable(e.key==='Home'?'trees':e.key==='End'?'areas':tableKind==='trees'?'areas':'trees',true);
+   }};
+  }
   function drawTable(){
+   const tableFields=['@code',...new Set(Object.entries(data.fields[tableKind]).filter(([k])=>!['usr_id','code'].includes(k)).map(([,m])=>m.label))];
+   const tableRows=visible.filter(f=>f.properties.kind===tableKind);
    $('tableHead').replaceChildren();$('tableBody').replaceChildren();const head=el('tr');
-   for(const k of fields){const th=el('th'),button=el('button',label(k)+(sort===k?(ascending?' ↑':' ↓'):''));button.type='button';button.onclick=()=>{ascending=sort===k?!ascending:true;sort=k;page=0;drawTable();};th.setAttribute('aria-sort',sort===k?(ascending?'ascending':'descending'):'none');th.append(button);head.append(th);}$('tableHead').append(head);
-   const sorted=[...visible].sort((a,b)=>String(value(a,sort)).localeCompare(String(value(b,sort)),'cs',{numeric:true})*(ascending?1:-1));page=Math.max(0,Math.min(page,Math.ceil(sorted.length/50)-1));
-   for(const f of sorted.slice(page*50,page*50+50)){const tr=el('tr');for(const k of fields){const td=el('td');if(k==='@code'){const button=el('button',value(f,k));button.type='button';button.title='Zobrazit objekt na mapě';button.onclick=()=>{map.fitBounds(L.geoJSON(f).getBounds(),{maxZoom:19,padding:[25,25]});open(f);};td.append(button);}else td.textContent=value(f,k);tr.append(td);}$('tableBody').append(tr);}
-   $('page').textContent=(sorted.length?page+1:0)+' / '+Math.ceil(sorted.length/50)+' · '+sorted.length+' objektů';$('prev').disabled=page===0;$('next').disabled=(page+1)*50>=sorted.length;
+   for(const k of tableFields){const th=el('th'),button=el('button',label(k)+(sort===k?(ascending?' ↑':' ↓'):''));button.type='button';button.onclick=()=>{ascending=sort===k?!ascending:true;sort=k;page=0;drawTable();};th.setAttribute('aria-sort',sort===k?(ascending?'ascending':'descending'):'none');th.append(button);head.append(th);}$('tableHead').append(head);
+   const sorted=[...tableRows].sort((a,b)=>String(value(a,sort)).localeCompare(String(value(b,sort)),'cs',{numeric:true})*(ascending?1:-1));page=Math.max(0,Math.min(page,Math.ceil(sorted.length/50)-1));
+   for(const f of sorted.slice(page*50,page*50+50)){const tr=el('tr');for(const k of tableFields){const td=el('td');if(k==='@code'){const button=el('button',value(f,k));button.type='button';button.title='Zobrazit objekt na mapě';button.onclick=()=>{map.fitBounds(L.geoJSON(f).getBounds(),{maxZoom:19,padding:[25,25]});open(f);};td.append(button);}else td.textContent=value(f,k);tr.append(td);}$('tableBody').append(tr);}
+   $('page').textContent=(sorted.length?page+1:0)+' / '+Math.ceil(sorted.length/50)+' · '+sorted.length+(tableKind==='trees'?' stromů':' ploch');$('prev').disabled=page===0;$('next').disabled=(page+1)*50>=sorted.length;
   }
   function render(){
    if(treeClusters)map.removeLayer(treeClusters);if(areaLayer)map.removeLayer(areaLayer);visible=data.features.filter(matches);const key=$('colorField').value;colors=new Map();$('legend').replaceChildren();
@@ -156,5 +172,6 @@
   $('controls').addEventListener('toggle',()=>map.invalidateSize());render();SVMFilters.notice(active());window.addEventListener('pageshow',e=>{if(e.persisted)SVMFilters.notice(active());});if(layer.getLayers().length)map.fitBounds(layer.getBounds(),{padding:[20,20],maxZoom:18});
  }catch(e){$('status').textContent=e.message;}
 })();
+
 
 

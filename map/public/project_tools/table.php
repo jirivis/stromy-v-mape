@@ -8,7 +8,8 @@
 <div class="scroll"><table class="project-table"><thead id="head"></thead><tbody id="rows"></tbody></table></div><div class="tools"><button id="prev">Předchozí</button><span id="page"></span><button id="next">Další</button></div><nav class="tools no-print" aria-label="Návrat do přehledu"><a class="button" href="/dashboard.php" target="_top">← Dashboard</a></nav></main>
 <div id="rowMenu" class="row-menu" hidden><button id="showMap">Zobrazit na rychlé mapě</button><a id="editRow" target="_blank" rel="noopener">Upravit ve formuláři</a></div>
 <dialog id="quickDialog" class="quick-dialog" aria-labelledby="quickTitle"><div class="tools"><strong id="quickTitle">Rychlá mapa</strong><button id="closeMap">Zavřít</button></div><div id="quickMap"></div></dialog>
-<?php ptBoot(); ?><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="client.js?v=2.3"></script><script src="../js/project_filters.js?v=2.25.5"></script><script src="table.js?v=2.25.5"></script>
+<?php ptBoot(); ?><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="client.js?v=2.3"></script><script src="../js/project_filters.js?v=20261118-tabs"></script><script src="table.js?v=2.25.5"></script>
+
 
 
 
