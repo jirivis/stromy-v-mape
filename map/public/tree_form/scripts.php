@@ -999,6 +999,14 @@ function protectedTreePhotoUrl(value) {
 
 
 function selectSpecies(item) {
+        const form = document.querySelector('form[action="tree_save.php"]');
+        let selected = form.querySelector('[name="taxonomy_selected"]');
+        if (!selected) {
+            selected = document.createElement('input');
+            selected.type = 'hidden'; selected.name = 'taxonomy_selected';
+            form.append(selected);
+        }
+        selected.value = '1';
         document.querySelector("#species").value = item.scientific_name;
         document.querySelector("#scientific_author").value = item.author || "";
         document.querySelector("#czech").value = item.czech_name || "";
@@ -2284,7 +2292,7 @@ async function createMap() {
 
 
         /*
-         * OSM je spodní záložní podklad.
+         * OSM je výchozí podklad.
          */
         const osm =
             L.tileLayer(
@@ -2298,13 +2306,8 @@ async function createMap() {
             );
 
 
-        /*
-         * ČÚZK ortofoto je hlavní podklad.
-         *
-         * transparent:true je důležité:
-         * pokud WMS v některém měřítku nic nevrátí,
-         * zůstane pod ním viditelné OSM.
-         */
+        // Výchozí podklad ruční opravy polohy je OpenStreetMap.
+        osm.addTo(map);
 const ortho =
     L.tileLayer.wms(
         'https://ags.cuzk.gov.cz/arcgis1/services/ORTOFOTO/MapServer/WMSServer',
@@ -2314,7 +2317,7 @@ const ortho =
             layers:'0',format:'image/jpeg',version:'1.3.0',
             attribution: '© ČÚZK'
         }
-    ).addTo(map);
+    );
 	
 	/*
  * Katastrální mapa ČÚZK.
@@ -2362,8 +2365,8 @@ whiteBackground.createTile =
          */
 L.control.layers(
     {
-        'Ortofoto ČÚZK': ortho,
         'OpenStreetMap': osm,
+        'Ortofoto ČÚZK': ortho,
         'Bílý podklad': whiteBackground
     },
     {
@@ -2538,3 +2541,4 @@ if (!map) {
 
 })();
 </script>
+

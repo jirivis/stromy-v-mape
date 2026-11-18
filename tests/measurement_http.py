@@ -79,6 +79,24 @@ with tempfile.TemporaryDirectory() as td:
     assert post_form(endpoint,{'id':1,'action':'revoke','tree_form_token':'test-form-token'},'viewer')==403
    def sql(statement):
     return subprocess.check_output(['mariadb','--no-defaults','--protocol=tcp','-h127.0.0.1','-P'+port,'-uroot','-N','valuation_fresh','-e',statement]).decode().strip()
+   # Hidden taxonomy is preserved normally, but a deliberate autocomplete choice
+   # replaces all related fields while unrelated hidden fields stay untouched.
+   sql("UPDATE trees SET usr_id=1,species='Old',scientific_author='Old author',czech='Old Czech',angio_gymno='old',note_tree='Keep me' WHERE id=1")
+   def save_taxonomy(selected):
+    q=urllib.request.Request('http://127.0.0.1:33080/map/public/tree_new.php?id=1',headers={'Cookie':'PHPSESSID=editor'})
+    with urllib.request.urlopen(q) as response:html=response.read().decode()
+    version=re.search(r'name="row_version" value="([a-f0-9]+)"',html).group(1)
+    fields={k:'' for k in json.loads((app/'map/public/project_tools/tree_fields.json').read_text())}
+    fields.update(id='1',project_id='1',usr_id='1',tree_form_token='test-form-token',row_version=version,species='Pinus sylvestris',scientific_author='L.',czech='borovice lesni',angio_gymno='gymnospermae',note_tree='Do not replace',preserve_fields=json.dumps(['scientific_author','czech','angio_gymno','note_tree']))
+    if selected:fields['taxonomy_selected']='1'
+    q=urllib.request.Request('http://127.0.0.1:33080/map/public/tree_save.php',data=urllib.parse.urlencode(fields).encode(),headers={'Cookie':'PHPSESSID=editor','X-Requested-With':'TreeApp'})
+    with urllib.request.urlopen(q) as response:assert json.load(response)['success']
+   save_taxonomy(False)
+   assert sql("SELECT scientific_author FROM trees WHERE id=1")=='Old author'
+   save_taxonomy(True)
+   assert sql("SELECT CONCAT(scientific_author,'|',czech,'|',angio_gymno,'|',note_tree) FROM trees WHERE id=1")=='L.|borovice lesni|gymnospermae|Keep me'
+   assert sql("SELECT vitality IS NULL AND tree_health IS NULL AND stability IS NULL FROM trees WHERE id=1")=='1'
+   print('PASS tree save: empty assessments and explicit hidden taxonomy update; unrelated hidden fields preserved')
    share_token='a'*64
    sql("INSERT INTO tree_shares(tree_id,token_hash) VALUES(1,'"+hashlib.sha256(share_token.encode()).hexdigest()+"'); INSERT INTO trees_photo(tree_id,url,note_photo,status) VALUES(1,'uploads/active.jpg','VISIBLE-PHOTO','active'),(1,'uploads/archived.jpg','ARCHIVED-SECRET','archived');")
    url='http://127.0.0.1:33080/map/public/public_tree.php?token='+share_token
@@ -133,3 +151,4 @@ with tempfile.TemporaryDirectory() as td:
    print('PASS legacy photo HTTP: scripts/spoofed images rejected; viewer/CSRF denied; real image stored under random .png name')
    print('PASS measurement HTTP: anonymous/viewer/CSRF/cross-project denied; authorized read/write and author retained')
   finally:server.terminate();server.wait(timeout=10)
+

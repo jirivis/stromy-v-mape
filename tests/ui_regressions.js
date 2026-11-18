@@ -21,3 +21,35 @@ console.log('PASS touch devices retain original minimum dimensions');
 
 assert.match(source,/font: 700 13px\/1\.2/);
 assert.doesNotMatch(source,/font: 700 16px/);
+
+// Project extent must work for areas alone, mixed objects, and empty filters.
+{
+ const selection=fs.readFileSync('map/public/js/selection.js','utf8');
+ const start=selection.indexOf('TreeApp.fitMapToFilteredTrees =');
+ const finish=selection.indexOf('\n};',start)+3;
+ const makeBounds=()=>({points:[],extend(p){this.points.push(...(p.points||[p]));return this;},isValid(){return this.points.length>0;}});
+ let rows=[],calls=[],areas=makeBounds();
+ const app={map:{hasLayer:()=>true,fitBounds:b=>calls.push(b.points)},markersById:{1:{getLatLng:()=>[50,14]}},areaLayers:{getBounds:()=>areas}};
+ const context={TreeApp:app,L:{latLngBounds:makeBounds}};vm.createContext(context);vm.runInContext(selection.slice(start,finish),context);
+ areas.extend([49,15]);app.fitMapToFilteredTrees();assert.deepEqual(calls.pop(),[[49,15]]);
+ app.dataTable={rows:()=>({nodes:()=>({toArray:()=>rows})})};rows=[{dataset:{treeId:1}}];
+ app.fitMapToFilteredTrees();assert.deepEqual(calls.pop(),[[50,14],[49,15]]);
+ areas=makeBounds();app.fitMapToFilteredTrees();assert.deepEqual(calls.pop(),[[50,14]]);
+ rows=[];app.fitMapToFilteredTrees();assert.equal(calls.length,0);
+ console.log('PASS project extent: areas only, mixed, trees only and empty');
+}
+
+// Both autocomplete entry points use this callback, even for hidden controls.
+{
+ const script=fs.readFileSync('map/public/tree_form/scripts.php','utf8');
+ const start=script.indexOf('function selectSpecies(item) {'),end=script.indexOf('\ncreateAutocomplete(document.querySelector("#species")',start);
+ const inputs=Object.fromEntries(['species','scientific_author','czech','angio_gymno'].map(k=>['#'+k,{value:'old',hidden:true}]));
+ let flag;const form={querySelector:()=>flag,append:n=>flag=n};
+ const context={document:{querySelector:s=>s.startsWith('form[')?form:inputs[s],createElement:()=>({})}};
+ vm.createContext(context);vm.runInContext(script.slice(start,end),context);
+ context.selectSpecies({scientific_name:'Pinus sylvestris',author:'L.',czech_name:'borovice lesní',family:'Pinaceae'});
+ assert.equal(inputs['#scientific_author'].value,'L.');assert.equal(inputs['#czech'].value,'borovice lesní');assert.equal(inputs['#angio_gymno'].value,'gymnospermae');assert.equal(flag.value,'1');
+ context.selectSpecies({scientific_name:'Unknown'});assert.equal(inputs['#scientific_author'].value,'');assert.equal(inputs['#angio_gymno'].value,'');
+ console.log('PASS autocomplete updates hidden taxonomy and clears stale values');
+}
+

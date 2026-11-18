@@ -9,7 +9,8 @@ $('#projectName').textContent=boot.project_name;
 $('#areaLocation').append(document.querySelector('.map-column'));
 let dirty=false,busy=false,selected=null,editingLayer=null,features=[];
 let loadSerial=0,editLoadFailed=false,photoNotesAvailable=true;
-const requestedId=new URLSearchParams(location.search).get('id');
+const entryParams=new URLSearchParams(location.search);
+const requestedId=entryParams.get('new')==='1'?null:entryParams.get('id');
 
 
 const fields=['name','status','height_min','height_max','suitability','management','biology','attractiveness','state_note','treatments','urgency','note','planted','measured_at','last_insp_at','next_insp_at'];
@@ -70,8 +71,9 @@ map.on('zoomend',updateLabels);
 function mark(){dirty=true;}
 form.addEventListener('input',mark);form.addEventListener('change',mark);
 window.addEventListener('beforeunload',e=>{if(dirty||busy||boundary.active||photoNotesDirty()){e.preventDefault();e.returnValue='';}});
-function closeEditor(){if(busy){status('Právě probíhá ukládání nebo načítání. Vyčkejte.',true);return;}if(!mayLeave())return;stopDrawing();stopEditing();dirty=false;location.href='../index.php';}
+function closeEditor(){if(busy){status('Právě probíhá ukládání nebo načítání. Vyčkejte.',true);return;}if(!mayLeave())return;stopDrawing();stopEditing();dirty=false;location.href='/map/public/index.php';}
 $('#closeEditor').onclick=$('#closeEditorBottom').onclick=closeEditor;
+$('#backToMap').onclick=e=>{e.preventDefault();closeEditor();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.querySelector('dialog[open]')){e.preventDefault();e.stopImmediatePropagation();closeEditor();}},true);
 function photoNotesDirty(){return !!$('#photos').querySelector('[data-note-dirty="1"]');}
 function mayLeave(){return !busy && (!(dirty||boundary.active||photoNotesDirty()) || confirm('Máte neuložené změny. Opravdu je zahodit?'));}
@@ -125,7 +127,7 @@ $('#deleteArea').onclick=async()=>{
  const id=selected.properties.id,code=selected.properties.code,version=selected.properties.version;
  if(!confirm('Trvale smazat plochu '+code+' včetně všech jejích fotografií? Tuto akci nelze vrátit. Pokud byl porost pouze odstraněn v terénu, použijte raději tlačítko Označit porost jako odstraněný.'))return;
  busy=true;$('#fields').disabled=true;stopDrawing();stopEditing();
- try{await api('delete',{id,version},'POST');features=features.filter(f=>f.properties.id!==id);dirty=false;location.href='../index.php';}
+ try{await api('delete',{id,version},'POST');features=features.filter(f=>f.properties.id!==id);dirty=false;location.href='/map/public/index.php';}
  catch(e){status(e.message,true);}finally{busy=false;$('#fields').disabled=!boot.can_edit;}
 };
 $('#pickPhotos').onclick=()=>{if(!busy&&!photoNotesDirty())$('#photoFiles').click();else if(photoNotesDirty())status('Nejdříve uložte popisky fotografií.',true);};
@@ -147,3 +149,4 @@ try{const d=await api('list');features=d.features;if(!requestedId)fill(null);els
 catch(e){status(e.message,true);$('#save').disabled=true;}
 if(boot.can_edit && !editLoadFailed && !requestedId && !$('#save').disabled && new URLSearchParams(location.search).get('new')==='1') $('#drawArea').click();
 })();
+

@@ -130,6 +130,8 @@ if($is_edit){
  if(!hash_equals($version,(string)($_POST['row_version']??'')))treeSaveReject('Strom mezitím změnil jiný uživatel. Vaše změny nebyly uloženy. Otevřete aktuální záznam.');
  $preserve=json_decode($_POST['preserve_fields']??'[]',true);$catalog=json_decode(file_get_contents(__DIR__.'/project_tools/tree_fields.json'),true);
  if(is_array($preserve))foreach($preserve as $key)if(is_string($key)&&isset($catalog[$key])&&array_key_exists($key,$lockedTree)&&!in_array($key,['usr_id','lat_wgs84','lng_wgs84','x_sjtsk','y_sjtsk'])){
+  // An explicit autocomplete choice updates the complete taxon, including hidden fields.
+  if(($_POST['taxonomy_selected']??'')==='1' && in_array($key,['species','czech','scientific_author','angio_gymno'],true) && array_key_exists($key,$_POST))continue;
   if(preg_match('/^treatment_u[0-3]$/',$key)){$_POST[$key]=[];$_POST[$key.'_custom']=$lockedTree[$key]??'';}else $_POST[$key]=$lockedTree[$key]??'';
  }
 }

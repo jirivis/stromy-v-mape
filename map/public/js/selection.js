@@ -365,74 +365,21 @@ TreeApp.syncMapWithTableFilter = function () {
 // ------------------------------------------------------------
 
 TreeApp.fitMapToFilteredTrees = function () {
-
-    if (
-        !TreeApp.dataTable ||
-        !TreeApp.map
-    ) {
-        return;
+    if (!TreeApp.map) return;
+    const bounds = L.latLngBounds([]);
+    const rows = TreeApp.dataTable
+        ? TreeApp.dataTable.rows({search: "applied"}).nodes().toArray()
+        : [];
+    for (const row of rows) {
+        const marker = TreeApp.markersById[String(row.dataset.treeId)];
+        if (marker) bounds.extend(marker.getLatLng());
     }
-
-    const filteredRows = TreeApp.dataTable
-        .rows({
-            search: "applied"
-        })
-        .nodes()
-        .toArray();
-
-    const visibleMarkers = [];
-
-    filteredRows.forEach(function (row) {
-
-        const treeId = row.dataset.treeId;
-
-        if (!treeId) {
-            return;
-        }
-
-        const marker =
-            TreeApp.markersById[String(treeId)];
-
-        if (marker) {
-            visibleMarkers.push(marker);
-        }
-
-    });
-
-    // Žádný výsledek – mapou nehýbeme
-    if (visibleMarkers.length === 0) {
-        return;
+    // areaLayers already contains only polygons matching the area filters.
+    if (TreeApp.areaLayers && TreeApp.map.hasLayer(TreeApp.areaLayers)) {
+        const areas = TreeApp.areaLayers.getBounds();
+        if (areas.isValid()) bounds.extend(areas);
     }
-
-    // Jeden strom – přiblížíme přímo na něj
-    if (visibleMarkers.length === 1) {
-
-        TreeApp.map.setView(
-            visibleMarkers[0].getLatLng(),
-            18
-        );
-
-        return;
-    }
-
-    // Více stromů – zobrazíme jejich společný rozsah
-    const markerGroup =
-        L.featureGroup(visibleMarkers);
-
-    const bounds = markerGroup.getBounds();
-
-    if (!bounds.isValid()) {
-        return;
-    }
-
-    TreeApp.map.fitBounds(
-        bounds,
-        {
-            padding: [40, 40],
-            maxZoom: 18
-        }
-    );
-
+    if (bounds.isValid()) TreeApp.map.fitBounds(bounds, {padding: [40, 40], maxZoom: 18});
 };
 
 // ------------------------------------------------------------

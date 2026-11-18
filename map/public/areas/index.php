@@ -14,7 +14,7 @@ $boot=['csrf'=>$_SESSION['areas_csrf'],'project_id'=>(int)$activeProjectId,'can_
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
 <link rel="stylesheet" href="areas.css?v=2.24.2">
 </head><body>
-<header><a href="/dashboard.php" target="_top">← Dashboard</a><a href="../index.php">← Hlavní mapa</a><strong id="pageMode"><?=!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><a id="areaCardLink" hidden target="_blank" rel="noopener">Karta porostu ↗</a><span id="projectName"></span></header>
+<header><a href="/dashboard.php" target="_top">← Dashboard</a><a id="backToMap" href="/map/public/index.php">← Hlavní mapa</a><strong id="pageMode"><?=empty($_GET['new'])&&!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><a id="areaCardLink" hidden target="_blank" rel="noopener">Karta porostu ↗</a><span id="projectName"></span></header>
 <div id="status" role="status" aria-live="polite">Načítám plochy…</div>
 <main><section class="map-column" aria-label="Mapa porostů">
 <button id="newArea" type="button" hidden>Nová plocha</button><button id="allAreas" type="button" hidden>Zobrazit všechny</button>
@@ -26,7 +26,7 @@ $boot=['csrf'=>$_SESSION['areas_csrf'],'project_id'=>(int)$activeProjectId,'can_
 </div>
 <label class="snap-option"><input id="snapAreas" type="checkbox" checked> Přichytávat k plochám </label>
 <div id="areaMap"></div><div id="boundaryBelow"></div><p class="hint boundary-validity">Obrys jedné plochy se nesmí křížit ani dotýkat sám sebe. Takovou hranici nelze potvrdit a plochu s ní nelze uložit.</p><div class="boundary-status" role="status"><span id="boundaryHint">Spusťte kreslení nebo úpravu hranice.</span> <span id="gnssInfo"></span></div><select id="areaList" hidden><option value="">— Vyberte plochu —</option></select></section>
-<section class="form-column"><h1 id="formTitle"><?=!empty($_GET['id'])?'Načítám plochu k editaci…':'Nová plocha'?></h1>
+<section class="form-column"><h1 id="formTitle"><?=empty($_GET['new'])&&!empty($_GET['id'])?'Načítám plochu k editaci…':'Nová plocha'?></h1>
 <form id="areaForm"><fieldset id="fields">
 <h2>Identifikace</h2><label>Číslo plochy<input name="code" required maxlength="40" placeholder="1"></label><label>Název<input name="name" maxlength="200"></label>
 <input type="hidden" name="status" value="existing">
@@ -49,5 +49,6 @@ $boot=['csrf'=>$_SESSION['areas_csrf'],'project_id'=>(int)$activeProjectId,'can_
 <h2>Fotografie</h2><p id="photoHelp">Nejdříve uložte plochu, potom přidejte fotografie.</p><div class="tools"><button type="button" id="pickPhotos" disabled>Nahrát foto</button><button type="button" id="takePhoto" disabled>Fotit</button></div><input id="cameraFile" type="file" accept="image/*" capture="environment" hidden disabled><input id="photoFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden disabled><p id="photoSelection"></p><div id="photos"></div><div class="editor-close-bottom"><button id="closeEditorBottom" type="button">Zavřít · Esc</button></div>
 </section></main>
 <script>window.AreasBoot=<?= json_encode($boot,JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_UNESCAPED_UNICODE) ?>;</script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script><script src="boundary_editor.js?v=2.12"></script><script src="areas.js?v=2.24.1"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script><script src="boundary_editor.js?v=2.12"></script><script src="areas.js?v=20261118"></script>
 <script>window.FormFieldsBoot={kind:'areas',project_id:<?= (int)$activeProjectId ?>};</script><script src="../project_tools/visibility.js?v=2.3"></script></body></html>
+

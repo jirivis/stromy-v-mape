@@ -19,9 +19,10 @@ TreeApp.initMap=function(...args){
  return hits;
  }
  function open(item){location.href=item.type==='tree'?'/map/public/tree_new.php?id='+encodeURIComponent(item.id):'/map/public/areas/?id='+encodeURIComponent(item.id);}
- const click=e=>{if(!enabled||e.target.closest('.leaflet-control,.leaflet-popup,.marker-cluster'))return;const hitMarker=Object.values(TreeApp.markersById||{}).find(m=>m.getElement()?.contains(e.target));const hits=candidates(hitMarker?hitMarker.getLatLng():map.mouseEventToLatLng(e));if(!hits.length)return;e.preventDefault();e.stopImmediatePropagation();map.closePopup();if(hits.length===1){open(hits[0]);return;}choices.replaceChildren();for(const hit of hits){const b=document.createElement('button');b.type='button';b.textContent=hit.label;b.onclick=()=>{dialog.close();open(hit);};choices.append(b);}dialog.showModal();};
+ const click=e=>{if(!enabled||e.target.closest('.leaflet-control,.leaflet-popup,.marker-cluster,a,button,input,select,textarea,dialog,[role=button]'))return;const hitMarker=Object.values(TreeApp.markersById||{}).find(m=>m.getElement()?.contains(e.target));const hits=candidates(hitMarker?hitMarker.getLatLng():map.mouseEventToLatLng(e));if(!hits.length)return;e.preventDefault();e.stopImmediatePropagation();map.closePopup();if(hits.length===1){open(hits[0]);return;}choices.replaceChildren();for(const hit of hits){const b=document.createElement('button');b.type='button';b.textContent=hit.label;b.onclick=()=>{dialog.close();open(hit);};choices.append(b);}dialog.showModal();};
  map.getContainer().addEventListener('click',click,true);
  map.once('unload',()=>{map.getContainer().removeEventListener('click',click,true);dialog.remove();});
  return result;
 };
 })();
+
