@@ -63,32 +63,34 @@
  function create(kind,fields={},identity){
   identity=identity||root.ProjectTools||root.TreeAppUser||{};
   const user=Number(identity.user_id??identity.userId)||0,project=Number(identity.project_id??identity.projectId)||0;
-  const key='svm-filters:v1:'+user+':'+project+':'+kind;
+  const key='svm-filters:v1:'+user+':'+project+':'+kind+(identity.storage_scope?':'+identity.storage_scope:'');
+  const restrict=identity.public===true;
+  function sanitize(value){const s=clean(value);if(!restrict)return s;s.rules=s.rules.filter(r=>Object.hasOwn(fields,r.field));s.urgency='all';s.showRemoved=true;if(!fields.next_insp_at)s.inspection='all';if(!fields.angio_gymno)s.group='';if(!fields.status)s.status='';return s;}
   if(controllers.has(key)){const c=controllers.get(key);if(Object.keys(fields).length)c.setFields(fields);return c;}
   let state=defaults(),catalog=fields;const listeners=new Set();let persistent=true;
-  try{state=clean(JSON.parse(root.localStorage.getItem(key)));}catch{persistent=false;}
+  try{state=sanitize(JSON.parse(root.localStorage.getItem(key)));}catch{persistent=false;}
   const emit=origin=>listeners.forEach(fn=>fn(origin));
   const c={get state(){return state;},get fields(){return catalog;},get persistent(){return persistent;},
-   set(next,origin){state=clean(next);try{root.localStorage.setItem(key,JSON.stringify(state));persistent=true;}catch{persistent=false;}emit(origin);},
+   set(next,origin){state=sanitize(next);try{root.localStorage.setItem(key,JSON.stringify(state));persistent=true;}catch{persistent=false;}emit(origin);},
    setFields(next){catalog=next;emit();},subscribe(fn){listeners.add(fn);return ()=>listeners.delete(fn);},
    matches(row){return matches(row,state,catalog,kind);},
-   mount(host){return mount(host,c,kind);}
+   mount(host){return mount(host,c,kind,restrict);}
   };
-  root.addEventListener?.('storage',e=>{if(e.key===key){try{state=clean(JSON.parse(e.newValue));emit();}catch{}}});controllers.set(key,c);return c;
+  root.addEventListener?.('storage',e=>{if(e.key===key){try{state=sanitize(JSON.parse(e.newValue));emit();}catch{}}});controllers.set(key,c);return c;
  }
- function mount(host,c,kind){
+ function mount(host,c,kind,restrict=false){
   const el=(tag,label)=>{const e=document.createElement(tag);if(label!=null)e.textContent=label;return e;};
   const box=el('section');box.className='svm-shared-filters';host.replaceChildren(box);
-  const heading=el('strong',kind==='trees'?'Filtry stromů':'Filtry ploch'),note=el('p','Stejný filtr platí pro mapu i tabulku tohoto projektu. Zaškrtnutý výběr se nemění.');box.append(heading,note);
+  const heading=el('strong',kind==='trees'?'Filtry stromů':'Filtry ploch'),note=el('p',restrict?'Filtr platí pro veřejnou mapu i tabulku. Nabízí pouze zveřejněné údaje.':'Stejný filtr platí pro mapu i tabulku tohoto projektu. Zaškrtnutý výběr se nemění.');box.append(heading,note);
   const query=el('input');query.type='search';query.placeholder='Hledat ve všech sloupcích';query.setAttribute('aria-label','Hledat ve všech sloupcích');box.append(query);
   const quick={};
   function select(key,label,options){const wrap=el('label',label+' '),s=el('select');s.setAttribute('aria-label',label);for(const [v,t] of options)s.append(new Option(t,v));wrap.append(s);box.append(wrap);quick[key]=s;s.onchange=()=>c.set({...c.state,[key]:s.value},box);}
   if(kind==='trees'){
-   select('urgency','Naléhavost zásahu',[['all','Všechny'],['u0','U0 – ihned'],['u1','U1'],['u2','U2'],['u3','U3'],['none','Bez zásahu']]);
-   select('inspection','Příští kontrola',[['all','Všechny termíny'],['overdue','Po termínu'],['soon','Do 90 dnů'],['future','Za více než 90 dnů'],['missing','Bez data']]);
-   select('group','Kryto / naho',[['','Všechny skupiny'],['gymnospermae','Nahosemenné (jehličnany)'],['angiospermae','Krytosemenné']]);
-   const label=el('label','Zobrazit odstraněné stromy '),check=el('input');check.type='checkbox';label.prepend(check);box.append(label);quick.showRemoved=check;check.onchange=()=>c.set({...c.state,showRemoved:check.checked},box);
-  }else select('status','Stav ploch',[['','Všechny stavy'],['existing','Existující'],['removed','Odstraněné']]);
+   if(!restrict)select('urgency','Naléhavost zásahu',[['all','Všechny'],['u0','U0 – ihned'],['u1','U1'],['u2','U2'],['u3','U3'],['none','Bez zásahu']]);
+   if(!restrict||c.fields.next_insp_at)select('inspection','Příští kontrola',[['all','Všechny termíny'],['overdue','Po termínu'],['soon','Do 90 dnů'],['future','Za více než 90 dnů'],['missing','Bez data']]);
+   if(!restrict||c.fields.angio_gymno)select('group','Kryto / naho',[['','Všechny skupiny'],['gymnospermae','Nahosemenné (jehličnany)'],['angiospermae','Krytosemenné']]);
+   if(!restrict){const label=el('label','Zobrazit odstraněné stromy '),check=el('input');check.type='checkbox';label.prepend(check);box.append(label);quick.showRemoved=check;check.onchange=()=>c.set({...c.state,showRemoved:check.checked},box);}
+  }else if(!restrict||c.fields.status)select('status','Stav ploch',[['','Všechny stavy'],['existing','Existující'],['removed','Odstraněné']]);
   const details=el('details'),summary=el('summary','Podmínky podle sloupců'),mode=el('select');mode.setAttribute('aria-label','Kombinovat podmínky');mode.append(new Option('Splnit všechny podmínky','all'),new Option('Splnit alespoň jednu','any'));
   const rows=el('div'),add=el('button','Přidat podmínku'),apply=el('button','Použít podmínky'),reset=el('button','Zrušit všechny filtry'),status=el('p');status.setAttribute('role','status');
   for(const b of [add,apply,reset])b.type='button';details.append(summary,mode,rows,add,apply);box.append(details,reset,status);
@@ -114,4 +116,5 @@
  const api={create,matches,ruleMatch,defaults,clean,inspection,urgency,text,isActive,notice};root.SVMFilters=api;
  if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
+
 

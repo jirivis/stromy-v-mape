@@ -45,6 +45,13 @@ with tempfile.TemporaryDirectory() as td:
    feature=next(f for f in data['features'] if f['properties']['kind']=='trees');ot=feature['properties']['token'];at=next(f['properties']['token'] for f in data['features'] if f['properties']['kind']=='areas')
    assert 'Public text' in json.dumps(feature['properties']['values'])
    assert not feature['properties']['marker'] # No unpublished dimensions or classification.
+   assert set(data['fields']['trees'])=={'usr_id','species','note_public'}
+   assert set(data['fields']['areas'])=={'code','name'}
+   assert set(feature['properties']['filter_values'])=={'usr_id','species','note_public'}
+   area_feature=next(f for f in data['features'] if f['properties']['kind']=='areas')
+   assert area_feature['properties']['filter_values']=={'code':'P1','name':'Public area'}
+   assert all(set(meta)<= {'label','type','options'} for catalog in data['fields'].values() for meta in catalog.values())
+
    status,detail,_=pub('detail',ot);assert status==200 and detail['photos']==[];assert 'Public text' in json.dumps(detail) and 'NEVER_PUBLIC' not in json.dumps(detail)
    assert 'AREA_SECRET' not in json.dumps(pub('detail',at)[1]);assert pub('detail',foreign)[0]==404
    settings.update(version=2,photos=True);assert admin('settings',settings)[0]==200
@@ -74,3 +81,4 @@ with tempfile.TemporaryDirectory() as td:
   except Exception:
    print((root/'http.log').read_text()[-5000:]);raise
   finally:server.terminate();server.wait(timeout=10)
+

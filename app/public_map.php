@@ -27,6 +27,27 @@ function pmValues(string $kind,array $r,array $fields):array{
   if(!is_scalar($v))continue;$out[]=['label'=>$catalog[$k]['label'],'value'=>(string)($catalog[$k]['options'][(string)$v]??$v)];
  }return $out;
 }
+// Only selected, allowlisted public values enter filtering; never expose whole database rows.
+function pmFilterFields(string $kind,array $selected):array{
+ $catalog=pmCatalog()[$kind];$out=[];
+ foreach(array_unique(array_merge([$kind==='trees'?'usr_id':'code'],$selected)) as $key){
+  if(!isset($catalog[$key]))continue;
+  $out[$key]=array_intersect_key($catalog[$key],array_flip(['label','type','options']));
+ }
+ return $out;
+}
+function pmFilterValues(string $kind,array $row,array $selected):array{
+ $values=$kind==='trees'?$row:array_merge(json_decode($row['attributes_json'],true)?:[],['code'=>$row['code'],'area_m2'=>$row['area_m2']]);
+ $out=[];
+ foreach(pmFilterFields($kind,$selected) as $key=>$meta){
+  $value=$values[$key]??null;
+  if($kind==='areas'&&$key==='species'){
+   $display=pmValues($kind,$row,[$key]);$value=$display[0]['value']??'';
+  }
+  $out[$key]=is_scalar($value)?$value:null;
+ }
+ return $out;
+}
 function pmGeometry(string $kind,array $r):?array{
  if($kind==='trees'){$lat=$r['lat_wgs84']??null;$lon=$r['lng_wgs84']??null;if(!is_numeric($lat)||!is_numeric($lon)||abs((float)$lat)>90||abs((float)$lon)>180||((float)$lat===0.0&&(float)$lon===0.0))return null;return ['type'=>'Point','coordinates'=>[(float)$lon,(float)$lat]];}
  $g=json_decode($r['geometry_json'],true);if(!is_array($g)||!in_array($g['type']??'',['Polygon','MultiPolygon'],true))return null;return ['type'=>$g['type'],'coordinates'=>$g['coordinates']??[]];
@@ -55,3 +76,4 @@ function pmNotify(mysqli $db,array $project):void{
  $rows=pmQuery($db,"SELECT DISTINCT u.email FROM users u JOIN projects p ON p.id=? LEFT JOIN project_users pu ON pu.project_id=p.id AND pu.user_id=u.id WHERE u.active=1 AND (p.owner_id=u.id OR pu.project_role='admin') LIMIT 20",[$project['project_id']])->get_result()->fetch_all(MYSQLI_ASSOC);
  require_once __DIR__.'/mail/send_mail.php';foreach($rows as $r)if(filter_var($r['email'],FILTER_VALIDATE_EMAIL))sendAppMail($r['email'],'Nové podněty ve veřejné mapě','<p>Ve vašem projektu přibyly podněty obyvatel. Přihlaste se do aplikace, vyberte projekt a otevřete Veřejná mapa a podněty.</p>');
 }
+

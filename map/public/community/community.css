@@ -88,3 +88,11 @@ body{height:100dvh;display:flex;flex-direction:column}header{flex-shrink:0}main{
 .public-location-control button:focus-visible{outline:3px solid #1976d2;outline-offset:2px}
 
 .public-location-control button:disabled{opacity:.45;cursor:default}
+
+
+#controls{flex-shrink:0;max-height:65dvh;overflow:auto}
+.public-filter-panels{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px;padding:0 16px}
+#filterSummary.has-active-filters{color:#b42323;font-weight:700}
+#filterSummary.has-active-filters::after{content:" · Aktivní filtry"}
+.leaflet-tooltip.public-area-label{background:transparent;border:0;box-shadow:none;color:#fff;font:700 13px/1.2 Arial,sans-serif;-webkit-text-stroke:2.5px #202020;paint-order:stroke fill;pointer-events:none}
+.leaflet-tooltip.public-area-label::before{display:none}

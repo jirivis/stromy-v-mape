@@ -61,12 +61,63 @@
  try{
   const data=await api('map');$('title').textContent=data.name;document.title=data.name+' – veřejná mapa';
   const value=(f,key)=>key==='@code'?f.properties.code:key==='@kind'?(f.properties.kind==='trees'?'Strom':'Plocha'):(f.properties.values||[]).find(v=>v.label===key)?.value??'';
-  const fields=['@code','@kind',...new Set(data.features.flatMap(f=>(f.properties.values||[]).map(v=>v.label)))];
+  const fields=['@code','@kind',...new Set(Object.values(data.fields).flatMap(c=>Object.values(c).map(m=>m.label)))];
   const label=k=>k==='@code'?'Číslo objektu':k==='@kind'?'Typ objektu':k;
-  for(const id of ['colorField','filterField'])for(const k of fields){const option=el('option',label(k));option.value=k;$(id).append(option);}
+  for(const id of ['colorField'])for(const k of fields){const option=el('option',label(k));option.value=k;$(id).append(option);}
+  const displayKey='svm-public-display:v1:'+p;
+  const displayIds=['symbol','sizeMode','labels','colorField','areaColor','areaPattern','areaTransparency'];
+  try{const saved=JSON.parse(localStorage.getItem(displayKey)||'{}');for(const id of displayIds){
+   const control=$(id),v=saved[id];
+   if(control.type==='checkbox'){if(typeof v==='boolean')control.checked=v;}
+   else if(control.tagName==='SELECT'){if([...control.options].some(o=>o.value===v))control.value=v;}
+   else if(id==='areaColor'&&/^#[0-9a-f]{6}$/i.test(v))control.value=v;
+   else if(id==='areaTransparency'&&Number.isFinite(v)&&v>=0&&v<=100)control.value=String(v);
+  }}catch{}
+  function saveDisplay(){try{localStorage.setItem(displayKey,JSON.stringify(Object.fromEntries(displayIds.map(id=>[id,$(id).type==='checkbox'?$(id).checked:id==='areaTransparency'?Number($(id).value):$(id).value]))));}catch{}}
+  for(const id of displayIds)$(id).addEventListener('input',saveDisplay);
   let page=0,sort='@code',ascending=true,visible=[];
-  const normalize=v=>String(v).toLocaleLowerCase('cs'),number=v=>String(v).trim()===''?NaN:Number(String(v).replace(',','.'));
-  function matches(f){if(!$(f.properties.kind).checked)return false;const q=normalize($('search').value.trim());if(q&&!fields.some(k=>normalize(value(f,k)).includes(q)))return false;const k=$('filterField').value;if(!k)return true;const a=normalize(value(f,k)),b=normalize($('filterValue').value.trim());switch($('filterOp').value){case 'eq':return a===b;case 'ne':return a!==b;case 'gt':return number(a)>number(b);case 'lt':return number(a)<number(b);case 'empty':return a==='';case 'filled':return a!=='';default:return a.includes(b);}}
+  const filters={};
+  for(const kind of ['trees','areas']){
+   filters[kind]=SVMFilters.create(kind,data.fields[kind],{public:true,storage_scope:'public:'+p});
+   filters[kind].mount($(kind==='trees'?'treeFilters':'areaFilters'));
+  }
+  const active=()=>$('search').value.trim()||Object.entries(filters).some(([kind,c])=>SVMFilters.isActive(c.state,kind));
+  function filterIndicator(){const enabled=!!active();$('filterSummary').classList.toggle('has-active-filters',enabled);if(!enabled)SVMFilters.notice(false);}
+  function matches(f){
+   if(!$(f.properties.kind).checked)return false;
+   const row=f.properties.filter_values||{},c=filters[f.properties.kind];
+   return c.matches(row)&&SVMFilters.matches(row,{...SVMFilters.defaults(),query:$('search').value},c.fields,f.properties.kind);
+  }
+  // Shared tree-label renderer and the same zoom thresholds as the main map.
+  TreeApp.map=map;TreeApp.installTreeLabelStyles();
+  function refreshLabels(){
+   TreeApp.showTreeLabels=$('labels').checked;TreeApp.refreshTreeLabels();
+   areaLayer?.eachLayer(l=>{
+    if(l.getTooltip())l.unbindTooltip();
+    const code=String(l.feature.properties.code||'');
+    if($('labels').checked&&map.getZoom()>=15&&code)l.bindTooltip(el('span',(/^p/i.test(code)?'':'p')+code),{permanent:true,direction:'center',className:'public-area-label',interactive:false});
+   });
+  }
+  map.on('zoomend',refreshLabels);
+  const areaRenderer=L.svg();
+  function styleAreas(){
+   $('areaTransparencyValue').textContent=$('areaTransparency').value+' %';
+   const pattern=$('areaPattern').value,opacity=1-Number($('areaTransparency').value)/100;
+   const container=areaRenderer._container;
+   container?.querySelector('defs[data-public-patterns]')?.remove();
+   const svg=(tag,attrs)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,v);return n;};
+   const defs=svg('defs',{'data-public-patterns':''});if(container)container.prepend(defs);
+   let index=0;
+   areaLayer?.eachLayer(l=>{
+    const fill=$('colorField').value?color(l.feature):$('areaColor').value;
+    l.setStyle({color:fill,fillColor:fill,fillOpacity:opacity});
+    if(pattern!=='solid'&&container&&l._path){
+     const id='public-area-pattern-'+index++,pat=svg('pattern',{id,patternUnits:'userSpaceOnUse',width:10,height:10});
+     pat.append(svg('path',{d:pattern==='cross'?'M-2,2 L2,-2 M0,10 L10,0 M8,12 L12,8 M0,0 L10,10':'M-2,2 L2,-2 M0,10 L10,0 M8,12 L12,8',stroke:fill,'stroke-width':2}));
+     defs.append(pat);l._path.setAttribute('fill','url(#'+id+')');
+    }
+   });
+  }
   const mainColorFields={"Vitalita": "vitality", "Zdravotní stav": "tree_health", "Statická stabilita": "stability", "Sadovnická hodnota": "landscape_value", "Perspektiva": "longevity", "Další kontrola": "next_insp_at"};
   const palette=['#26733f','#2166ac','#b35806','#762a83','#b2182b','#00877a','#826b00','#bb4980','#555555'];
   let colors=new Map();
@@ -81,19 +132,29 @@
   function render(){
    if(treeClusters)map.removeLayer(treeClusters);if(areaLayer)map.removeLayer(areaLayer);visible=data.features.filter(matches);const key=$('colorField').value;colors=new Map();$('legend').replaceChildren();
    if(key){const categories=[...new Set(data.features.map(f=>value(f,key)))].sort((a,b)=>a.localeCompare(b,'cs',{numeric:true}));categories.forEach((v,i)=>{const field=mainColorFields[key],sample=field&&data.features.find(f=>f.properties.kind==='trees'&&value(f,key)===v&&Object.hasOwn(f.properties.marker||{},field));colors.set(v,sample?TreeApp.getTreeMarkerColor(sample.properties.marker,field==='next_insp_at'?'next_inspection':field):v===''?'#777777':palette[i%palette.length]);});for(const v of categories){const item=el('span'),swatch=el('i');swatch.style.backgroundColor=colors.get(v);item.append(swatch,document.createTextNode(v||'Nevyplněno'));$('legend').append(item);}}
-   layer=L.geoJSON(visible,{style:f=>({color:color(f),weight:2,fillOpacity:.25}),pointToLayer:(f,ll)=>{const tree=f.properties.marker||{},size=TreeApp.getMarkerDimension(tree,$('sizeMode').value),background=$('colorField').value?color(f):$('symbol').value==='transparent'?'transparent':'#ffffff';return L.marker(ll,{icon:TreeApp.createTreeMarkerIcon(tree,size,background)});},onEachFeature:(f,l)=>{const code=f.properties.code,tip=el('span',(f.properties.kind==='areas'&&!/^p/i.test(code)?'p':'')+code);l.bindTooltip(tip,{permanent:$('labels').checked,direction:'top'});l.on('click',()=>open(f));}});
+   TreeApp.markersById={};TreeApp.treesById={};
+   layer=L.geoJSON(visible,{renderer:areaRenderer,style:()=>({color:$('areaColor').value,weight:2,fillOpacity:.25}),pointToLayer:(f,ll)=>{
+    const tree=f.properties.marker||{},size=TreeApp.getMarkerDimension(tree,$('sizeMode').value),background=$('colorField').value?color(f):$('symbol').value==='transparent'?'transparent':'#ffffff';
+    const marker=L.marker(ll,{icon:TreeApp.createTreeMarkerIcon(tree,size,background)});marker._treeMarkerSize=size;
+    TreeApp.markersById[f.properties.token]=marker;
+    // Leaflet treats tooltip strings as HTML; encode public identifiers as text.
+    const text=el('span',String(f.properties.code));TreeApp.treesById[f.properties.token]={usr_id:text.innerHTML};return marker;
+   },onEachFeature:(f,l)=>{l.on('click',()=>open(f));}});
    treeClusters=L.markerClusterGroup({showCoverageOnHover:false,zoomToBoundsOnClick:true,spiderfyOnMaxZoom:true,disableClusteringAtZoom:19,maxClusterRadius:40,removeOutsideVisibleBounds:true});
    areaLayer=L.featureGroup();
    layer.eachLayer(l=>{if(l.feature.properties.kind==='trees')treeClusters.addLayer(l);else areaLayer.addLayer(l);});
-   treeClusters.addTo(map);areaLayer.addTo(map);
+   treeClusters.addTo(map);areaLayer.addTo(map);refreshLabels();styleAreas();
    $('showAll').disabled=layer.getLayers().length===0;
-   $('status').textContent='Zobrazeno '+visible.length+' z '+data.features.length+' objektů.';$('filterValue').disabled=['empty','filled'].includes($('filterOp').value);drawTable();
+   $('status').textContent='Zobrazeno '+visible.length+' z '+data.features.length+' objektů.';filterIndicator();drawTable();
   }
-  for(const id of ['search','trees','areas','symbol','sizeMode','labels','colorField','filterField','filterOp','filterValue'])$(id).addEventListener('input',()=>{page=0;render();});
-  $('resetFilter').onclick=()=>{$('search').value='';$('filterField').value='';$('filterValue').value='';$('trees').checked=$('areas').checked=true;page=0;render();};
+  for(const id of ['search','trees','areas','symbol','sizeMode','labels','colorField'])$(id).addEventListener('input',()=>{page=0;render();});
+  $('resetFilter').onclick=()=>{$('search').value='';for(const c of Object.values(filters))c.set(SVMFilters.defaults());$('trees').checked=$('areas').checked=true;page=0;render();};
+  for(const c of Object.values(filters))c.subscribe(()=>{page=0;render();});
+  for(const id of ['areaColor','areaPattern','areaTransparency'])$(id).addEventListener('input',styleAreas);
   $('prev').onclick=()=>{page--;drawTable();};$('next').onclick=()=>{page++;drawTable();};
-  $('toggleTable').onclick=()=>{const show=$('tablePanel').hidden;$('tablePanel').hidden=!show;$('toggleTable').setAttribute('aria-expanded',String(show));$('toggleTable').textContent=show?'Skrýt tabulku':'Tabulka';map.invalidateSize();};
-  $('controls').addEventListener('toggle',()=>map.invalidateSize());render();if(layer.getLayers().length)map.fitBounds(layer.getBounds(),{padding:[20,20],maxZoom:18});
+  $('toggleTable').onclick=()=>{const show=$('tablePanel').hidden;$('tablePanel').hidden=!show;$('toggleTable').setAttribute('aria-expanded',String(show));$('toggleTable').textContent=show?'Skrýt tabulku':'Tabulka';map.invalidateSize();SVMFilters.notice(active());};
+  $('controls').addEventListener('toggle',()=>map.invalidateSize());render();SVMFilters.notice(active());window.addEventListener('pageshow',e=>{if(e.persisted)SVMFilters.notice(active());});if(layer.getLayers().length)map.fitBounds(layer.getBounds(),{padding:[20,20],maxZoom:18});
  }catch(e){$('status').textContent=e.message;}
 })();
+
 
