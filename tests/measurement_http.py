@@ -108,6 +108,10 @@ with tempfile.TemporaryDirectory() as td:
    (app/'map/public/uploads/foreign.jpg').write_bytes(png)
    sql("INSERT INTO trees_photo(tree_id,url,note_photo,status) VALUES(2,'uploads/foreign.jpg','foreign','active')")
    photo_id=sql("SELECT id FROM trees_photo WHERE note_photo='VISIBLE-PHOTO'")
+   q=urllib.request.Request('http://127.0.0.1:33080/map/public/karta.php?id=1',headers={'Cookie':'PHPSESSID=editor'})
+   with urllib.request.urlopen(q) as response:
+    card=response.read().decode();assert '/map/public/photo.php?photo='+photo_id in card
+    assert 'src="uploads/active.jpg"' not in card
    archived_id=sql("SELECT id FROM trees_photo WHERE note_photo='ARCHIVED-SECRET'")
    foreign_id=sql("SELECT id FROM trees_photo WHERE note_photo='foreign'")
    def image_request(query,sid=None):
@@ -151,4 +155,5 @@ with tempfile.TemporaryDirectory() as td:
    print('PASS legacy photo HTTP: scripts/spoofed images rejected; viewer/CSRF denied; real image stored under random .png name')
    print('PASS measurement HTTP: anonymous/viewer/CSRF/cross-project denied; authorized read/write and author retained')
   finally:server.terminate();server.wait(timeout=10)
+
 

@@ -9,7 +9,7 @@
  L.control.layers({'OpenStreetMap':osm,'Ortofoto ČÚZK':ortho,'Bílý podklad':white},{'Katastrální mapa ČÚZK':cadastre}).addTo(map);
  const warning=L.control({position:'bottomleft'});warning.onAdd=()=>{const box=el('div','Podklad se nenačetl. Vyberte jiný v ovladači vrstev.');box.className='tile-warning';return box;};let warned=false;
  for(const tiles of [osm,ortho,cadastre])tiles.on('tileerror',()=>{if(!warned){warning.addTo(map);warned=true;}});
- map.on('baselayerchange',()=>{if(warned){map.removeControl(warning);warned=false;}});let layer;
+ map.on('baselayerchange',()=>{if(warned){map.removeControl(warning);warned=false;}});let layer,treeClusters,areaLayer;
  const locationControl=L.control({position:'topright'});
  locationControl.onAdd=()=>{
   const box=el('div');box.className='leaflet-bar public-location-control';
@@ -79,9 +79,13 @@
    $('page').textContent=(sorted.length?page+1:0)+' / '+Math.ceil(sorted.length/50)+' · '+sorted.length+' objektů';$('prev').disabled=page===0;$('next').disabled=(page+1)*50>=sorted.length;
   }
   function render(){
-   if(layer)map.removeLayer(layer);visible=data.features.filter(matches);const key=$('colorField').value;colors=new Map();$('legend').replaceChildren();
+   if(treeClusters)map.removeLayer(treeClusters);if(areaLayer)map.removeLayer(areaLayer);visible=data.features.filter(matches);const key=$('colorField').value;colors=new Map();$('legend').replaceChildren();
    if(key){const categories=[...new Set(data.features.map(f=>value(f,key)))].sort((a,b)=>a.localeCompare(b,'cs',{numeric:true}));categories.forEach((v,i)=>{const field=mainColorFields[key],sample=field&&data.features.find(f=>f.properties.kind==='trees'&&value(f,key)===v&&Object.hasOwn(f.properties.marker||{},field));colors.set(v,sample?TreeApp.getTreeMarkerColor(sample.properties.marker,field==='next_insp_at'?'next_inspection':field):v===''?'#777777':palette[i%palette.length]);});for(const v of categories){const item=el('span'),swatch=el('i');swatch.style.backgroundColor=colors.get(v);item.append(swatch,document.createTextNode(v||'Nevyplněno'));$('legend').append(item);}}
-   layer=L.geoJSON(visible,{style:f=>({color:color(f),weight:2,fillOpacity:.25}),pointToLayer:(f,ll)=>{const tree=f.properties.marker||{},size=TreeApp.getMarkerDimension(tree,$('sizeMode').value),background=$('colorField').value?color(f):$('symbol').value==='transparent'?'transparent':'#ffffff';return L.marker(ll,{icon:TreeApp.createTreeMarkerIcon(tree,size,background)});},onEachFeature:(f,l)=>{const code=f.properties.code,tip=el('span',(f.properties.kind==='areas'&&!/^p/i.test(code)?'p':'')+code);l.bindTooltip(tip,{permanent:$('labels').checked,direction:'top'});l.on('click',()=>open(f));}}).addTo(map);
+   layer=L.geoJSON(visible,{style:f=>({color:color(f),weight:2,fillOpacity:.25}),pointToLayer:(f,ll)=>{const tree=f.properties.marker||{},size=TreeApp.getMarkerDimension(tree,$('sizeMode').value),background=$('colorField').value?color(f):$('symbol').value==='transparent'?'transparent':'#ffffff';return L.marker(ll,{icon:TreeApp.createTreeMarkerIcon(tree,size,background)});},onEachFeature:(f,l)=>{const code=f.properties.code,tip=el('span',(f.properties.kind==='areas'&&!/^p/i.test(code)?'p':'')+code);l.bindTooltip(tip,{permanent:$('labels').checked,direction:'top'});l.on('click',()=>open(f));}});
+   treeClusters=L.markerClusterGroup({showCoverageOnHover:false,zoomToBoundsOnClick:true,spiderfyOnMaxZoom:true,disableClusteringAtZoom:19,maxClusterRadius:40,removeOutsideVisibleBounds:true});
+   areaLayer=L.featureGroup();
+   layer.eachLayer(l=>{if(l.feature.properties.kind==='trees')treeClusters.addLayer(l);else areaLayer.addLayer(l);});
+   treeClusters.addTo(map);areaLayer.addTo(map);
    $('showAll').disabled=layer.getLayers().length===0;
    $('status').textContent='Zobrazeno '+visible.length+' z '+data.features.length+' objektů.';$('filterValue').disabled=['empty','filled'].includes($('filterOp').value);drawTable();
   }
@@ -92,3 +96,4 @@
   $('controls').addEventListener('toggle',()=>map.invalidateSize());render();if(layer.getLayers().length)map.fitBounds(layer.getBounds(),{padding:[20,20],maxZoom:18});
  }catch(e){$('status').textContent=e.message;}
 })();
+
