@@ -1,4 +1,4 @@
-# Stromy v mapě 2.25.4 – nová instalace
+# Stromy v mapě 2.25.6 – nová instalace
 
 Kompletní balíček pro samostatnou doménu nebo subdoménu a **novou prázdnou databázi**. Nejde o aktualizační ZIP: nenahrávejte jej přes existující aplikaci a nenahrávejte jej do jejího aktualizátoru. Prezentační weby ani zákaznická data nejsou součástí.
 
@@ -22,13 +22,36 @@ Kompletní balíček pro samostatnou doménu nebo subdoménu a **novou prázdnou
 7. Ověřte strom i plochu, fotografii, import/export a práva dalšího uživatele. Soukromá data nesmějí být dostupná přes URL `/private/` ani `/database/`; ověřte také, že fotografie soukromého projektu nelze zobrazit bez oprávnění. Pokud server pravidla ignoruje, instalaci nepoužívejte, dokud hosting ochrany neopraví.
 8. V Aktualizacích zkontrolujte vydání. Zdroj `jirivis/stromy-v-mape-updates`, veřejný podpisový klíč a kontrola na dashboardu jsou již ve vzoru nastavené. Instalaci každé aktualizace schvaluje správce. Před ní zálohujte databázi, konfiguraci a fotografie.
 
+## Konfigurace jednoduše a nejčastější chyby
+
+Soubor `private/config.example.php` je vzor. Stáhněte jej, vytvořte jeho kopii pojmenovanou `config.php`, upravte ji v textovém editoru a nahrajte do stejné složky `private` nové instalace. Původní vzor můžete ponechat.
+
+Databázové údaje patří k **nově založené databázi**. Na WEDOS je najdete v e-mailu o jejím zřízení. Heslo databáze není automaticky stejné jako heslo hlavní aplikace, FTP ani administrace hostingu. Názvy klíčů nalevo neměňte; vlastní údaje napište napravo:
+
+```php
+'database' => [
+    'host' => 'SERVER_Z_EMAILU',
+    'port' => 3306,
+    'name' => 'NAZEV_DATABAZE',
+    'user' => 'UZIVATEL_DATABAZE',
+    'password' => 'HESLO_DATABAZE',
+],
+```
+
+Instalační klíč je další samostatný údaj: hodnotu `installation_key` z konfigurace zadejte také do instalačního formuláře. Heslo správce ve formuláři naopak určuje budoucí přihlášení do aplikace.
+
+- **Chyba 1045:** databázový server odmítl přihlášení. Zkontrolujte hostitele, uživatele a heslo nové databáze; samotné obnovení stránky je neopraví.
+- **Neplatný instalační klíč nebo formulář:** ověřte shodu klíče, otevřete formulář znovu a odešlete jej z téže domény.
+- **Varování certifikátu:** před zadáváním přístupů dokončete vystavení HTTPS certifikátu pro přesnou subdoménu.
+- **Částečně vytvořené tabulky:** nejprve zjistěte příčinu chyby. Instalátor odmítá neprázdnou databázi; nikdy kvůli testovací instalaci nemažte databázi stávající aplikace.
+
 ## Číselníky a veřejná distribuce
 
 Instalátor obsahuje 557 taxonů a 1 099 názvů kultivarů. Kultivar se automaticky nepřiřazuje. Mapování POWO/WCVP a jeho původ popisuje `application/database/catalogs/README.md`; nejde o živou synchronizaci s POWO. Vlastní kód aplikace je GPL-3.0-or-later, viz LICENSE a LICENSING.md. Původ původního seznamu českých názvů a kultivarů dosud není doložen. Tento balíček je připraven k ověření vlastní instalace; před veřejným nabízením úplné distribuce je potřeba původ těchto dat uzavřít. Licence přibalených komponent zůstávají v jejich složkách.
 
 ## Aktualizace a obnova
 
-Balíček obsahuje verzi 2.25.4. Aktualizátor nabízí balíček podle nainstalované výchozí verze; při větším odstupu se postupuje po kompatibilních krocích. Databázové změny mohou vyžadovat samostatnou SQL přípravu správcem. Automatická kontrola neznamená automatickou instalaci bez souhlasu.
+Balíček obsahuje verzi 2.25.6. Aktualizátor nabízí balíček podle nainstalované výchozí verze; při větším odstupu se postupuje po kompatibilních krocích. Databázové změny mohou vyžadovat samostatnou SQL přípravu správcem. Automatická kontrola neznamená automatickou instalaci bez souhlasu.
 
 Instalátor není určen pro obnovu produkčních dat. Postup zálohy a obnovy je v `docs/OBNOVA_A_OPRAVNENI.md`, fotografie v `docs/FOTOGRAFIE.md`. Při chybě instalace mohou zůstat některé tabulky; neopakujte ji nad důležitými daty. Použijte novou prázdnou databázi a původ chyby zjistěte z PHP logu.
 
