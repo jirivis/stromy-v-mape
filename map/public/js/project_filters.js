@@ -41,6 +41,24 @@
   const q=norm(state.query);if(q&&!Object.keys(fields).some(k=>norm(fields[k].options?.[row[k]]??text(row[k],k)).includes(q)))return false;
   return !state.rules.length||(state.mode==='any'?state.rules.some(r=>ruleMatch(row,r,fields)):state.rules.every(r=>ruleMatch(row,r,fields)));
  }
+ function isActive(state,kind){
+  return !!(norm(state.query)||state.rules.length||(kind==='trees'
+   ? state.urgency!=='all'||state.inspection!=='all'||!state.showRemoved||state.group
+   : state.status));
+ }
+ let noticeTimer,removeTimer;
+ function notice(active){
+  const doc=root.document;if(!doc)return;
+  clearTimeout(noticeTimer);clearTimeout(removeTimer);
+  doc.getElementById('svm-active-filter-notice')?.remove();
+  if(!active)return;
+  if(!doc.getElementById('svm-filter-notice-style')){
+   const style=doc.createElement('style');style.id='svm-filter-notice-style';
+   style.textContent='#svm-active-filter-notice{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:10000;padding:12px 22px;border-radius:10px;background:#fff;color:#a32424;border:1px solid #a32424;box-shadow:0 3px 16px #0003;font:600 16px/1.4 system-ui;pointer-events:none;opacity:1;transition:opacity .6s ease;max-width:calc(100vw - 48px);box-sizing:border-box}@media(prefers-reduced-motion:reduce){#svm-active-filter-notice{transition:none}}';doc.head.append(style);
+  }
+  const box=doc.createElement('div');box.id='svm-active-filter-notice';box.setAttribute('role','status');box.setAttribute('aria-live','polite');doc.body.append(box);box.textContent='Aktivní filtry';
+  noticeTimer=setTimeout(()=>{box.style.opacity='0';removeTimer=setTimeout(()=>box.remove(),650);},3000);
+ }
  const controllers=new Map();
  function create(kind,fields={},identity){
   identity=identity||root.ProjectTools||root.TreeAppUser||{};
@@ -93,6 +111,7 @@
   apply.onclick=()=>c.set({...c.state,mode:mode.value,rules:[...rows.children].map(r=>({field:r.children[0].value,op:r.children[1].value,value:r.children[2].value}))},box);
   reset.onclick=()=>c.set(defaults());render();return c.subscribe(render);
  }
- const api={create,matches,ruleMatch,defaults,clean,inspection,urgency,text};root.SVMFilters=api;
+ const api={create,matches,ruleMatch,defaults,clean,inspection,urgency,text,isActive,notice};root.SVMFilters=api;
  if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
+

@@ -1,6 +1,11 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs');
 const F=require('../map/public/js/project_filters.js');
+assert.equal(F.isActive(F.defaults(),'trees'),false);
+assert.equal(F.isActive({...F.defaults(),mode:'any',query:'  '},'trees'),false);
+for(const patch of [{query:'dub'},{rules:[{field:'height',op:'empty',value:''}]},{urgency:'u0'},{inspection:'overdue'},{showRemoved:false},{group:'gymnospermae'}])assert.equal(F.isActive({...F.defaults(),...patch},'trees'),true);
+assert.equal(F.isActive({...F.defaults(),status:'removed'},'areas'),true);
+assert.equal(F.isActive(F.defaults(),'areas'),false);
 const fields={usr_id:{label:'Číslo',type:'number'},height:{label:'Výška',type:'number'},species:{label:'Druh'},status:{label:'Stav'},vitality:{label:'Vitalita',options:{1:'Výborná'}},next_insp_at:{label:'Kontrola',type:'date'}};
 const rule=(field,op,value='')=>({field,op,value});
 assert.equal(F.ruleMatch({height:null},rule('height','eq','0'),fields),false);
@@ -44,12 +49,16 @@ w.eval(fs.readFileSync('map/public/js/project_filters.js','utf8'));
  // The same raw values match on the map; legacy display coercion must not turn NULL into zero.
  w.TreeApp={initTreeFilterControl(){},map:{getContainer:()=>w.document.body},applyTreeFilters(){},updateTreeFilterCount(){}};w.TreeAppUser={userId:7,projectId:8};w.fetch=async()=>({ok:true,json:async()=>({project_id:8,trees:fields,areas:fields})});
  w.eval(fs.readFileSync('map/public/js/advanced_filters.js','utf8'));await new Promise(r=>setTimeout(r,0));
+ const toggle=w.document.createElement('button');toggle.className='tree-filter-control__toggle';w.document.body.append(toggle);
+ w.TreeApp.initTreeFilterControl();assert.equal(toggle.classList.contains('has-active-filters'),true);
+ assert.equal(w.document.getElementById('svm-active-filter-notice').textContent,'Aktivní filtry');
+ await new Promise(r=>setTimeout(r,3700));assert.equal(w.document.getElementById('svm-active-filter-notice'),null);
  assert.equal(w.TreeApp.treeMatchesActiveFilters({height:0,filter_values:rows[0].values}),true);
  assert.equal(w.TreeApp.treeMatchesActiveFilters({height:0,filter_values:rows[1].values}),false);
  const key='svm-filters:v1:7:8:trees',saved=w.localStorage.getItem(key);assert.equal(JSON.parse(saved).rules[0].op,'empty');
  // A remote tab updates both rendered panels and table results, without touching selection.
  w.dispatchEvent(new w.StorageEvent('storage',{key,newValue:JSON.stringify({...F.defaults(),query:'dub'})}));assert.equal(count(),1);assert.equal(query.value,'dub');
- c.set(F.defaults());assert.equal(count(),3);assert.equal(w.document.querySelector('#rows input[type=checkbox]').checked,true);
+ c.set(F.defaults());assert.equal(toggle.classList.contains('has-active-filters'),false);const areaFilters=w.TreeApp.projectAreaFilters;areaFilters.set({...areaFilters.state,status:'removed'});assert.equal(toggle.classList.contains('has-active-filters'),true);areaFilters.set(F.defaults());assert.equal(toggle.classList.contains('has-active-filters'),false);assert.equal(count(),3);assert.equal(w.document.querySelector('#rows input[type=checkbox]').checked,true);
  // Conditions are draft until applied; reset clears quick and advanced filters together.
  const button=(root,label)=>[...root.querySelectorAll('button')].find(b=>b.textContent===label);
  button(mapHost,'Přidat podmínku').click();const row=mapHost.querySelector('.svm-filter-rule');row.children[0].value='height';row.children[1].value='gt';row.children[2].value='10';assert.equal(count(),3);button(mapHost,'Použít podmínky').click();assert.equal(count(),1);
@@ -59,3 +68,4 @@ w.eval(fs.readFileSync('map/public/js/project_filters.js','utf8'));
  const restored=next.window.SVMFilters.create('trees',fields,{user_id:7,project_id:8});assert.equal(restored.matches(rows[0].values),true);assert.equal(restored.matches(rows[1].values),false);
  next.window.close();w.close();console.log('PASS real table/map integration, panel synchronization, persistence, scope isolation and independent checkbox selection');
 })().catch(e=>{console.error(e);w.close();process.exitCode=1;});
+

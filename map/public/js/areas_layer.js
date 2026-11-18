@@ -34,7 +34,7 @@ TreeApp.initMap=function(...args){
  function applyFilter(){polygons.clearLayers();polygons.addData({type:'FeatureCollection',features:filtered()});applyStyle();updateLabels();renderRows();}
  areaFilters.subscribe(applyFilter);
  function filterFields(){const box=el('section');box.className='svm-area-filter';areaFilters.mount(box);return box;}
- function installFilters(){const root=map.getContainer();const toggle=root.querySelector('.tree-filter-control__toggle');if(toggle&&toggle.title!=='Filtr bodů a ploch'){toggle.title='Filtr bodů a ploch';toggle.setAttribute('aria-label','Filtr bodů a ploch');}const content=root.querySelector('.tree-filter-control__content');if(content&&!content.querySelector('.svm-area-filter'))content.append(filterFields());}
+ function installFilters(){const root=map.getContainer();const toggle=root.querySelector('.tree-filter-control__toggle');if(toggle&&!toggle.classList.contains('has-active-filters')&&toggle.title!=='Filtr bodů a ploch'){toggle.title='Filtr bodů a ploch';toggle.setAttribute('aria-label','Filtr bodů a ploch');}const content=root.querySelector('.tree-filter-control__content');if(content&&!content.querySelector('.svm-area-filter'))content.append(filterFields());}
  // Use the existing toggle handlers, so panel state remains consistent.
  const closePanels=e=>{if(e.target.closest('.leaflet-control,.leaflet-popup'))return;for(const cls of ['tree-filter-control','tree-marker-color-control']){const panel=map.getContainer().querySelector('.'+cls);if(panel&&!panel.classList.contains(cls+'--collapsed'))panel.querySelector('.'+cls+'__toggle')?.click();}};
  map.getContainer().addEventListener('click',closePanels);
@@ -76,3 +76,4 @@ TreeApp.initMap=function(...args){
  return result;
 };
 })();
+
