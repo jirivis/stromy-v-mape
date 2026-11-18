@@ -13,6 +13,7 @@
 <label>Průhlednost ploch <input id="areaTransparency" type="range" min="0" max="100" step="5" value="75"> <output id="areaTransparencyValue">75 %</output></label>
 <button id="resetFilter" type="button">Zrušit všechny filtry</button>
 </div><div id="legend" aria-label="Legenda barev"></div><div class="public-filter-panels"><div id="treeFilters"></div><div id="areaFilters"></div></div></details><main><div id="map" aria-label="Mapa"></div><aside id="detail" hidden><button id="close" type="button">Zavřít</button><div id="card"></div></aside></main><section id="tablePanel" hidden aria-label="Tabulka veřejných objektů"><div class="table-scroll"><table><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table></div><div class="pager"><button id="prev" type="button">Předchozí</button><span id="page"></span><button id="next" type="button">Další</button></div></section>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script><script>window.TreeApp={};</script><script src="../js/markers.js?v=2.25-public"></script><script src="../js/project_filters.js?v=20261118-public"></script><script src="community.js?v=20261118-unified"></script></html>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script><script>window.TreeApp={};</script><script src="../js/markers.js?v=2.25-public"></script><script src="../js/project_filters.js?v=2.25.5"></script><script src="community.js?v=2.25.5"></script></html>
+
 
 

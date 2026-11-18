@@ -36,6 +36,9 @@ jobs:
           php tests/photo_export_helpers.php
           python3 tests/export_stream.py
       - name: Signed update without database privileges
-        run: php tests/update_file_only.php
+        run: |
+          php tests/update_file_only.php
+          python3 tests/release_patch_2_25_5.py
       - name: Schema and HTTP authorization regression tests
         run: SVM_APACHE_TEST=1 python3 tests/run_schema.py
+
