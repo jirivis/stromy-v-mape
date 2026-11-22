@@ -10,6 +10,7 @@
   "app/auth_form.php",
   "app/auth_limit.php",
   "app/bootstrap.php",
+  "app/form_behavior.php",
   "app/includes/footer.php",
   "app/includes/header.php",
   "app/includes/topbar.php",

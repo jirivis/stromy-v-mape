@@ -801,47 +801,12 @@ try {
     }
 
 
-    /*
-     * Editor je otevřený v iframe mapy.
-     */
-    if (
-        window.parent
-        && window.parent !== window
-    ) {
-
-/*
- * Obnovíme mapu a předáme jí ID
- * právě uloženého stromu.
- */
-window.TreeFormLifecycle?.saved();
-if(typeof window.parent.ProjectTreeSaved==='function')window.parent.ProjectTreeSaved();
-const parentUrl =
-    new URL(
-        window.parent.location.href
-    );
-
-parentUrl.searchParams.set(
-    'focus_tree',
-    result.tree_id
-);
-
-window.parent.location.href =
-    parentUrl.toString();
-
-return;
-    }
-
-
-    /*
-     * Editor byl otevřen samostatně.
-     */
     window.TreeFormLifecycle?.saved();
-    window.location.href =
-        result.card_url
-        || (
-            'karta.php?id='
-            + result.tree_id
-        );
+    if (window.parent !== window && typeof window.parent.ProjectTreeSaved === 'function') {
+        window.parent.ProjectTreeSaved();
+    }
+    // Reload the saved ID so a second submit updates it and photo uploads are enabled.
+    window.location.href = result.next_url || result.card_url || ('karta.php?id=' + result.tree_id);
 
 
 } catch (error) {

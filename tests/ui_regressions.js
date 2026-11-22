@@ -9,10 +9,10 @@ for(const file of ['map/public/js/popup.js','map/public/tree_form/scripts.php'])
  assert.equal(ctx.protectedTreePhotoUrl('https://other.test/uploads/a.jpg'),'https://other.test/uploads/a.jpg');
  assert.equal(ctx.protectedTreePhotoUrl('photo.php?photo=12&token=abc'),'photo.php?photo=12&token=abc');
 }
-const source=fs.readFileSync('map/public/js/markers.js','utf8');const a=source.indexOf('TreeApp.getMarkerDimension'),b=source.indexOf('// Styl popisku',a);
+const source=fs.readFileSync('map/public/js/markers.js','utf8');const a=source.indexOf('TreeApp.clampMarkerSize'),b=source.indexOf('// Styl popisku',a);
 const ctx={TreeApp:{}};vm.createContext(ctx);vm.runInContext(source.slice(a,b),ctx);
 for(const mode of ['none','girth','dbh','spread','height'])assert.equal(ctx.TreeApp.getMarkerDimension({},mode),20);
-assert.equal(ctx.TreeApp.getMarkerDimension({spread_m:20},'spread'),80);
+assert.equal(ctx.TreeApp.getMarkerDimension({spread_m:20},'spread'),48);
 console.log('PASS image gateway URLs and readable minimum marker dimensions');
 
 ctx.window={matchMedia:()=>({matches:true})};
@@ -53,3 +53,6 @@ assert.doesNotMatch(source,/font: 700 16px/);
  console.log('PASS autocomplete updates hidden taxonomy and clears stale values');
 }
 
+
+for(const mode of ['girth','dbh','spread','height'])assert.equal(ctx.TreeApp.getMarkerDimension({girth1_cm:9999,dbh1_cm:9999,spread_m:9999,height:9999},mode),48);
+assert.equal(ctx.TreeApp.getMarkerDimension({girth1_cm:100},'girth'),30);

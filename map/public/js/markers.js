@@ -9,6 +9,11 @@ TreeApp.markerSizeMode = "girth";
 TreeApp.showTreeLabels = true;
 TreeApp.treeLabelMinZoom = 17;
 
+TreeApp.clampMarkerSize = function (value) {
+    const n = Number(value);
+    return Number.isNaN(n) ? 20 : Math.max(20, Math.min(48, n));
+};
+
 TreeApp.getMarkerDimension = function (tree, mode) {
     const minimum = 20;
     const firstPositive = function (fields) {
@@ -21,10 +26,10 @@ TreeApp.getMarkerDimension = function (tree, mode) {
     const girth = firstPositive(["girth1_cm", "girth2_cm", "girth3_cm", "girth4_cm", "girth_cm"]);
     const dbh = firstPositive(["dbh1_cm", "dbh2_cm", "dbh3_cm", "dbh4_cm"]);
     if (mode === "none") return minimum;
-    if (mode === "girth") return Math.max(minimum, (girth || (dbh ? dbh * Math.PI : 0)) * 0.3);
-    if (mode === "dbh") return Math.max(minimum, (dbh || (girth ? girth / Math.PI : 0)) * Math.PI * 0.3);
-    if (mode === "spread") return Math.max(minimum, Math.min(110, Number(tree.spread_m) > 0 ? Number(tree.spread_m) * 4 : minimum));
-    if (mode === "height") return Math.max(minimum, Math.min(110, Number(tree.height) > 0 ? Number(tree.height) * 2 : minimum));
+    if (mode === "girth") return TreeApp.clampMarkerSize((girth || (dbh ? dbh * Math.PI : 0)) * 0.3);
+    if (mode === "dbh") return TreeApp.clampMarkerSize((dbh || (girth ? girth / Math.PI : 0)) * Math.PI * 0.3);
+    if (mode === "spread") return TreeApp.clampMarkerSize(Number(tree.spread_m) > 0 ? Number(tree.spread_m) * 4 : minimum);
+    if (mode === "height") return TreeApp.clampMarkerSize(Number(tree.height) > 0 ? Number(tree.height) * 2 : minimum);
     return minimum;
 };
 
@@ -315,10 +320,7 @@ TreeApp.createTreeMarkerIcon = function (
         );
 
     const safeSize =
-        Math.max(
-            TreeApp.getMarkerDimension({}, "none"),
-            Math.round(size)
-        );
+        TreeApp.clampMarkerSize(Math.round(size));
 
     return L.divIcon({
 
@@ -357,6 +359,7 @@ TreeApp.createTreeMarkerIcon = function (
 
 
 TreeApp.createRemovedTreeMarkerIcon = function (size) {
+    size = TreeApp.clampMarkerSize(size);
     return L.divIcon({
         className: "tree-map-div-icon tree-marker-removed",
         html: `<div class="tree-map-removed-symbol" style="width:${size}px;height:${size}px;">

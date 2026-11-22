@@ -123,6 +123,8 @@ if(isset($_FILES['photos'])){
   $validatedPhotoExtensions[$i]=$ext;
  }
 }
+require_once __DIR__.'/../../app/form_behavior.php';
+$afterSave = svmProjectFormBehavior($mysqli, (int)$activeProjectId)['trees'][$is_edit ? 'edit' : 'create'];
 $mysqli->begin_transaction();
 if($is_edit){
  $lock=$mysqli->prepare('SELECT * FROM trees WHERE id=? AND project_id=? FOR UPDATE');$lock->bind_param('ii',$tree_id,$activeProjectId);$lock->execute();$lockedTree=$lock->get_result()->fetch_assoc();if(!$lockedTree)treeSaveReject('Strom nebyl nalezen.',404);
@@ -886,7 +888,8 @@ if (
         [
             'success' => true,
             'tree_id' => $tree_id,
-            'card_url' => 'karta.php?id=' . $tree_id
+            'card_url' => 'karta.php?id=' . $tree_id,
+            'next_url' => ($afterSave === 'form' ? 'tree_new.php?id=' : 'karta.php?id=') . $tree_id
         ],
         JSON_UNESCAPED_UNICODE
         | JSON_UNESCAPED_SLASHES
@@ -898,7 +901,7 @@ if (
 
 // Záloha pro klasické odeslání formuláře bez JavaScriptu.
 header(
-    'Location: karta.php?id=' . $tree_id
+    'Location: ' . ($afterSave === 'form' ? 'tree_new.php?id=' : 'karta.php?id=') . $tree_id
 );
 
 exit;
