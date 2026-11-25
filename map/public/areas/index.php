@@ -14,7 +14,7 @@ $boot=['after_save'=>$afterSave,'csrf'=>$_SESSION['areas_csrf'],'project_id'=>(i
 <!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Plochy porostů – Stromy v mapě</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
-<link rel="stylesheet" href="areas.css?v=20261125">
+<link rel="stylesheet" href="areas.css?v=20261125-help">
 </head><body>
 <header><a href="/dashboard.php" target="_top">← Dashboard</a><a id="backToMap" href="/map/public/index.php">← Hlavní mapa</a><strong id="pageMode"><?=empty($_GET['new'])&&!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><a id="areaCardLink" hidden target="_blank" rel="noopener">Karta porostu ↗</a><span id="projectName"></span></header>
 <div id="status" role="status" aria-live="polite">Načítám plochy…</div>
@@ -38,7 +38,7 @@ $boot=['after_save'=>$afterSave,'csrf'=>$_SESSION['areas_csrf'],'project_id'=>(i
 <div class="two"><label>Výška od (m)<input name="height_min" type="number" min="0" max="150" step="0.1"></label><label>Výška do (m)<input name="height_max" type="number" min="0" max="150" step="0.1"></label></div>
 <h2>Podklady pro AOPK 2022</h2><p class="hint">Zvolte charakter a zadejte jeho výměru. Výrazně odlišné části evidujte odděleně. Ocenění v Kč zatím není součástí této verze.</p>
 <div id="componentRows"></div><button type="button" id="addComponent">＋ Přidat charakter porostu</button><p id="componentTotal"></p><div id="aopkFields"></div>
-<p><a href="https://ocenovanidrevin.nature.cz/metodika.pdf#page=28" target="_blank" rel="noopener">Metodika AOPK ČR 2022, kapitola 4 ↗</a></p>
+<p class="hint">Výklad možností je stručným shrnutím metodiky. <a href="https://ocenovanidrevin.nature.cz/metodika.pdf#page=28" target="_blank" rel="noopener">Metodika AOPK ČR 2022, kapitola 4 ↗</a></p>
 <h2>Péče a poznámky</h2><label>Popis stavu<textarea name="state_note" maxlength="5000"></textarea></label><label>Navržené zásahy<textarea name="treatments" maxlength="5000"></textarea></label><label>Naléhavost<select name="urgency"><option value="">Nehodnoceno</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label><label>Poznámka<textarea name="note" maxlength="5000"></textarea></label>
 <h2>Časové údaje</h2><div class="two"><label>Datum výsadby<input name="planted" type="date"></label><label>Datum měření<input name="measured_at" type="date"></label><label>Poslední kontrola<input name="last_insp_at" type="date"></label><label>Další kontrola<input name="next_insp_at" type="date"></label></div>
 <section id="areaLocation"><h2>Lokalizace a hranice</h2></section>
@@ -53,7 +53,7 @@ $boot=['after_save'=>$afterSave,'csrf'=>$_SESSION['areas_csrf'],'project_id'=>(i
 <div class="editor-close-bottom"><button id="closeEditorBottom" type="button">Zavřít · Esc</button></div>
 </section></main>
 <script>window.AreasBoot=<?= json_encode($boot,JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_UNESCAPED_UNICODE) ?>;</script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script><script src="../js/project_context_map.js?v=20261125"></script><script src="boundary_editor.js?v=20261125"></script><script src="areas.js?v=20261125"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script><script src="../js/project_context_map.js?v=20261125"></script><script src="boundary_editor.js?v=20261125"></script><script src="areas.js?v=20261125-help"></script>
 <script>window.FormFieldsBoot={kind:'areas',project_id:<?= (int)$activeProjectId ?>};</script><script src="../project_tools/visibility.js?v=2.3"></script></body></html>
 
 

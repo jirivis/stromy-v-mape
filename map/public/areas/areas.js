@@ -23,16 +23,39 @@ const categories={
 };
 function node(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
 function button(text,fn){const b=node('button',text);b.type='button';b.onclick=fn;return b;}
+// Brief explanations paraphrased from AOPK 2022, chapter 4; source link below assessment.
+const categoryHelp={
+ suitability:{
+  invasive:'Invazivní druhy dominují počtem nebo strukturou. Odůvodněnou výjimkou mohou být záměrně založené, pravidelně udržované porosty.',
+  undesirable:'Skladba neodpovídá podmínkám stanoviště, umístění nebo požadované funkci.',
+  other:'Porost nelze zařadit mezi invazivní, nežádoucí ani vhodné.',
+  suitable:'Druhy odpovídají stanovišti a funkci; patří sem také ochranné porosty.'
+ },
+ management:{
+  neglected:'Dlouhodobě chybějící péče zhoršila stabilitu a kvalitu. Přirozeně řídký porost nevyžadující zásahy sem nepatří.',
+  irregular:'Dřívější zásahy byly nedostatečné nebo se neopakovaly; požadovaný stav neudržely.',
+  managed:'Pravidelná péče udržuje či zlepšuje stabilitu, skladbu a kvalitu.'
+ },
+ biology:{
+  low:'Zpravidla jednovrstevný porost, monokultura nebo převaha geograficky nepůvodních dřevin.',
+  medium:'Směs druhů s několika výškovými patry; pěstební zásahy jsou možné.',
+  high:'Více pater a odumřelé dřevo poskytují cenná stanoviště, včetně prostoru pro chráněné organismy.'
+ },
+ attractiveness:{
+  low:'Malý pohledový i prostorový význam, například uvnitř uzavřeného areálu.',
+  medium:'Menší význam v krajině, omezená přístupnost, návštěvnost nebo viditelnost.',
+  high:'Výrazná dominanta nebo významný prvek rušného veřejného prostoru či kulturního areálu.'
+ }
+};
 function help(key,label){
- const page=key==='suitability'?31:32,url='https://ocenovanidrevin.nature.cz/metodika.pdf#page='+page;
- const d=node('details',undefined,'methodology-help');d.append(node('summary','ⓘ '+label+' – úplné znění metodiky AOPK ČR 2022'));
- const link=node('a','Otevřít metodiku na příslušné stránce ↗');link.href=url;link.target='_blank';link.rel='noopener';
- d.append(node('p','Kolařík, J. a kol. (2022), Oceňování dřevin rostoucích mimo les. Kapitola 4. Pokud prohlížeč PDF nezobrazí, použijte odkaz.'),link);
- d.addEventListener('toggle',()=>{if(!d.open||d.querySelector('iframe'))return;const frame=node('iframe');frame.src=url;frame.title='Metodika AOPK ČR – '+label;frame.loading='lazy';d.append(frame);});return d;
+ const d=node('details',undefined,'methodology-help');d.append(node('summary','ⓘ Nápověda – '+label));
+ const list=node('dl');
+ for(const [value,title] of Object.entries(categories[key][1]))list.append(node('dt',title),node('dd',categoryHelp[key][value]));
+ d.append(list);return d;
 }
 function inputLabel(parent,title,input){const l=node('label',title);l.append(input);parent.append(l);return input;}
 function makeInput(type,value=''){const i=node('input');i.type=type;i.value=value??'';return i;}
-for(const [key,[label,options,hint]] of Object.entries(categories)){
+for(const [key,[label,options]] of Object.entries(categories)){
  const s=node('select');s.name=key;s.append(new Option('Nehodnoceno',''));for(const [v,t] of Object.entries(options))s.append(new Option(t,v));inputLabel($('#aopkFields'),label,s);$('#aopkFields').append(help(key,label));
 }
 const map=L.map('areaMap',{maxZoom:22}).setView([49.8,15.5],7);

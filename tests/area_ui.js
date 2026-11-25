@@ -23,7 +23,10 @@ d.querySelector('[title="Zobrazit editovanou plochu"]').click();
 assert.ok(d.getElementById('save').compareDocumentPosition(d.getElementById('areaPhotos'))&w.Node.DOCUMENT_POSITION_FOLLOWING);
 assert.ok(d.getElementById('areaPhotos').compareDocumentPosition(d.getElementById('removedArea'))&w.Node.DOCUMENT_POSITION_FOLLOWING);
 assert.equal(d.getElementById('areaPhotos').closest('form'),null);
-const help=d.querySelector('.methodology-help');assert.equal(help.querySelector('iframe'),null);help.open=true;help.dispatchEvent(new w.Event('toggle'));assert.ok(help.querySelector('iframe').src.endsWith('#page=31'));
+const helps=[...d.querySelectorAll('.methodology-help')];assert.equal(helps.length,4);
+for(const help of helps){help.open=true;help.dispatchEvent(new w.Event('toggle'));assert.equal(help.querySelector('iframe'),null);assert.ok(help.querySelectorAll('dt').length>=3);assert.equal(help.querySelectorAll('dt').length,help.querySelectorAll('dd').length);assert.ok([...help.querySelectorAll('dd')].every(n=>n.textContent.length>20));}
+const links=d.querySelectorAll('a[href*="ocenovanidrevin.nature.cz/metodika.pdf"]');assert.equal(links.length,1);assert.ok(d.getElementById('aopkFields').compareDocumentPosition(links[0])&w.Node.DOCUMENT_POSITION_FOLLOWING);
+
 const row=d.querySelector('.species-row'),latin=row.querySelector('input');latin.value='Mahonia';latin.dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal(row.querySelector('[data-author]').value,'');await sleep(260);row.querySelector('.suggest button').click();assert.equal(row.querySelector('[data-author]').value,'(Pursh) Nutt.');
 d.getElementById('areaForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await sleep(40);assert.equal(saved.id,1);assert.equal(saved.attributes.species[0].author,'(Pursh) Nutt.');assert.equal(saved.attributes.species[0].share,'100');
 w.eval(read('project_tools/porost_report.js'));const fields={species:{label:'Druhy'},status:{label:'Stav'},area_m2:{label:'Výměra'}};const values={code:'1',status:'existing',area_m2:5,species:[{scientific_name:'Ribes alpinum',author:'L.',czech_name:'rybíz'}]};
