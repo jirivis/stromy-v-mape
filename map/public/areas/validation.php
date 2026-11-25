@@ -79,7 +79,7 @@ function areaAttributes($a): array {
     $sum=0;
     foreach($species as $p) {
         if(!is_array($p)) throw new InvalidArgumentException('Neplatný druh.');
-        $row=['scientific_name'=>areaText($p['scientific_name']??'',250),'czech_name'=>areaText($p['czech_name']??'',250),'share'=>areaNumber($p['share']??null,100)];
+        $row=['scientific_name'=>areaText($p['scientific_name']??'',250),'czech_name'=>areaText($p['czech_name']??'',250),'author'=>areaText($p['author']??'',250),'share'=>areaNumber($p['share']??null,100)];
         if($row['scientific_name']==='' && $row['czech_name']==='') {
             if($row['share']!==null) throw new InvalidArgumentException('U zadaného zastoupení doplňte název druhu, nebo zastoupení vymažte.');
             continue; // Completely empty species rows are optional.
@@ -88,4 +88,21 @@ function areaAttributes($a): array {
     }
     if($sum>100.001) throw new InvalidArgumentException('Součet zastoupení druhů přesahuje 100 %.');
     return $out;
+}
+
+/** Resolve older records without guessing between different taxon authorities. */
+function areaSpeciesAuthors(array $attributes, mysqli $db): array {
+    static $cache = [];
+    foreach ($attributes['species'] ?? [] as $i => $species) {
+        $name = trim((string)($species['scientific_name'] ?? ''));
+        if ($name === '' || trim((string)($species['author'] ?? '')) !== '') continue;
+        if (!array_key_exists($name, $cache)) {
+            $q = $db->prepare("SELECT DISTINCT author FROM species WHERE BINARY scientific_name=BINARY ? AND author IS NOT NULL AND author<>'' LIMIT 2");
+            $q->bind_param('s', $name); $q->execute();
+            $matches = $q->get_result()->fetch_all(MYSQLI_ASSOC); $q->close();
+            $cache[$name] = count($matches) === 1 ? trim($matches[0]['author']) : '';
+        }
+        $attributes['species'][$i]['author'] = $cache[$name];
+    }
+    return $attributes;
 }

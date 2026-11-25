@@ -1,8 +1,8 @@
 const {JSDOM}=require('jsdom'),fs=require('fs'),assert=require('assert');
 const dir=process.cwd()+'/map/public/community/';
 const dom=new JSDOM(fs.readFileSync(dir+'index.php','utf8'),{url:'https://example.org/community/?p=abc',runScripts:'outside-only'}),w=dom.window,$=id=>w.document.getElementById(id);
-let fitted=null,zoom=17,shown=[],clusters=[],polygons=[],events={};
-const map={getZoom:()=>zoom,setView(){return this},invalidateSize(){},removeLayer(){},fitBounds(bounds){fitted=bounds},on(name,fn){events[name]=fn},removeControl(){}};
+let fitted=null,zoom=17,shown=[],clusters=[],polygons=[],visuals=[],panes={},events={};
+const map={createPane(name){return panes[name]=w.document.createElement('div')},getZoom:()=>zoom,setView(){return this},invalidateSize(){},removeLayer(){},fitBounds(bounds){fitted=bounds},on(name,fn){events[name]=fn},removeControl(){}};
 const tile=()=>({addTo(){return this},on(){return this}});
 const control=options=>({addTo(){if(this.onAdd){const box=this.onAdd();box.dataset.position=options.position;$('map').append(box)}return this}});control.layers=tile;
 const dot=()=>({addTo(){return this},setLatLng(){return this},setRadius(){return this}});
@@ -16,7 +16,7 @@ w.L={
  markerClusterGroup:options=>{assert.equal(options.disableClusteringAtZoom,19);assert.equal(options.maxClusterRadius,40);clusters=[];return {addLayer(l){clusters.push(l)},addTo(){return this}}},
  featureGroup:()=>{polygons=[];return {addLayer(l){polygons.push(l)},eachLayer(fn){polygons.forEach(fn)},addTo(){return this}}},
  DomEvent:{disableClickPropagation(){},disableScrollPropagation(){}},circle:dot,map:()=>map,tileLayer:Object.assign(tile,{wms:tile}),gridLayer:tile,control,circleMarker:dot,marker:vector,divIcon:x=>x,
- geoJSON:(features,opts)=>{const list=Array.isArray(features)?features:[features];if(opts)shown=list;const layers=list.map(f=>{const l=opts&&f.geometry.type==='Point'?opts.pointToLayer(f,[]):vector();l.feature=f;opts?.onEachFeature(f,l);return l});return {eachLayer(fn){layers.forEach(fn)},getLayers:()=>layers,getBounds:()=>({features:list})}}
+ geoJSON:(features,opts)=>{let list=[],layers=[];const group={addTo(){return this},clearLayers(){list=[];layers=[];return this},addData(data){const rows=Array.isArray(data)?data:data?.features||[data];for(const f of rows.filter(Boolean)){const l=opts?.pointToLayer&&f.geometry.type==='Point'?opts.pointToLayer(f,[]):vector();l.feature=f;if(opts?.style)l.setStyle(opts.style(f));opts?.onEachFeature?.(f,l);list.push(f);layers.push(l);}if(opts?.interactive===false)visuals=layers;else if(opts)shown=list;return this},eachLayer(fn){layers.forEach(fn)},getLayers:()=>layers,getBounds:()=>({features:list})};return group.addData(features)}
 };
 const data={name:'Test',fields:{trees:{usr_id:{label:'Číslo stromu'},height:{label:'Výška',type:'number'},species:{label:'Druh'},next_insp_at:{label:'Kontrola',type:'date'}},areas:{code:{label:'Číslo plochy'},height_max:{label:'Výška',type:'number'}}},features:[
  {type:'Feature',geometry:{type:'Point',coordinates:[15,50]},properties:{kind:'trees',code:'1',token:'a',filter_values:{usr_id:1,height:10,species:'Buk',next_insp_at:null},values:[{label:'Výška',value:'10'}],marker:{height:10}}},
@@ -33,7 +33,7 @@ setImmediate(()=>{try{
  assert.equal(c.state.rules.length,0);assert.equal(c.state.group,'');assert.equal(c.state.urgency,'all');
  assert.equal($('treeFilters').textContent.includes('Naléhavost zásahu'),false);
  assert.equal($('treeFilters').querySelector('[aria-label="Příští kontrola"]')!==null,true);
- assert.equal(shown.length,2);assert.equal(clusters.length,1);assert.equal(polygons.length,1);
+ assert.equal(shown.length,2);assert.equal(clusters.length,1);assert.equal(polygons.length,1);assert.equal(panes.areaVisuals.style.zIndex,'625');assert.equal(panes.areaVisuals.style.pointerEvents,'none');assert.equal(polygons[0].style.fillOpacity,0);assert.equal(visuals.length,1);
  assert.equal($('tableBody').children.length,1);assert.equal($('tableBody').textContent.includes('P2'),false);
  assert.equal($('tableHead').textContent.includes('Druh'),true);
  $('tableAreas').click();assert.equal($('tableBody').textContent.includes('P2'),true);assert.equal($('tableHead').textContent.includes('Druh'),false);
@@ -58,10 +58,10 @@ setImmediate(()=>{try{
  assert.equal(w.SVMFilters.create('trees',data.fields.trees,{public:true,storage_scope:'public:other'}).state.rules.length,0);
  assert.equal(w.SVMFilters.create('trees',data.fields.trees).state.rules.length,0);
  $('search').value='missing';input('search');assert.equal($('showAll').disabled,true);$('resetFilter').click();assert.equal(shown.length,2);
- $('areaColor').value='#123456';input('areaColor');assert.equal(polygons[0].style.fillColor,'#123456');
- $('areaTransparency').value='40';input('areaTransparency');assert.equal(polygons[0].style.fillOpacity,.6);
- $('areaPattern').value='cross';input('areaPattern');assert.ok(polygons[0]._path.getAttribute('fill').startsWith('url('));
- $('areaPattern').value='solid';input('areaPattern');assert.equal(polygons[0]._path.getAttribute('fill'),'#123456');
+ $('areaColor').value='#123456';input('areaColor');assert.equal(visuals[0].style.fillColor,'#123456');
+ $('areaTransparency').value='40';input('areaTransparency');assert.equal(visuals[0].style.fillOpacity,.6);
+ $('areaPattern').value='cross';input('areaPattern');assert.ok(visuals[0]._path.getAttribute('fill').startsWith('url('));
+ $('areaPattern').value='solid';input('areaPattern');assert.equal(visuals[0]._path.getAttribute('fill'),'#123456');
  $('colorField').value='Výška';input('colorField');assert.equal($('legend').children.length,2);
  $('toggleTable').click();assert.equal($('tablePanel').hidden,false);
  assert.equal($('deviceLocation').closest('.public-location-control').dataset.position,'topright');

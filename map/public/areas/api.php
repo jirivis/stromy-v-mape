@@ -23,7 +23,8 @@ function ownedArea(int $id): array {
     if(!$a) answer(['error'=>'Plocha v aktuálním projektu nebyla nalezena.'],404);return $a;
 }
 function asFeature(array $r): array {
-    return ['type'=>'Feature','id'=>(int)$r['id'],'geometry'=>json_decode($r['geometry_json'],true,512,JSON_THROW_ON_ERROR),'properties'=>['id'=>(int)$r['id'],'code'=>$r['code'],'area_m2'=>(float)$r['area_m2'],'version'=>(int)$r['version'],'attributes'=>json_decode($r['attributes_json'],true,512,JSON_THROW_ON_ERROR),'created_at'=>$r['created_at'],'updated_at'=>$r['updated_at']]];
+    global $mysqli;
+    return ['type'=>'Feature','id'=>(int)$r['id'],'geometry'=>json_decode($r['geometry_json'],true,512,JSON_THROW_ON_ERROR),'properties'=>['id'=>(int)$r['id'],'code'=>$r['code'],'area_m2'=>(float)$r['area_m2'],'version'=>(int)$r['version'],'attributes'=>areaSpeciesAuthors(json_decode($r['attributes_json'],true,512,JSON_THROW_ON_ERROR),$mysqli),'created_at'=>$r['created_at'],'updated_at'=>$r['updated_at']]];
 }
 try {
     if($_SERVER['REQUEST_METHOD']==='GET') {
@@ -65,7 +66,7 @@ try {
         $id=(int)($d['id']??0);$version=(int)($d['version']??0);
         $code=areaText($d['code']??'',40);
         if(!preg_match('/^[\p{L}\p{N}_. -]{1,40}$/u',$code))throw new InvalidArgumentException('Vyplňte číslo plochy, například P1 (písmena, čísla, mezera, tečka, pomlčka).');
-        [$g,$m2]=areaGeometry($d['geometry']??null);$a=areaAttributes($d['attributes']??null);
+        [$g,$m2]=areaGeometry($d['geometry']??null);$a=areaSpeciesAuthors(areaAttributes($d['attributes']??null),$mysqli);
         $gj=json_encode($g,JSON_THROW_ON_ERROR);$aj=json_encode($a,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
         $mysqli->begin_transaction();$areaTransaction=true;
         if($id>0) {

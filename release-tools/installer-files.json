@@ -201,6 +201,7 @@
   "map/public/js/map.js",
   "map/public/js/markers.js",
   "map/public/js/popup.js",
+  "map/public/js/project_context_map.js",
   "map/public/js/project_filters.js",
   "map/public/js/selection.js",
   "map/public/js/table.js",

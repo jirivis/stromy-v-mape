@@ -99,7 +99,9 @@
    });
   }
   map.on('zoomend',refreshLabels);
-  const areaRenderer=L.svg();
+  const areaPane=map.createPane('areaVisuals');areaPane.style.zIndex=625;areaPane.style.pointerEvents='none';
+  const areaRenderer=L.svg({pane:'areaVisuals'});
+  const areaVisuals=L.geoJSON(null,{pane:'areaVisuals',renderer:areaRenderer,interactive:false}).addTo(map);
   function styleAreas(){
    $('areaTransparencyValue').textContent=$('areaTransparency').value+' %';
    const pattern=$('areaPattern').value,opacity=1-Number($('areaTransparency').value)/100;
@@ -108,9 +110,9 @@
    const svg=(tag,attrs)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,v);return n;};
    const defs=svg('defs',{'data-public-patterns':''});if(container)container.prepend(defs);
    let index=0;
-   areaLayer?.eachLayer(l=>{
+   areaVisuals.eachLayer(l=>{
     const fill=$('colorField').value?color(l.feature):$('areaColor').value;
-    l.setStyle({color:fill,fillColor:fill,fillOpacity:opacity});
+    l.setStyle({weight:2,color:fill,fillColor:fill,fillOpacity:opacity});
     if(pattern!=='solid'&&container&&l._path){
      const id='public-area-pattern-'+index++,pat=svg('pattern',{id,patternUnits:'userSpaceOnUse',width:10,height:10});
      pat.append(svg('path',{d:pattern==='cross'?'M-2,2 L2,-2 M0,10 L10,0 M8,12 L12,8 M0,0 L10,10':'M-2,2 L2,-2 M0,10 L10,0 M8,12 L12,8',stroke:fill,'stroke-width':2}));
@@ -149,7 +151,8 @@
    if(treeClusters)map.removeLayer(treeClusters);if(areaLayer)map.removeLayer(areaLayer);visible=data.features.filter(matches);const key=$('colorField').value;colors=new Map();$('legend').replaceChildren();
    if(key){const categories=[...new Set(data.features.map(f=>value(f,key)))].sort((a,b)=>a.localeCompare(b,'cs',{numeric:true}));categories.forEach((v,i)=>{const field=mainColorFields[key],sample=field&&data.features.find(f=>f.properties.kind==='trees'&&value(f,key)===v&&Object.hasOwn(f.properties.marker||{},field));colors.set(v,sample?TreeApp.getTreeMarkerColor(sample.properties.marker,field==='next_insp_at'?'next_inspection':field):v===''?'#777777':palette[i%palette.length]);});for(const v of categories){const item=el('span'),swatch=el('i');swatch.style.backgroundColor=colors.get(v);item.append(swatch,document.createTextNode(v||'Nevyplněno'));$('legend').append(item);}}
    TreeApp.markersById={};TreeApp.treesById={};
-   layer=L.geoJSON(visible,{renderer:areaRenderer,style:()=>({color:$('areaColor').value,weight:2,fillOpacity:.25}),pointToLayer:(f,ll)=>{
+   areaVisuals.clearLayers();areaVisuals.addData(visible.filter(f=>f.properties.kind==='areas'));
+   layer=L.geoJSON(visible,{style:()=>({opacity:0,weight:2,fillOpacity:0}),pointToLayer:(f,ll)=>{
     const tree=f.properties.marker||{},size=TreeApp.getMarkerDimension(tree,$('sizeMode').value),background=$('colorField').value?color(f):$('symbol').value==='transparent'?'transparent':'#ffffff';
     const marker=L.marker(ll,{icon:TreeApp.createTreeMarkerIcon(tree,size,background)});marker._treeMarkerSize=size;
     TreeApp.markersById[f.properties.token]=marker;

@@ -14,7 +14,7 @@ $boot=['after_save'=>$afterSave,'csrf'=>$_SESSION['areas_csrf'],'project_id'=>(i
 <!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Plochy porostů – Stromy v mapě</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
-<link rel="stylesheet" href="areas.css?v=2.24.2">
+<link rel="stylesheet" href="areas.css?v=20261125">
 </head><body>
 <header><a href="/dashboard.php" target="_top">← Dashboard</a><a id="backToMap" href="/map/public/index.php">← Hlavní mapa</a><strong id="pageMode"><?=empty($_GET['new'])&&!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><a id="areaCardLink" hidden target="_blank" rel="noopener">Karta porostu ↗</a><span id="projectName"></span></header>
 <div id="status" role="status" aria-live="polite">Načítám plochy…</div>
@@ -43,15 +43,17 @@ $boot=['after_save'=>$afterSave,'csrf'=>$_SESSION['areas_csrf'],'project_id'=>(i
 <h2>Časové údaje</h2><div class="two"><label>Datum výsadby<input name="planted" type="date"></label><label>Datum měření<input name="measured_at" type="date"></label><label>Poslední kontrola<input name="last_insp_at" type="date"></label><label>Další kontrola<input name="next_insp_at" type="date"></label></div>
 <section id="areaLocation"><h2>Lokalizace a hranice</h2></section>
 <div class="save-actions"><button class="primary" id="save" type="submit">Uložit plochu</button><button type="submit" form="areaForm" id="saveHistory" hidden>Uložit záznam do historie</button></div>
+</fieldset></form>
+<section id="areaPhotos"><h2>Fotografie</h2><p id="photoHelp">Nejdříve uložte plochu, potom přidejte fotografie.</p><div class="tools"><button type="button" id="pickPhotos" disabled>Nahrát foto</button><button type="button" id="takePhoto" disabled>Fotit</button></div><input id="cameraFile" type="file" accept="image/*" capture="environment" hidden disabled><input id="photoFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden disabled><p id="photoSelection"></p><div id="photos"></div></section>
 <section class="area-state-actions"><h2>Stav porostu</h2>
 <button type="button" id="removedArea" hidden>Označit porost jako odstraněný</button><p id="removedHint"></p>
 <button type="button" id="deleteArea" class="danger" hidden>Smazat plochu</button>
-</section></fieldset></form>
+</section>
 <details id="areaHistory"><summary>Historické záznamy</summary><p>Historie hodnot a hranic. Běžné uložení zaznamenává změny automaticky; tlačítkem „Uložit záznam do historie“ označíte aktuální stav jako samostatný historický záznam.</p><p class="hint">Uloží také aktuální změny formuláře. Fotografie nejsou součástí historického snímku.</p><div id="historyRows"></div><button type="button" id="moreHistory" hidden>Starší záznamy</button></details>
-<h2>Fotografie</h2><p id="photoHelp">Nejdříve uložte plochu, potom přidejte fotografie.</p><div class="tools"><button type="button" id="pickPhotos" disabled>Nahrát foto</button><button type="button" id="takePhoto" disabled>Fotit</button></div><input id="cameraFile" type="file" accept="image/*" capture="environment" hidden disabled><input id="photoFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden disabled><p id="photoSelection"></p><div id="photos"></div><div class="editor-close-bottom"><button id="closeEditorBottom" type="button">Zavřít · Esc</button></div>
+<div class="editor-close-bottom"><button id="closeEditorBottom" type="button">Zavřít · Esc</button></div>
 </section></main>
 <script>window.AreasBoot=<?= json_encode($boot,JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_UNESCAPED_UNICODE) ?>;</script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script><script src="boundary_editor.js?v=2.12"></script><script src="areas.js?v=20261122"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script><script src="../js/project_context_map.js?v=20261125"></script><script src="boundary_editor.js?v=20261125"></script><script src="areas.js?v=20261125"></script>
 <script>window.FormFieldsBoot={kind:'areas',project_id:<?= (int)$activeProjectId ?>};</script><script src="../project_tools/visibility.js?v=2.3"></script></body></html>
 
 
