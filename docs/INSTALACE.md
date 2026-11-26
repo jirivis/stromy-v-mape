@@ -1,4 +1,4 @@
-# Stromy v mapě 2.25.7 – nová instalace
+# Stromy v mapě 2.25.8 – nová instalace
 
 Kompletní balíček pro samostatnou doménu nebo subdoménu a **novou prázdnou databázi**. Nejde o aktualizační ZIP: nenahrávejte jej přes existující aplikaci a nenahrávejte jej do jejího aktualizátoru. Prezentační weby ani zákaznická data nejsou součástí.
 
@@ -51,7 +51,7 @@ Instalátor obsahuje 557 taxonů a 1 099 názvů kultivarů. Kultivar se automat
 
 ## Aktualizace a obnova
 
-Balíček obsahuje verzi 2.25.7. Aktualizátor nabízí balíček podle nainstalované výchozí verze; při větším odstupu se postupuje po kompatibilních krocích. Databázové změny mohou vyžadovat samostatnou SQL přípravu správcem. Automatická kontrola neznamená automatickou instalaci bez souhlasu.
+Balíček obsahuje verzi 2.25.8. Aktualizátor nabízí balíček podle nainstalované výchozí verze; při větším odstupu se postupuje po kompatibilních krocích. Databázové změny mohou vyžadovat samostatnou SQL přípravu správcem. Automatická kontrola neznamená automatickou instalaci bez souhlasu.
 
 Instalátor není určen pro obnovu produkčních dat. Postup zálohy a obnovy je v `docs/OBNOVA_A_OPRAVNENI.md`, fotografie v `docs/FOTOGRAFIE.md`. Při chybě instalace mohou zůstat některé tabulky; neopakujte ji nad důležitými daty. Použijte novou prázdnou databázi a původ chyby zjistěte z PHP logu.
 
