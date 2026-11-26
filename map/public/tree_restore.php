@@ -145,6 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              SET
                 status = "active",
                 removed_at = NULL,
+                removal_date = NULL,
+                removal_marked_at = NULL,
                 removal_type = NULL,
                 removal_reason = NULL
              WHERE id = ?

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/../../../app/tree_lifecycle.php';
 
 use proj4php\Proj4php;
 use proj4php\Proj;
@@ -305,6 +306,7 @@ $photoStatement = $db->prepare("
 				'status' => $row['status'] ?? 'active',
 				'removed_at' => $row['removed_at'] ?? null,
 				'removal_type' => $row['removal_type'] ?? null,
+                'lifecycle_event' => svmTreeEvent($row),
 				'removal_reason' => $row['removal_reason'] ?? null,
 
 				'longevity' => $row['longevity'] ?? null,

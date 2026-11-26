@@ -18,6 +18,7 @@ with tempfile.TemporaryDirectory(prefix='svm-schema-') as td:
             subprocess.run(['php',str(pathlib.Path(__file__).with_name('auth_limit.php'))],check=True)
             subprocess.run(['php',str(pathlib.Path(__file__).with_name('update_schema.php')),socket],check=True)
             subprocess.run(['php',str(pathlib.Path(__file__).with_name('valuation_schema.php')),socket],check=True)
+            subprocess.run(['php',str(pathlib.Path(__file__).with_name('tree_event_schema.php')),socket],check=True)
             subprocess.run(['php',str(pathlib.Path(__file__).with_name('catalogs.php')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('measurement_http.py')),socket],check=True)
             subprocess.run(['python3',str(pathlib.Path(__file__).with_name('auth_http.py')),socket],check=True)

@@ -67,6 +67,9 @@
 </select>
 
 
+<label for="death_date">Datum odumření (pokud je známé)</label>
+<input type="date" name="death_date" id="death_date" value="<?= htmlspecialchars((string)($tree['death_date'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+<p class="hint">Nevyplněné datum nenahrazujeme datem zápisu. Při změně vitality na 5 se automaticky zaznamená den označení.</p>
 <label for="tree_health">Zdravotní stav</label>
 <select name="tree_health" id="tree_health">
     <option value="">— vyber —</option>

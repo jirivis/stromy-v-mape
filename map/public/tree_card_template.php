@@ -1032,8 +1032,11 @@ $hasDates =
 
 <?php endif; ?>
 
-    <?php if (($tree['removal_type'] ?? '') === 'dead' || (string) ($tree['vitality'] ?? '') === '5'): ?>
-        <div class="tree-dead-banner"><strong>Odumřelý jedinec</strong></div>
+    <?php require_once __DIR__.'/../../app/tree_lifecycle.php'; $event=svmTreeEvent($tree); ?>
+    <?php if ($event): ?>
+        <div class="tree-dead-banner"><strong><?= cardEscape($event['label']) ?></strong>
+        <?php if ($event['date']): ?><div><?= cardEscape($event['date_label']) ?>: <?= cardDate($event['date']) ?></div><?php endif; ?>
+        </div>
     <?php endif; ?>
 
     <header class="card-header">

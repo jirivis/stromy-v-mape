@@ -1158,6 +1158,7 @@ ${
     return `
         <article class="tree-popup">
 
+            ${p.lifecycle_event ? `<div class="tree-popup__event" style="padding:10px;border:2px solid #9b3028;color:#7b201b;background:#fff0ed"><strong>${TreeApp.popupEscapeHtml(p.lifecycle_event.label)}</strong>${p.lifecycle_event.date ? `<br>${TreeApp.popupEscapeHtml(p.lifecycle_event.date_label)}: ${TreeApp.popupEscapeHtml(p.lifecycle_event.date)}` : ''}</div>` : ''}
             ${headerHtml}
 
             ${attributesHtml}

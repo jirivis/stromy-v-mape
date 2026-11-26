@@ -60,3 +60,5 @@
         'UTF-8'
     ) ?>"
 >
+<label for="removal_date">Datum odstranění (pokud je známé)</label>
+<input type="date" name="removal_date" id="removal_date" value="<?= htmlspecialchars((string)($tree['removal_date'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">

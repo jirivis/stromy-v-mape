@@ -282,5 +282,15 @@
     "label": "Veřejná poznámka",
     "type": "textarea",
     "options": {}
+  },
+  "death_date": {
+    "label": "death_date",
+    "type": "date",
+    "options": []
+  },
+  "removal_date": {
+    "label": "removal_date",
+    "type": "date",
+    "options": []
   }
 }

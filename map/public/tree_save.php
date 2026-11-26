@@ -137,6 +137,10 @@ if($is_edit){
   if(preg_match('/^treatment_u[0-3]$/',$key)){$_POST[$key]=[];$_POST[$key.'_custom']=$lockedTree[$key]??'';}else $_POST[$key]=$lockedTree[$key]??'';
  }
 }
+require_once __DIR__.'/../../app/tree_lifecycle.php';
+try {
+ $eventDates=[];foreach(['death_date','removal_date'] as $key)$eventDates[$key]=svmEventDate($_POST[$key]??($lockedTree[$key]??null));
+} catch (InvalidArgumentException $e) { treeSaveReject($e->getMessage(),422); }
 $number=filter_var($_POST['usr_id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);if($number===false)treeSaveReject('Zadejte kladné celé číslo stromu.',422);
 $dupe=$mysqli->prepare('SELECT id FROM trees WHERE project_id=? AND usr_id=? AND id<>? FOR UPDATE');$dupe->bind_param('iii',$activeProjectId,$number,$tree_id);$dupe->execute();if($dupe->get_result()->fetch_assoc())treeSaveReject('Toto číslo stromu je již použité.',422);
 
@@ -593,6 +597,13 @@ treeSaveDebug(
 $stmt->close();
 
 // ---------------------------------------------------------
+// Persist event dates in the same transaction, before the history snapshot.
+$eventDates=array_replace($eventDates,svmDeathTransition($lockedTree??[],array_replace($lockedTree??[],['vitality'=>$vitality]),date('Y-m-d H:i:s')));
+$eventCols=array_map(fn($key)=>'`'.$key.'`=?',array_keys($eventDates));
+$eventStmt=$mysqli->prepare('UPDATE trees SET '.implode(',',$eventCols).' WHERE id=? AND project_id=?');
+$eventArgs=[...array_values($eventDates),$tree_id,$activeProjectId];
+$eventStmt->bind_param(str_repeat('s',count($eventDates)).'ii',...$eventArgs);$eventStmt->execute();$eventStmt->close();
+
 // 5) ZPRACOVÁNÍ FOTOGRAFIÍ
 // ---------------------------------------------------------
 

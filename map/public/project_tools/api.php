@@ -75,6 +75,8 @@ try{
    else{
     if(array_key_exists('usr_id',$values)){if($values['usr_id']===null||$values['usr_id']<1||floor($values['usr_id'])!=$values['usr_id'])throw new InvalidArgumentException('Číslo stromu musí být kladné celé číslo.');if(ptQuery('SELECT id FROM trees WHERE project_id=? AND usr_id=? AND id<>? FOR UPDATE',[$project,$values['usr_id'],$id])->get_result()->fetch_assoc())throw new InvalidArgumentException('Číslo stromu je již použité.');}
     foreach(['lat_wgs84'=>90,'lng_wgs84'=>180] as $k=>$limit)if(isset($values[$k])&&abs($values[$k])>$limit)throw new InvalidArgumentException('Souřadnice mimo rozsah.');
+    require_once __DIR__.'/../../../app/tree_lifecycle.php';
+    $values=array_replace($values,svmDeathTransition($old,array_replace($old,$values),date('Y-m-d H:i:s')));
     $cols=array_map(fn($k)=>'`'.$k.'`=?',array_keys($values));ptQuery('UPDATE trees SET '.implode(',',$cols).' WHERE id=? AND project_id=?',[...array_values($values),$id,$project]);
    }
    $before=$kind==='areas'?json_decode($old['attributes_json'],true):$old;$audit=[];foreach($values as $k=>$v)$audit[$k]=['before'=>$before[$k]??null,'after'=>$v];ptQuery('INSERT INTO svm_table_audit(project_id,user_id,object_type,object_id,changes_json) VALUES(?,?,?,?,?)',[$project,(int)$_SESSION['user_id'],$kind,$id,ptJson($audit)]);

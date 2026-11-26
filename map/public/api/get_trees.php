@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/../../../app/tree_lifecycle.php';
 
 ini_set('display_errors', '1');
 error_reporting(E_ALL);
@@ -165,6 +166,7 @@ try {
 			'status' => $row['status'] ?? 'active',
 			'removed_at' => $row['removed_at'] ?? null,
 			'removal_type' => $row['removal_type'] ?? null,
+                'lifecycle_event' => svmTreeEvent($row),
 			'removal_reason' => $row['removal_reason'] ?? null,
 
             'longevity' => $row['longevity'] ?? null,

@@ -195,7 +195,7 @@ window.TreeAppUser = {
 <script src="/map/public/js/app.js"></script>
 <script src="/map/public/js/map.js?v=2.24.2"></script>
 <script src="/map/public/js/selection.js?v=2.25.5"></script>
-<script src="/map/public/js/popup.js?v=2.24.2"></script>
+<script src="/map/public/js/popup.js?v=20261126-events"></script>
 <script src="/map/public/js/table.js?v=2.24.2"></script>
 <script src="/map/public/js/editor.js?v=project2.8"></script>
 <script src="/map/public/js/markers.js?v=20261122"></script>

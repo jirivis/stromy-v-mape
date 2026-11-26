@@ -1,0 +1,26 @@
+[
+  {
+    "table": "trees",
+    "column": "death_date",
+    "type": "date",
+    "nullable": true
+  },
+  {
+    "table": "trees",
+    "column": "removal_date",
+    "type": "date",
+    "nullable": true
+  },
+  {
+    "table": "trees",
+    "column": "death_marked_at",
+    "type": "datetime",
+    "nullable": true
+  },
+  {
+    "table": "trees",
+    "column": "removal_marked_at",
+    "type": "datetime",
+    "nullable": true
+  }
+]

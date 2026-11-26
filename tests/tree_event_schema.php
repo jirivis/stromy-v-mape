@@ -1,0 +1,33 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/app/sql.php';
+require dirname(__DIR__).'/app/update_database.php';
+mysqli_report(MYSQLI_REPORT_ERROR|MYSQLI_REPORT_STRICT);
+$db=new mysqli('127.0.0.1','root','','',(int)$argv[1]);
+$db->query('CREATE DATABASE event_dates_test');$db->select_db('event_dates_test');
+$db->query("CREATE TABLE trees(id INT PRIMARY KEY, project_id INT, status VARCHAR(20), removal_type VARCHAR(20), removal_reason TEXT, removed_at DATE)");
+$db->query("INSERT INTO trees VALUES(1,2,'removed','dead','test','2020-01-01')");
+$sql=file_get_contents(dirname(__DIR__).'/database/migrations/09_tree_event_dates.sql');
+foreach(siStatements($sql) as $s)$db->query($s);
+$r=$db->query('SELECT * FROM trees')->fetch_assoc();
+foreach(['death_date','removal_date','death_marked_at','removal_marked_at'] as $k)if($r[$k]!==null)throw new Exception('Unexpected backfill');
+// Execute the actual marking query and bindings used by the form.
+$source=file_get_contents(dirname(__DIR__).'/map/public/tree_remove.php');
+preg_match("/\x27(UPDATE trees.*?)\x27\s*\)/s",$source,$m);
+$query=str_replace("\\'","'",$m[1]);
+$s=$db->prepare($query);
+$type='dead';$death='2026-10-01';$removal=null;$legacy=null;$reason='test';$id=1;$project=2;
+$s->bind_param('sssssssssii',$type,$type,$type,$type,$death,$removal,$legacy,$type,$reason,$id,$project);
+$db->query("UPDATE trees SET removal_type=NULL,status='active'");$s->execute();
+$r=$db->query('SELECT * FROM trees')->fetch_assoc();
+if($r['status']!=='active'||!$r['death_marked_at']||$r['death_date']!==$death||$r['removal_marked_at']!==null)throw new Exception('Death marking failed');
+$db->query("UPDATE trees SET death_marked_at='2026-01-01 00:00:00'");$s->execute();
+if($db->query('SELECT death_marked_at FROM trees')->fetch_row()[0]!=='2026-01-01 00:00:00')throw new Exception('Repeated marking changed time');
+$type='felled';$removal='2026-11-20';$legacy=$removal;$s->execute();
+$r=$db->query('SELECT * FROM trees')->fetch_assoc();
+if($r['status']!=='removed'||!$r['removal_marked_at']||$r['removal_date']!==$removal||$r['death_date']!==$death)throw new Exception('Removal marking failed');
+foreach(siStatements($sql) as $q)$db->query($q);
+if($db->query('SELECT removal_date FROM trees')->fetch_row()[0]!==$removal)throw new Exception('Migration lost date');
+$checks=json_decode(file_get_contents(dirname(__DIR__).'/database/migrations/09_tree_event_dates_checks.json'),true);
+upDatabasePreflight(['migrations'=>['test.sql'],'migration_mode'=>'manual-schema','schema_checks'=>$checks],$db);
+echo "PASS event schema, marking query, idempotence and no backfill\n";

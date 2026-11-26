@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../auth_api.php';
 require_once __DIR__ . '/../../config_app.php';
 require_once __DIR__ . '/api/db.php';
 require_once __DIR__ . '/api/tree_history.php';
+require_once __DIR__.'/../../app/tree_lifecycle.php';
 
 header('Content-Type: text/html; charset=utf-8');
 header('Cache-Control: no-store');
@@ -37,7 +38,7 @@ $stmt =
             status,
             removed_at,
             removal_type,
-            removal_reason
+            removal_reason, death_date, removal_date
          FROM trees
          WHERE id = ?
          LIMIT 1'
@@ -118,9 +119,8 @@ if (
 
 $error = '';
 
-$removedAt =
-    $tree['removed_at']
-    ?: date('Y-m-d');
+$deathDate = $tree['death_date'] ?? '';
+$removalDate = $tree['removal_date'] ?? '';
 
 $removalType =
     (string) (
@@ -137,11 +137,9 @@ $removalReason =
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $removedAt =
-        trim(
-            $_POST['removed_at']
-            ?? ''
-        );
+    $deathDate = $_POST['death_date'] ?? '';
+    $removalDate = $_POST['removal_date'] ?? '';
+    try {$deathDate=svmEventDate($deathDate);$removalDate=svmEventDate($removalDate);} catch (InvalidArgumentException $e) {$error=$e->getMessage();}
 
     $removalType =
         $_POST['removal_type']
@@ -163,12 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
 
-    if ($removedAt === '') {
-
-        $error =
-            'Zadejte datum odstranění.';
-
-    } elseif (
+    if (
         !in_array(
             $removalType,
             $allowedTypes,
@@ -187,7 +180,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mysqli->prepare(
                 'UPDATE trees
                  SET
-                    status = "removed",
+                    death_marked_at = CASE WHEN ? = \'dead\' AND COALESCE(removal_type,\'\') <> \'dead\' THEN CURRENT_TIMESTAMP ELSE death_marked_at END,
+                    removal_marked_at = CASE WHEN ? <> \'dead\' AND (status <> \'removed\' OR COALESCE(removal_type,\'\') <> ?) THEN CURRENT_TIMESTAMP ELSE removal_marked_at END,
+                    status = CASE WHEN ? = \'dead\' THEN \'active\' ELSE \'removed\' END,
+                    death_date = ?,
+                    removal_date = ?,
                     removed_at = ?,
                     removal_type = ?,
                     removal_reason = ?
@@ -202,9 +199,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } else {
 
+            $legacyRemovedAt=$removalType==='dead'?null:$removalDate;
             $updateStmt->bind_param(
-                'sssii',
-                $removedAt,
+                'sssssssssii',
+                $removalType,$removalType,$removalType,$removalType,
+                $deathDate,$removalDate,$legacyRemovedAt,
                 $removalType,
                 $removalReason,
                 $treeId,
@@ -365,25 +364,12 @@ require_once dirname(__DIR__, 2)
 
 
     <div class="admin-field">
-
-        <label for="removed_at">
-            Datum odstranění
-        </label>
-
-        <input
-            type="date"
-            id="removed_at"
-            name="removed_at"
-            required
-            value="<?= htmlspecialchars(
-                $removedAt,
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>"
-        >
-
+        <label for="death_date">Datum odumření (pokud je známé)</label>
+        <input type="date" id="death_date" name="death_date" value="<?= htmlspecialchars((string)$deathDate, ENT_QUOTES, 'UTF-8') ?>">
+        <label for="removal_date">Datum odstranění (pokud je známé)</label>
+        <input type="date" id="removal_date" name="removal_date" value="<?= htmlspecialchars((string)$removalDate, ENT_QUOTES, 'UTF-8') ?>">
+        <p>Pokud skutečné datum neznáte, ponechte je prázdné. Den označení v systému se zaznamená automaticky. Odumřelý strom může stále stát.</p>
     </div>
-
 
     <div class="admin-field">
 

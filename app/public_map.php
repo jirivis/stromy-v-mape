@@ -6,7 +6,8 @@ function pmQuery(mysqli $db,string $sql,array $args=[]):mysqli_stmt{$s=$db->prep
 function pmReady(mysqli $db):bool{static $ready;return $ready??=$db->query("SHOW TABLES LIKE 'svm_public_maps'")->num_rows===1;}
 function pmCatalog():array{
  // Explicit, reviewed allowlist. Newly added database/form fields are never published automatically.
- $tree=ptTreeFields();$keys=['usr_id','species','czech','scientific_author','angio_gymno','cultivated_variety','dbh1_cm','dbh2_cm','dbh3_cm','dbh4_cm','girth1_cm','girth2_cm','girth3_cm','girth4_cm','height','canopy_h_m','spread_m','phy_age','age','vitality','tree_health','stability','operational_safety','longevity','ecological_value','landscape_value','planted','measured_at','last_insp_at','next_insp_at','note_public'];$t=[];foreach($keys as $k)if(isset($tree[$k]))$t[$k]=$tree[$k];
+ $tree=ptTreeFields();$keys=['usr_id','species','czech','scientific_author','angio_gymno','cultivated_variety','dbh1_cm','dbh2_cm','dbh3_cm','dbh4_cm','girth1_cm','girth2_cm','girth3_cm','girth4_cm','height','canopy_h_m','spread_m','phy_age','age','vitality','tree_health','stability','operational_safety','longevity','ecological_value','landscape_value','planted','measured_at','last_insp_at','next_insp_at','note_public','death_date','removal_date'];$t=[];foreach($keys as $k)if(isset($tree[$k]))$t[$k]=$tree[$k];
+ $t['removal_type']=['label'=>'Stav jedince','type'=>'select','options'=>['dead'=>'Odumřel','felled'=>'Pokácen','fallen'=>'Vyvrácen / zlomen','missing'=>'Nenalezen','other'=>'Jiný důvod']];
  $area=ptAreaFields();$a=['code'=>['label'=>'Číslo plochy'],'area_m2'=>['label'=>'Výměra (m²)'],'species'=>['label'=>'Druhové složení']];foreach(['name','height_min','height_max','planted','measured_at','last_insp_at','next_insp_at','suitability','management','biology','attractiveness','urgency','status'] as $k)$a[$k]=$area[$k];return ['trees'=>$t,'areas'=>$a];
 }
 function pmFields(mixed $fields):array{if(!is_array($fields))throw new InvalidArgumentException('Vyberte zveřejněná pole.');$out=[];foreach(pmCatalog() as $kind=>$catalog){$list=$fields[$kind]??null;if(!is_array($list)||count($list)>80)throw new InvalidArgumentException('Neplatný výběr polí.');foreach($list as $k)if(!is_string($k)||!isset($catalog[$k]))throw new InvalidArgumentException('Toto pole nelze zveřejnit.');$out[$kind]=array_values(array_unique($list));}return $out;}
@@ -77,3 +78,9 @@ function pmNotify(mysqli $db,array $project):void{
  require_once __DIR__.'/mail/send_mail.php';foreach($rows as $r)if(filter_var($r['email'],FILTER_VALIDATE_EMAIL))sendAppMail($r['email'],'Nové podněty ve veřejné mapě','<p>Ve vašem projektu přibyly podněty obyvatel. Přihlaste se do aplikace, vyberte projekt a otevřete Veřejná mapa a podněty.</p>');
 }
 
+
+function pmTreeEvent(array $r,array $fields):?array {
+ require_once __DIR__.'/tree_lifecycle.php';
+ $safe=array_intersect_key($r,array_flip($fields));
+ return svmTreeEvent($safe);
+}

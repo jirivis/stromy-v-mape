@@ -33,6 +33,7 @@ jobs:
         run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
       - name: Export photo captions
         run: |
+          php tests/tree_lifecycle.php
           php tests/form_behavior.php
           php tests/area_attributes.php
           php tests/photo_caption.php

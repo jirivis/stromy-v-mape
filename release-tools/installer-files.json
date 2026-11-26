@@ -320,5 +320,8 @@
   "users.php",
   "web-app-manifest-192x192.png",
   "web-app-manifest-512x512.png",
-  "web_style.css"
+  "web_style.css",
+  "app/tree_lifecycle.php",
+  "database/migrations/09_tree_event_dates.sql",
+  "database/migrations/09_tree_event_dates_checks.json"
 ]
