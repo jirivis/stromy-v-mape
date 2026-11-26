@@ -13,8 +13,13 @@ $r=$db->query('SELECT * FROM trees')->fetch_assoc();
 foreach(['death_date','removal_date','death_marked_at','removal_marked_at'] as $k)if($r[$k]!==null)throw new Exception('Unexpected backfill');
 // Execute the actual marking query and bindings used by the form.
 $source=file_get_contents(dirname(__DIR__).'/map/public/tree_remove.php');
-preg_match("/\x27(UPDATE trees.*?)\x27\s*\)/s",$source,$m);
-$query=str_replace("\\'","'",$m[1]);
+$query=null;
+foreach(token_get_all($source) as $token){
+ if(is_array($token)&&$token[0]===T_CONSTANT_ENCAPSED_STRING&&str_starts_with($token[1],"'UPDATE trees")){
+  $query=str_replace("\\'","'",substr($token[1],1,-1));break;
+ }
+}
+if(!$query)throw new Exception('Marking SQL not found');
 $s=$db->prepare($query);
 $type='dead';$death='2026-10-01';$removal=null;$legacy=null;$reason='test';$id=1;$project=2;
 $s->bind_param('sssssssssii',$type,$type,$type,$type,$death,$removal,$legacy,$type,$reason,$id,$project);

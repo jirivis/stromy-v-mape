@@ -15,3 +15,10 @@ $e=svmTreeEvent(['removal_type'=>'felled','vitality'=>5,'removal_date'=>'2026-11
 check(svmEventDate('')===null&&svmEventDate('2024-02-29')==='2024-02-29');
 foreach(['2026-02-29','2026-13-01','yesterday',[]] as $v){try{svmEventDate($v);throw new RuntimeException('Accepted invalid date');}catch(InvalidArgumentException $e){}}
 echo "PASS lifecycle dates, transitions and labels\n";
+require __DIR__.'/../app/public_map.php';
+$r=['removal_type'=>'dead','vitality'=>5,'death_date'=>'2026-10-10','death_marked_at'=>$now];
+check(pmTreeEvent($r,[])===null);
+check(pmTreeEvent($r,['death_date'])===null);
+check(pmTreeEvent($r,['vitality'])['date']===null);
+check(pmTreeEvent($r,['removal_type','death_date'])['date']==='2026-10-10');
+echo "PASS public event field permissions\n";
