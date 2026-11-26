@@ -696,6 +696,7 @@ $page_title = $is_edit
 #tree-save-actions{margin:24px 0}#tree-photos{border-top:1px solid #cedbcf;padding-top:18px;margin-top:20px}#tree-photos>h2{margin:0 0 15px}
 #tree-photos .compact-photo-button{display:inline-flex!important;width:auto!important;min-width:0!important;padding:12px 18px!important;margin:0 10px 12px 0!important;background:#28613d!important;color:#fff!important;border:1px solid #90ab92;border-radius:6px;font-weight:500!important}
 #tree-history{border-top:1px solid #cedbcf;margin-top:28px;padding-top:18px}#tree-history>h3{margin-top:0}.tree-record-actions{margin:32px 0 20px;padding-top:24px;border-top:1px solid #cedbcf}.tree-danger-zone{margin-top:24px}.photo-meta-save{margin:16px 0}.photo-item textarea{max-width:100%}
+.tree-card-link{display:inline-block;padding:10px 16px;border:1px solid #28613d;border-radius:6px;background:#28613d;color:#fff;text-decoration:none;font-weight:600}
 </style></head>
 
 <body>
@@ -708,6 +709,9 @@ $page_title = $is_edit
         'UTF-8'
     ) ?>
 </h1>
+<?php if ($is_edit): ?>
+<p><a class="tree-card-link" href="karta.php?id=<?= (int) $id ?>" target="_blank" rel="noopener">Otevřít kartu ↗</a></p>
+<?php endif; ?>
 
 <?php if (
     isset($_GET['history_saved'])

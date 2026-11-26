@@ -511,6 +511,18 @@ $hasDates =
             background: #66736a;
         }
 
+        .tree-dead-banner {
+            margin: 0 0 20px;
+            padding: 16px 20px;
+            border: 2px solid #9b3028;
+            border-left-width: 8px;
+            border-radius: 8px;
+            background: #fff0ed;
+            color: #7b201b;
+            font-size: 1.35rem;
+            break-inside: avoid;
+        }
+
         .card-header {
             display: grid;
             grid-template-columns:
@@ -1019,6 +1031,10 @@ $hasDates =
     </div>
 
 <?php endif; ?>
+
+    <?php if (($tree['removal_type'] ?? '') === 'dead' || (string) ($tree['vitality'] ?? '') === '5'): ?>
+        <div class="tree-dead-banner"><strong>Odumřelý jedinec</strong></div>
+    <?php endif; ?>
 
     <header class="card-header">
 

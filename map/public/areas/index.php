@@ -14,9 +14,9 @@ $boot=['after_save'=>$afterSave,'csrf'=>$_SESSION['areas_csrf'],'project_id'=>(i
 <!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Plochy porostů – Stromy v mapě</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
-<link rel="stylesheet" href="areas.css?v=20261125-help">
+<link rel="stylesheet" href="areas.css?v=20261126-card">
 </head><body>
-<header><a href="/dashboard.php" target="_top">← Dashboard</a><a id="backToMap" href="/map/public/index.php">← Hlavní mapa</a><strong id="pageMode"><?=empty($_GET['new'])&&!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><a id="areaCardLink" hidden target="_blank" rel="noopener">Karta porostu ↗</a><span id="projectName"></span></header>
+<header><a href="/dashboard.php" target="_top">← Dashboard</a><a id="backToMap" href="/map/public/index.php">← Hlavní mapa</a><strong id="pageMode"><?=empty($_GET['new'])&&!empty($_GET['id'])?'Editace plochy':'Přidání plochy'?></strong><button id="closeEditor" type="button">Zavřít · Esc</button><span id="projectName"></span></header>
 <div id="status" role="status" aria-live="polite">Načítám plochy…</div>
 <main><section class="map-column" aria-label="Mapa porostů">
 <button id="newArea" type="button" hidden>Nová plocha</button><button id="allAreas" type="button" hidden>Zobrazit všechny</button>
@@ -29,6 +29,7 @@ $boot=['after_save'=>$afterSave,'csrf'=>$_SESSION['areas_csrf'],'project_id'=>(i
 <label class="snap-option"><input id="snapAreas" type="checkbox" checked> Přichytávat k plochám </label>
 <div id="areaMap"></div><div id="boundaryBelow"></div><p class="hint boundary-validity">Obrys jedné plochy se nesmí křížit ani dotýkat sám sebe. Takovou hranici nelze potvrdit a plochu s ní nelze uložit.</p><div class="boundary-status" role="status"><span id="boundaryHint">Spusťte kreslení nebo úpravu hranice.</span> <span id="gnssInfo"></span></div><select id="areaList" hidden><option value="">— Vyberte plochu —</option></select></section>
 <section class="form-column"><h1 id="formTitle"><?=empty($_GET['new'])&&!empty($_GET['id'])?'Načítám plochu k editaci…':'Nová plocha'?></h1>
+<p><a id="areaCardLink" class="area-card-link" hidden target="_blank" rel="noopener">Otevřít kartu ↗</a></p>
 <form id="areaForm"><fieldset id="fields">
 <h2>Identifikace</h2><label>Číslo plochy<input name="code" required maxlength="40" placeholder="1"></label><label>Název<input name="name" maxlength="200"></label>
 <input type="hidden" name="status" value="existing">
