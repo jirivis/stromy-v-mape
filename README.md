@@ -1,4 +1,4 @@
-# Stromy v mapě – aplikace 2.25.9
+# Stromy v mapě – aplikace 2.25.10
 
 Aplikace pro evidenci stromů a porostních ploch, fotografie, historii, import/export a volitelnou veřejnou mapu. Prezentační weby ani zákaznická data nejsou součástí.
 
@@ -45,3 +45,5 @@ Chyby a návrhy přijímáme přes [Issues](https://github.com/jirivis/stromy-v-
 Verze 2.25.8 odděluje skutečná data odumření a odstranění od dne označení. Aktualizace z 2.25.7 vyžaduje SQL přípravu nabídnutou aktualizátorem; po záloze ji spusťte v phpMyAdminu a zvolte Zkontrolovat databázi. Podrobnosti: [docs/TREE_EVENT_DATES.md](docs/TREE_EVENT_DATES.md).
 
 Verze 2.25.9 upravuje rozestupy a tlačítka formuláře, obnovuje zobrazení nových sdílených odkazů, sjednocuje značku odstraněných stromů ve veřejné mapě a doplňuje okolní objekty při ruční opravě polohy. Aktualizace z 2.25.8 nevyžaduje SQL. Poslední kompletní instalační ZIP zůstává 2.25.8; poté použijte aktualizátor.
+
+Verze 2.25.10 sjednocuje červené zobrazení odstraněných ploch a horní stavové hlášky. Červená je vyhrazena odstraněným porostům; veřejná mapa zveřejní tento stav pouze při povoleném poli Stav. Aktualizace z 2.25.9 je bez SQL změn.
