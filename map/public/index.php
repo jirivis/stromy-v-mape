@@ -169,6 +169,7 @@ require_once __DIR__ . '/../../app/includes/topbar.php';
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/map/public/js/popup_controls.js?v=20261127"></script>
 
 <script
     src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js">

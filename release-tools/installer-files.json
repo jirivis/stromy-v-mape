@@ -325,5 +325,6 @@
   "app/tree_lifecycle.php",
   "app/tree_share_tokens.php",
   "database/migrations/09_tree_event_dates.sql",
-  "database/migrations/09_tree_event_dates_checks.json"
+  "database/migrations/09_tree_event_dates_checks.json",
+  "map/public/js/popup_controls.js"
 ]

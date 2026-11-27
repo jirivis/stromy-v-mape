@@ -30,6 +30,7 @@ jobs:
           NODE_PATH=/tmp/svm-filter-tests/node_modules node tests/community_ui.js
           NODE_PATH=/tmp/svm-filter-tests/node_modules node tests/area_ui.js
           NODE_PATH=/tmp/svm-filter-tests/node_modules node tests/area_map_style.js
+          NODE_PATH=/tmp/svm-filter-tests/node_modules node tests/popup_controls.js
       - name: PHP syntax
         run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
       - name: Export photo captions
