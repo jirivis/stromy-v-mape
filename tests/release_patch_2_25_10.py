@@ -10,7 +10,7 @@ with tempfile.TemporaryDirectory() as td:
  archive=out/'update-2.25.10.zip'
  with zipfile.ZipFile(archive) as z:
   m=json.loads(z.read('manifest.json'));assert m['from']=='2.25.9' and m['version']=='2.25.10' and m['migrations']==[]
-  assert len(m['files'])==7 and {'app/public_map.php','map/public/js/area_style.js','map/public/js/areas_layer.js'} <= set(m['files'])
+  assert len(m['files'])==9 and {'app/public_map.php','map/public/js/area_style.js','map/public/js/areas_layer.js'} <= set(m['files'])
   for p,h in m['files'].items():assert hashlib.sha256(z.read('payload/'+p)).hexdigest()==h and z.read('payload/'+p)==(src/p).read_bytes()
   for p in z.namelist():assert b'PRIVATE KEY-----' not in z.read(p)
  target=root/'installed';shutil.copytree(src,target)

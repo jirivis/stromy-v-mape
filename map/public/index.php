@@ -206,7 +206,7 @@ window.TreeAppUser = {
 <script src="/map/public/js/advanced_filters.js?v=2.25.5"></script>
 <script src="/map/public/js/trees.js"></script>
 <script src="/map/public/js/area_style.js?v=20261127"></script><script src="/map/public/js/areas_layer.js?v=20261127"></script>
-<script src="/map/public/js/edit_mode.js?v=2.25.5"></script>
+<script src="/map/public/js/edit_mode.js?v=20261127-click"></script>
 <script src="/map/public/main.js"></script>
 
 </body>
