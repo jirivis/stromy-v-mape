@@ -45,6 +45,7 @@ jobs:
           python3 tests/release_patch_2_25_5.py
           python3 tests/release_patch_2_25_6.py
           python3 tests/release_patch_2_25_7.py
+          python3 tests/release_patch_2_25_9.py
       - name: Schema and HTTP authorization regression tests
         run: SVM_APACHE_TEST=1 python3 tests/run_schema.py
 
