@@ -2273,6 +2273,11 @@ async function createMap() {
 
         // Výchozí podklad ruční opravy polohy je OpenStreetMap.
         osm.addTo(map);
+        SVMContextMap.panes(map);
+        Promise.all([
+            SVMContextMap.trees(map, <?= (int)$activeProjectId ?>, <?= (int)$id ?>),
+            SVMContextMap.areas(map, <?= (int)$activeProjectId ?>, null)
+        ]).catch(()=>{const info=document.querySelector('.manual-location-info');if(info)info.textContent='Okolní objekty se nepodařilo načíst. Polohu můžete upravit, případně obnovte stránku.';});
 const ortho =
     L.tileLayer.wms(
         'https://ags.cuzk.gov.cz/arcgis1/services/ORTOFOTO/MapServer/WMSServer',

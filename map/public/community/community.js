@@ -154,7 +154,7 @@
    areaVisuals.clearLayers();areaVisuals.addData(visible.filter(f=>f.properties.kind==='areas'));
    layer=L.geoJSON(visible,{style:()=>({opacity:0,weight:2,fillOpacity:0}),pointToLayer:(f,ll)=>{
     const tree=f.properties.marker||{},size=TreeApp.getMarkerDimension(tree,$('sizeMode').value),background=$('colorField').value?color(f):$('symbol').value==='transparent'?'transparent':'#ffffff';
-    const marker=L.marker(ll,{icon:TreeApp.createTreeMarkerIcon(tree,size,background)});marker._treeMarkerSize=size;
+    const marker=L.marker(ll,{icon:TreeApp.isTreeStump(tree)?TreeApp.createRemovedTreeMarkerIcon(size):TreeApp.createTreeMarkerIcon(tree,size,background)});marker._treeMarkerSize=size;
     TreeApp.markersById[f.properties.token]=marker;
     // Leaflet treats tooltip strings as HTML; encode public identifiers as text.
     const text=el('span',String(f.properties.code));TreeApp.treesById[f.properties.token]={usr_id:text.innerHTML};return marker;

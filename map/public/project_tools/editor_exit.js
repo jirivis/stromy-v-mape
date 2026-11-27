@@ -16,7 +16,7 @@
  const save=document.createElement('button');save.type='button';save.textContent='Uložit změny';
  save.onclick=()=>{if(saving||uploading)return;const submit=form.querySelector('button[type="submit"]');if(submit&&!submit.disabled)form.requestSubmit(submit);};
  const button=document.createElement('button');button.type='button';button.textContent='Zavřít · Esc';button.onclick=close;
- bar.append(save,button);form.before(bar);
+ bar.append(save,button);const card=document.querySelector('.tree-card-link');if(card){const wrapper=card.parentElement;bar.prepend(card);if(wrapper.tagName==='P'&&!wrapper.textContent.trim())wrapper.remove();}form.before(bar);
  const bottom=document.createElement('div');bottom.className='editor-close-bar editor-close-bottom';const bottomClose=button.cloneNode(true);bottomClose.onclick=close;bottom.append(bottomClose);
  (document.querySelector('.tree-danger-zone')||document.getElementById('tree-history')||form).after(bottom);
  document.addEventListener('keydown',e=>{if(e.key!=='Escape'||document.querySelector('dialog[open]'))return;e.preventDefault();e.stopImmediatePropagation();close();},true);

@@ -15,14 +15,14 @@ window.SVMContextMap = {
   if (Number(data.project_id) !== Number(projectId)) throw Error('Aktivní projekt se změnil. Obnovte stránku.');
   return data;
  },
- async trees(map, projectId) {
+ async trees(map, projectId, excludedId) {
   const data = await this.data('/map/public/project_tools/api.php?action=rows&kind=trees', projectId);
   const group = L.featureGroup().addTo(map);
   for (const row of data.rows) {
-   if (row.geometry?.type !== 'Point') continue;
+   if (Number(row.id) === Number(excludedId) || row.geometry?.type !== 'Point') continue;
    const [lng, lat] = row.geometry.coordinates;
    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
-   const icon = row.values.status === 'removed' ? 'stump' : row.values.angio_gymno === 'gymnospermae' ? 'gymno' : 'angio';
+   const icon = (row.values.status === 'removed' || Number(row.values.vitality) === 5 || row.values.removal_type) ? 'stump' : row.values.angio_gymno === 'gymnospermae' ? 'gymno' : 'angio';
    L.marker([lat,lng], {pane:'contextTrees', interactive:false, keyboard:false,
     icon:L.divIcon({className:'context-tree', iconSize:[20,20], iconAnchor:[10,10],
      html:'<img alt="" src="/icons/'+icon+'.svg" style="width:20px;height:20px;background:#fff;border:1px solid #445e4b;border-radius:50%;box-sizing:border-box">'})

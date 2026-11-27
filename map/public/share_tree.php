@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/../../app/bootstrap.php';
+require_once __DIR__.'/../../app/tree_share_tokens.php';
 
 
 
@@ -136,6 +137,23 @@ if (
     )
 ) {
     /*
+     * Skutečný token se ukáže jen uživateli.
+     * Do databáze uložíme pouze jeho hash.
+     */
+    $token =
+        bin2hex(
+            random_bytes(32)
+        );
+
+    $tokenHash =
+        hash(
+            'sha256',
+            $token
+        );
+
+    svmStoreShareToken($token);
+    $mysqli->begin_transaction();
+    /*
      * Staré odkazy tohoto stromu deaktivujeme.
      */
     $disableStatement = $mysqli->prepare(
@@ -155,20 +173,7 @@ if (
     }
 
 
-    /*
-     * Skutečný token se ukáže jen uživateli.
-     * Do databáze uložíme pouze jeho hash.
-     */
-    $token =
-        bin2hex(
-            random_bytes(32)
-        );
 
-    $tokenHash =
-        hash(
-            'sha256',
-            $token
-        );
 
     $userId =
         (int) $_SESSION['user_id'];
@@ -220,33 +225,13 @@ if (
     }
 
     $insertStatement->close();
+    $mysqli->commit();
 
     $generatedUrl =
         svmUrl()
         . '/map/public/public_tree.php?token='
         . rawurlencode($token);
 		
-$emailSubject =
-    'Karta stromu č. '
-    . $treeNumber
-    . (
-        $treeName !== ''
-            ? ' – ' . $treeName
-            : ''
-    );
-
-$emailBody =
-    "Dobrý den,\n\n"
-    . "na následujícím odkazu naleznete "
-    . "kartu stromu č. "
-    . $treeNumber
-    . ":\n\n"
-    . $generatedUrl
-    . "\n\n"
-    . "Odkaz můžete kdykoliv znovu otevřít "
-    . "a kartu také vytisknout nebo uložit do PDF.\n\n"
-    . "S pozdravem";
-
     $message =
         $action === 'regenerate'
             ? 'Byl vytvořen nový odkaz. '
@@ -302,7 +287,8 @@ $shareStatement = $mysqli->prepare(
         id,
         label,
         created_at,
-        last_access_at
+        last_access_at,
+        token_hash
      FROM tree_shares
      WHERE tree_id = ?
        AND active = 1
@@ -332,6 +318,32 @@ if ($shareStatement) {
 
     $shareStatement->close();
 }
+
+if ($activeShare && $generatedUrl === '') {
+    $savedToken = svmReadShareToken((string)$activeShare['token_hash']);
+    if ($savedToken !== null) $generatedUrl = svmUrl().'/map/public/public_tree.php?token='.rawurlencode($savedToken);
+}
+$emailSubject =
+    'Karta stromu č. '
+    . $treeNumber
+    . (
+        $treeName !== ''
+            ? ' – ' . $treeName
+            : ''
+    );
+
+$emailBody =
+    "Dobrý den,\n\n"
+    . "na následujícím odkazu naleznete "
+    . "kartu stromu č. "
+    . $treeNumber
+    . ":\n\n"
+    . $generatedUrl
+    . "\n\n"
+    . "Odkaz můžete kdykoliv znovu otevřít "
+    . "a kartu také vytisknout nebo uložit do PDF.\n\n"
+    . "S pozdravem";
+
 
 ?>
 <!DOCTYPE html>
@@ -531,7 +543,7 @@ if ($shareStatement) {
         <div class="field">
 
             <label for="generatedUrl">
-                Nový veřejný odkaz
+                Aktivní veřejný odkaz
             </label>
 
             <input
@@ -585,9 +597,7 @@ if ($shareStatement) {
             <p><small>Vyberte aplikaci a příjemce. Zprávu odešlete sami ve své aplikaci.</small></p>
             <p>
                 <small>
-                    Tento odkaz si nyní uložte.
-                    Z databáze ho později nelze
-                    znovu zobrazit.
+                    Odkaz zde najdete i při příštím otevření sdílení.
                 </small>
             </p>
 
@@ -598,6 +608,7 @@ if ($shareStatement) {
 
     <?php if ($activeShare): ?>
 
+        <?php if ($generatedUrl === ''): ?><p>U tohoto staršího odkazu byl uložen pouze bezpečnostní otisk, proto jej nelze znovu zobrazit. Jednou vytvořte nový odkaz; původní přestane platit. Nový odkaz zde již zůstane k dispozici.</p><?php endif; ?>
         <div class="status">
 
             <strong>

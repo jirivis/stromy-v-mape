@@ -1,4 +1,4 @@
-# Stromy v mapě – aplikace 2.25.8
+# Stromy v mapě – aplikace 2.25.9
 
 Aplikace pro evidenci stromů a porostních ploch, fotografie, historii, import/export a volitelnou veřejnou mapu. Prezentační weby ani zákaznická data nejsou součástí.
 
@@ -30,7 +30,7 @@ ZIP obsahuje application/ a návod. Používá explicitní seznam souborů, nep�
 
 Veřejný distribuční zdroj je jirivis/stromy-v-mape-updates. Nové instalace mají ve vzoru konfigurace tento zdroj, veřejný podpisový klíč a kontrolu vydání na dashboardu. Každou instalaci aktualizace schvaluje správce. Instalační ZIP není aktualizační balíček. SQL změny mohou vyžadovat přípravu správcem databáze.
 
-Verze **2.25.8** přidává maximální velikost značek 48 px, volby po uložení stromů a ploch, autory taxonů na kartách ploch, okolní objekty na mapkách a přiblížení na editovanou plochu. Plochy se kreslí průhledně nad značkami; fotografie jsou pod ukládáním a nápovědy AOPK vysvětlují jednotlivé možnosti. Aktualizace z 2.25.6 nevyžaduje SQL změny.
+Verze **2.25.7** přidává maximální velikost značek 48 px, volby po uložení stromů a ploch, autory taxonů na kartách ploch, okolní objekty na mapkách a přiblížení na editovanou plochu. Plochy se kreslí průhledně nad značkami; fotografie jsou pod ukládáním a nápovědy AOPK vysvětlují jednotlivé možnosti. Aktualizace z 2.25.6 nevyžaduje SQL změny.
 
 Verze 2.25.5–2.25.6 opravují ukládání stromů, načítání fotografií v kartách, navigaci editoru a doplňování taxonomie ve zkrácených šablonách. Veřejná mapa má sjednocené značky, clusterování a filtry podle zveřejněných údajů. Aktivní filtry mají červené označení a krátkou hlášku uprostřed obrazovky; veřejná tabulka odděluje Stromy a Plochy do záložek. Oprávnění a obnova: [docs/OBNOVA_A_OPRAVNENI.md](docs/OBNOVA_A_OPRAVNENI.md). Fotografie: [docs/FOTOGRAFIE.md](docs/FOTOGRAFIE.md).
 
@@ -43,3 +43,5 @@ Vlastní kód: **GPL-3.0-or-later**, viz LICENSE a LICENSING.md. Cizí komponent
 Chyby a návrhy přijímáme přes [Issues](https://github.com/jirivis/stromy-v-mape/issues), opravy přes pull requesty. Výchozím zdrojem je větev main. Bezpečnostní nálezy posílejte neveřejně podle SECURITY.md.
 
 Verze 2.25.8 odděluje skutečná data odumření a odstranění od dne označení. Aktualizace z 2.25.7 vyžaduje SQL přípravu nabídnutou aktualizátorem; po záloze ji spusťte v phpMyAdminu a zvolte Zkontrolovat databázi. Podrobnosti: [docs/TREE_EVENT_DATES.md](docs/TREE_EVENT_DATES.md).
+
+Verze 2.25.9 upravuje rozestupy a tlačítka formuláře, obnovuje zobrazení nových sdílených odkazů, sjednocuje značku odstraněných stromů ve veřejné mapě a doplňuje okolní objekty při ruční opravě polohy. Aktualizace z 2.25.8 nevyžaduje SQL. Poslední kompletní instalační ZIP zůstává 2.25.8; poté použijte aktualizátor.

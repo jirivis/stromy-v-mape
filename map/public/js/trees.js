@@ -346,7 +346,7 @@ TreeApp.treeLayer = null;
                         p, TreeApp.markerSizeMode
                     );
 
-                    const icon = p.status === "removed"
+                    const icon = TreeApp.isTreeStump(p)
                         ? TreeApp.createRemovedTreeMarkerIcon(size)
                         : TreeApp.createTreeMarkerIcon(p, size);
 

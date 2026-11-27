@@ -1,4 +1,5 @@
 "use strict";
+TreeApp.isTreeStump = tree => tree.status === 'removed' || Number(tree.vitality) === 5 || ['dead','felled','fallen','missing','other'].includes(tree.removal_type);
 
 /*
  * Aktuální režim podbarvení markerů.
@@ -80,7 +81,7 @@ TreeApp.refreshTreeMarkerSizes = function () {
         if (!tree || !marker) return;
         const size = TreeApp.getMarkerDimension(tree, TreeApp.markerSizeMode);
         marker._treeMarkerSize = size;
-        if (tree.status === "removed") {
+        if (TreeApp.isTreeStump(tree)) {
             marker.setIcon(TreeApp.createRemovedTreeMarkerIcon(size));
         } else {
             marker.setIcon(TreeApp.createTreeMarkerIcon(tree, size));
@@ -396,7 +397,7 @@ TreeApp.refreshTreeMarkerColors = function () {
         }
 
         marker.setIcon(
-            tree.status === "removed"
+            TreeApp.isTreeStump(tree)
                 ? TreeApp.createRemovedTreeMarkerIcon(marker._treeMarkerSize)
                 : TreeApp.createTreeMarkerIcon(tree, marker._treeMarkerSize)
         );

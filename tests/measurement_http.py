@@ -79,6 +79,21 @@ with tempfile.TemporaryDirectory() as td:
     assert post_form(endpoint,{'id':1,'action':'revoke','tree_form_token':'test-form-token'},'viewer')==403
    def sql(statement):
     return subprocess.check_output(['mariadb','--no-defaults','--protocol=tcp','-h127.0.0.1','-P'+port,'-uroot','-N','valuation_fresh','-e',statement]).decode().strip()
+   # Active share stays copyable after reopening; rotation and revocation still work.
+   def share_page(data=None,sid='editor'):
+    q=urllib.request.Request('http://127.0.0.1:33080/map/public/share_tree.php?id=1',data=urllib.parse.urlencode(data).encode() if data else None,headers={'Cookie':'PHPSESSID='+sid})
+    with urllib.request.urlopen(q) as response:return response.read().decode()
+   created=share_page({'action':'create','tree_form_token':'test-form-token'})
+   share_url=re.search(r'id="generatedUrl"[^>]*value="([^"]+)"',created,re.S).group(1)
+   assert share_url in share_page()
+   rotated=share_page({'action':'regenerate','tree_form_token':'test-form-token'})
+   new_url=re.search(r'id="generatedUrl"[^>]*value="([^"]+)"',rotated,re.S).group(1)
+   assert new_url!=share_url and new_url in share_page()
+   try:urllib.request.urlopen(share_url);raise AssertionError('Rotated share readable')
+   except urllib.error.HTTPError as e:assert e.code==404
+   revoked=share_page({'action':'revoke','tree_form_token':'test-form-token'})
+   assert 'id="generatedUrl"' not in revoked and 'id="generatedUrl"' not in share_page()
+   print('PASS retained share URL: reopen, rotate, revoke')
    # Hidden taxonomy is preserved normally, but a deliberate autocomplete choice
    # replaces all related fields while unrelated hidden fields stay untouched.
    sql("UPDATE trees SET usr_id=1,species='Old',scientific_author='Old author',czech='Old Czech',angio_gymno='old',note_tree='Keep me' WHERE id=1")

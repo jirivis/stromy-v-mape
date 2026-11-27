@@ -26,6 +26,8 @@ let requests=0;w.fetch=async()=>{requests++;return {ok:true,json:async()=>data}}
 w.TreeApp={};w.eval(fs.readFileSync(dir+'../js/markers.js','utf8'));w.eval(fs.readFileSync(dir+'../js/project_filters.js','utf8'));
 // A stale filter on a formerly published field must disappear, including unavailable quick filters.
 w.localStorage.setItem('svm-filters:v1:0:0:trees:public:abc',JSON.stringify({...w.SVMFilters.defaults(),rules:[{field:'note_tree',op:'contains',value:'secret'}],group:'gymnospermae',urgency:'u0'}));
+for(const tree of [{status:'removed'},{vitality:5},{removal_type:'dead'},{removal_type:'fallen'}])assert.equal(w.TreeApp.isTreeStump(tree),true);
+assert.equal(w.TreeApp.isTreeStump({}),false);
 w.eval(fs.readFileSync(dir+'community.js','utf8'));
 setImmediate(()=>{try{
  const input=id=>$(id).dispatchEvent(new w.Event('input'));
