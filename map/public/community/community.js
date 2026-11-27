@@ -54,7 +54,7 @@
  };
  window.addEventListener('pagehide',()=>stopLocation());
  $('close').onclick=()=>{generation++;$('detail').hidden=true;map.invalidateSize();};
- async function open(feature){const seq=++generation;$('detail').hidden=false;$('card').textContent='Načítám…';map.invalidateSize();try{const d=await api('detail',feature.properties.token);if(seq!==generation)return;const card=$('card');card.replaceChildren(el('h2',(d.kind==='trees'?'Strom ':'Plocha ')+d.code));if(d.event){const banner=el('p',d.event.label+(d.event.date?' · '+d.event.date_label+': '+d.event.date:''));banner.className='tree-event';card.append(banner);}const dl=el('dl');for(const v of d.values)dl.append(el('dt',v.label),el('dd',v.value));card.append(dl);
+ async function open(feature){const seq=++generation;$('detail').hidden=false;$('card').textContent='Načítám…';map.invalidateSize();try{const d=await api('detail',feature.properties.token);if(seq!==generation)return;const card=$('card');card.replaceChildren();if(d.event){const banner=el('p',d.event.label+(d.event.date?' · '+d.event.date_label+': '+d.event.date:''));banner.className='tree-event';card.append(banner);}card.append(el('h2',(d.kind==='trees'?'Strom ':'Plocha ')+d.code));const dl=el('dl');for(const v of d.values)dl.append(el('dt',v.label),el('dd',v.value));card.append(dl);
   for(const photo of d.photos){const figure=el('figure'),a=el('a'),img=el('img');a.href=photo.url;a.target='_blank';a.rel='noopener';img.src=photo.url;img.alt='Fotografie objektu '+d.code;img.loading='lazy';a.append(img);figure.append(a);if(photo.note)figure.append(el('figcaption',photo.note));card.append(figure);}
   if(d.reports){const button=el('button','Poslat podnět');card.append(button);button.onclick=async()=>{button.disabled=true;try{const c=await api('challenge',feature.properties.token);if(seq!==generation)return;const form=el('form'),message=el('textarea'),contact=el('input'),trap=el('input'),result=el('p'),submit=el('button','Odeslat podnět');message.required=true;message.minLength=10;message.maxLength=2000;message.rows=5;contact.type='email';contact.maxLength=200;trap.tabIndex=-1;trap.autocomplete='off';trap.className='trap';trap.setAttribute('aria-hidden','true');for(const [label,input] of [['Váš podnět',message],['Kontaktní e-mail (nepovinný)',contact]]){const l=el('label',label);l.append(input);form.append(l);}form.append(trap,el('p','Podnět a případný kontakt uvidí pouze správci projektu. Nezveřejní se na mapě. Uvádějte jen údaje potřebné k vyřízení.'),submit,result);card.append(form);message.focus();form.onsubmit=async e=>{e.preventDefault();submit.disabled=true;try{await api('report',feature.properties.token,{token:c.token,message:message.value,contact:contact.value,website:trap.value});form.replaceChildren(el('p','Děkujeme. Podnět byl uložen a správci jej uvidí v aplikaci.'));}catch(e){result.textContent=e.message;submit.disabled=false;}};}catch(e){button.disabled=false;$('status').textContent=e.message;}};}
  }catch(e){if(seq===generation)$('card').textContent=e.message;}}
@@ -103,6 +103,7 @@
   const areaRenderer=L.svg({pane:'areaVisuals'});
   const areaVisuals=L.geoJSON(null,{pane:'areaVisuals',renderer:areaRenderer,interactive:false}).addTo(map);
   function styleAreas(){
+   $('areaColor').value=SVMAreaStyle.existingColor($('areaColor').value);
    $('areaTransparencyValue').textContent=$('areaTransparency').value+' %';
    const pattern=$('areaPattern').value,opacity=1-Number($('areaTransparency').value)/100;
    const container=areaRenderer._container;
@@ -111,7 +112,7 @@
    const defs=svg('defs',{'data-public-patterns':''});if(container)container.prepend(defs);
    let index=0;
    areaVisuals.eachLayer(l=>{
-    const fill=$('colorField').value?color(l.feature):$('areaColor').value;
+    const fill=SVMAreaStyle.color(l.feature.properties.filter_values?.status,$('colorField').value?color(l.feature):$('areaColor').value);
     l.setStyle({weight:2,color:fill,fillColor:fill,fillOpacity:opacity});
     if(pattern!=='solid'&&container&&l._path){
      const id='public-area-pattern-'+index++,pat=svg('pattern',{id,patternUnits:'userSpaceOnUse',width:10,height:10});
@@ -121,7 +122,7 @@
    });
   }
   const mainColorFields={"Vitalita": "vitality", "Zdravotní stav": "tree_health", "Statická stabilita": "stability", "Sadovnická hodnota": "landscape_value", "Perspektiva": "longevity", "Další kontrola": "next_insp_at"};
-  const palette=['#26733f','#2166ac','#b35806','#762a83','#b2182b','#00877a','#826b00','#bb4980','#555555'];
+  const palette=['#26733f','#2166ac','#b35806','#762a83','#00877a','#826b00','#bb4980','#555555'];
   let colors=new Map();
   function color(f){return $('colorField').value?colors.get(value(f,$('colorField').value))||'#777777':'#28613d';}
   function selectTable(kind,focus=false){

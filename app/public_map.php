@@ -79,6 +79,11 @@ function pmNotify(mysqli $db,array $project):void{
 }
 
 
+function pmAreaEvent(array $r,array $fields):?array {
+ if(!in_array('status',$fields,true))return null;
+ $a=json_decode($r['attributes_json']??'{}',true);
+ return ($a['status']??'')==='removed'?['label'=>'Odstraněný porost','date'=>null]:null;
+}
 function pmTreeEvent(array $r,array $fields):?array {
  require_once __DIR__.'/tree_lifecycle.php';
  $safe=array_intersect_key($r,array_flip($fields));

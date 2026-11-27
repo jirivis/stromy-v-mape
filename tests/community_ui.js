@@ -28,6 +28,7 @@ w.TreeApp={};w.eval(fs.readFileSync(dir+'../js/markers.js','utf8'));w.eval(fs.re
 w.localStorage.setItem('svm-filters:v1:0:0:trees:public:abc',JSON.stringify({...w.SVMFilters.defaults(),rules:[{field:'note_tree',op:'contains',value:'secret'}],group:'gymnospermae',urgency:'u0'}));
 for(const tree of [{status:'removed'},{vitality:5},{removal_type:'dead'},{removal_type:'fallen'}])assert.equal(w.TreeApp.isTreeStump(tree),true);
 assert.equal(w.TreeApp.isTreeStump({}),false);
+w.eval(fs.readFileSync(dir+'../js/area_style.js','utf8'));
 w.eval(fs.readFileSync(dir+'community.js','utf8'));
 setImmediate(()=>{try{
  const input=id=>$(id).dispatchEvent(new w.Event('input'));
@@ -69,6 +70,12 @@ setImmediate(()=>{try{
  assert.equal($('deviceLocation').closest('.public-location-control').dataset.position,'topright');
  $('deviceLocation').click();assert.equal(watches,1);locate({coords:{latitude:50,longitude:15,accuracy:12}});assert.ok($('locationStatus').textContent.includes('12 m'));
  $('deviceLocation').click();assert.equal(clears,1);$('deviceLocation').click();locateError({code:1});assert.equal(clears,2);assert.equal(requests,1);
+ $('colorField').value='';input('colorField');
+ $('areaColor').value='#ff0000';input('areaColor');assert.equal($('areaColor').value,'#6a852e');
+ data.features[1].properties.filter_values.status='removed';
+ input('areaColor');assert.equal(visuals[0].style.color,'#b3483c');assert.equal(visuals[0].style.fillColor,'#b3483c');
+ $('areaPattern').value='cross';input('areaPattern');assert.ok(visuals[0]._path.getAttribute('fill').startsWith('url('));
+ delete data.features[1].properties.filter_values.status;input('areaColor');assert.equal(visuals[0].style.color,'#6a852e');
  console.log('PASS public shared filters, public-only field scope, all/any, table, cluster, zoom labels, area styles and device location');
 }catch(e){console.error(e);process.exitCode=1}finally{w.close()}});
 

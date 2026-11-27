@@ -194,6 +194,7 @@
   "map/public/js/advanced_filters.js",
   "map/public/js/app.js",
   "map/public/js/areas_layer.js",
+  "map/public/js/area_style.js",
   "map/public/js/edit_mode.js",
   "map/public/js/editor.js",
   "map/public/js/filters.js",

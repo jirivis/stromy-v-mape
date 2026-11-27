@@ -22,3 +22,9 @@ check(pmTreeEvent($r,['death_date'])===null);
 check(pmTreeEvent($r,['vitality'])['date']===null);
 check(pmTreeEvent($r,['removal_type','death_date'])['date']==='2026-10-10');
 echo "PASS public event field permissions\n";
+
+$r=['attributes_json'=>json_encode(['status'=>'removed'])];
+check(pmAreaEvent($r,[])===null);
+check(pmAreaEvent($r,['status'])['label']==='Odstraněný porost');
+check(pmAreaEvent(['attributes_json'=>'{"status":"existing"}'],['status'])===null);
+echo "PASS public area removal event respects selected status\n";
