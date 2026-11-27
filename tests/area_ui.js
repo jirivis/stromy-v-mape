@@ -44,7 +44,7 @@ console.log('PASS area form: authors, context, focus control, photo order, help,
  w.SVGSVGElement.prototype.createSVGRect=()=>({});w.eval(fs.readFileSync(require.resolve('leaflet/dist/leaflet.js'),'utf8'));
  const map=w.L.map('map').setView([50,15],18),feature={type:'Feature',geometry:{type:'Polygon',coordinates:[[[15,50],[15.001,50],[15,50.001],[15,50]]]},properties:{id:1,code:'1',area_m2:50,attributes:{status:'existing'}}};
  w.TreeApp={map,initMap(){},projectAreaFilters:{matches:()=>true,subscribe(){},mount(){}}};w.fetch=async()=>({ok:true,json:async()=>({features:[feature],project_id:4})});
- w.eval(read('js/areas_layer.js'));w.TreeApp.initMap();await sleep(40);
+ w.eval(read('js/area_style.js'));w.eval(read('js/areas_layer.js'));w.TreeApp.initMap();await sleep(40);
  const pane=map.getPane('areaVisuals');assert.equal(pane.style.zIndex,'625');assert.equal(pane.style.pointerEvents,'none');assert.equal(pane.querySelectorAll('g > path').length,1);assert.equal(pane.querySelector('.leaflet-interactive'),null);
  const hit=w.TreeApp.areaLayers.getLayers()[0];assert.equal(hit.options.fillOpacity,0);assert.equal(hit.options.opacity,0);assert.ok(hit.getPopup());
  map.removeLayer(w.TreeApp.areaLayers);assert.equal(pane.querySelectorAll('g > path').length,0);w.TreeApp.areaLayers.addTo(map);assert.equal(pane.querySelectorAll('g > path').length,1);
